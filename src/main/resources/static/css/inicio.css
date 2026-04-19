@@ -1,0 +1,210 @@
+/************** base ****************/
+
+body {
+    min-height: 100vh;
+    color: var(--color-text);
+    background-color: var(--color-neutral);
+    font-family: 'Manrope', sans-serif, Arial;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: var(--color-secondary);
+    font-family: "Noto Serif", serif, Arial;
+    font-size: 4rem;
+}
+
+/************** hero ****************/
+.hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background: url('../imagenes/img-fondo.webp') no-repeat center center/cover;
+}
+
+.hero::before {
+    content: "";
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--color-neutral-transparent);
+    position: absolute;
+    background: linear-gradient(to bottom,
+            var(--color-neutral-transparent) 0%,
+            var(--color-neutral-transparent) 50%,
+            var(--color-neutral) 100%);
+}
+
+.hero-contenido {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-texto {
+    font-size: 1.5rem;
+    font-style: italic;
+    margin-bottom: 60px;
+}
+
+.reserva-link {
+    position: relative;
+    display: inline-block;
+    color: var(--color-neutral);
+    background-color: var(--color-primary);
+    padding: 12px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    margin-right: 20px;
+    letter-spacing: 2px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+
+.reserva-link::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    inset: 0;
+    border-radius: 10px;
+    box-shadow: 0 0 40px var(--color-primary-transparent);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.reserva-link:hover {
+    transform: translateY(-10px);
+}
+
+.reserva-link:hover::before {
+    box-shadow: 0 0 60px var(--color-primary-transparent);
+}
+
+.menu-link {
+    color: var(--color-secondary);
+    background-color: transparent;
+    border-radius: 10px;
+    border: 1px solid var(--color-secondary-transparent);
+    padding: 12px 24px;
+    text-decoration: none;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+}
+
+.menu-link:hover {
+    background-color: var(--color-secondary-transparent);
+}
+
+/******************* platillos ****************/
+
+
+.platillos {
+    margin-top: 150px;
+}
+
+.platillos-header {
+    padding: 0 20px;
+    margin: 0;
+}
+
+.platillos-titulo {
+    color: var(--color-primary);
+    font-family: "Manrope", sans-serif, Arial;
+    font-size: 1.2rem;
+    padding: 0;
+    margin: 0;
+
+}
+
+.platillos-subtitulo {
+    font-family: "Noto Serif", serif, Arial;
+    font-size: 2rem;
+    color: var(--color-secondary);
+    margin: 0;
+}
+
+.platillos-contenedor {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    padding: 20px;
+    gap: 40px;
+}
+
+
+.platillo-uno {
+    grid-column: span 2 / span 2;
+    grid-row: span 3 / span 3;
+    background: url('../imagenes/carne.webp') no-repeat center center/cover;
+}
+
+.platillo-dos {
+    grid-row: span 3 / span 3;
+    grid-column-start: 3;
+    background: url('../imagenes/pastas.webp') no-repeat center center/cover;
+}
+
+.platillo-tres {
+    grid-row: span 2 / span 2;
+    grid-row-start: 4;
+    background: url('../imagenes/sushi.webp') no-repeat center center/cover;
+}
+
+.platillo-cuatro {
+    grid-column: span 2 / span 2;
+    grid-row: span 2 / span 2;
+    grid-row-start: 4;
+    background: url('../imagenes/postre.webp') no-repeat center center/cover;
+}
+
+.platillo-card {
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin: 0;
+}
+
+.platillo-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-neutral-transparent);
+    border-radius: 10px;
+
+}
+
+.platillo-info {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+}
+
+.platillo-precio {
+    color: var(--color-primary);
+    font-weight: 500;
+    margin: 0;
+}
+
+.platillo-nombre {
+    color: var(--color-secondary);
+    font-family: "Noto Serif", serif, Arial;
+    margin: 5px 0;
+    padding: 0;
+}
+
+.platillo-descripcion {
+    color: var(--color-text);
+}
+
+/******************* informacion ***************/

@@ -5,10 +5,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/inicio.css}">
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
-    <p>pene</p>
+    <header th:replace="~{fragmentos/nav :: navbar}"></header>
+
+    <section class="hero">
+        <div class="hero-contenido">
+            <h1>The Culinary <br> Manuscript</h1>
+            <p class="hero-texto">Disfruta de la Mejor Comida en un Ambiente Acogedor.</p>
+            <a href="#" class="reserva-link">Reserva Ahora</a>
+            <a href="#" class="menu-link">Ver el Menú</a>
+        </div>
+    </section>
+
+    <section class="platillos">
+        <div class="platillos-header">
+            <h2 class="platillos-titulo">LA COLECCION</h2>
+            <h3 class="platillos-subtitulo">Nuestros Platillos Destacados</h3>
+        </div>
+        <div class="platillos-contenedor">
+            <div class="platillo-uno platillo-card">
+                <div class="platillo-info">
+                    <p class="platillo-precio">$78k</p>
+                    <h3 class="platillo-nombre">Aged Wagyu Prime</h3>
+                    <p class="platillo-descripcion">Corte premium madurado por 45 días, servido con puré de ajo negro
+                        fermentado y mantequilla de tuétano ahumada.</p>
+                </div>
+            </div>
+            <div class="platillo-dos platillo-card">
+                <div class="platillo-info">
+                    <p class="platillo-precio">$42k</p>
+                    <h3 class="platillo-nombre">Truffle Tagliatelle</h3>
+                    <p class="platillo-descripcion">Pasta artesanal hecha a mano, bañada en crema de queso Parmigiano
+                        Reggiano de 36 meses y láminas de trufa negra fresca.</p>
+                </div>
+            </div>
+            <div class="platillo-tres platillo-card">
+                <div class="platillo-info">
+                    <p class="platillo-precio">$55k</p>
+                    <h3 class="platillo-nombre">Imperial Omakase</h3>
+                    <p class="platillo-descripcion">Selección del chef de nigiris y rolls con pescados de grado sashimi,
+                        decorado con láminas de oro comestible y bonito seco.</p>
+                </div>
+            </div>
+            <div class="platillo-cuatro platillo-card">
+                <div class="platillo-info">
+                    <p class="platillo-precio">$22k</p>
+                    <h3 class="platillo-nombre">Midnight Gold Ganache</h3>
+                    <p class="platillo-descripcion">Domo de chocolate amargo 70% de origen único, con pétalos de
+                        chocolate
+                        blanco y negro, sales marinas y hoja de oro.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
     <form th:action="@{/logout}" method="post">
         <button type="submit">Cerrar sesión</button>
     </form>

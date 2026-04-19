@@ -1,0 +1,12 @@
+:root {
+    --color-primary: #D4AF37;
+    --color-primary-transparent: rgba(212, 175, 55, 0.4);
+    --color-secondary: #FFFFFF;
+    --color-secondary-transparent: rgba(255, 255, 255, 0.1);
+    --color-tertiary: #97B0FF;
+    --color-neutral: #121212;
+    --color-text: gray;
+    --color-neutral-transparent: rgba(18, 18, 18, 0.6);
+    --font-family-base: 'Manrope', sans-serif, Arial;
+    --font-family-title: "Noto Serif", serif, Arial;
+}

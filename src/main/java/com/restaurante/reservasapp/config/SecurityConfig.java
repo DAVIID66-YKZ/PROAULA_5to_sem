@@ -15,35 +15,37 @@ import com.restaurante.reservasapp.services.UsuarioSeguridadService;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private UsuarioSeguridadService usuarioSeguridadService;
+        @Autowired
+        private UsuarioSeguridadService usuarioSeguridadService;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        return http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/loginProcess", "/usuarios/guardar", "/css/**").permitAll()
-                        .anyRequest().authenticated())
-                .userDetailsService(usuarioSeguridadService)
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/loginProcess")
-                        .usernameParameter("correo")
-                        .passwordParameter("contrasena")
-                        .defaultSuccessUrl("/index", false)
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
-                        .permitAll())
-                .build();
-    }
+                return http
+                                .csrf(csrf -> csrf.disable())
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/login", "/loginProcess", "/usuarios/guardar",
+                                                                "/css/**", "/index", "/", "/imagenes/**")
+                                                .permitAll()
+                                                .anyRequest().authenticated())
+                                .userDetailsService(usuarioSeguridadService)
+                                .formLogin(form -> form
+                                                .loginPage("/login")
+                                                .loginProcessingUrl("/loginProcess")
+                                                .usernameParameter("correo")
+                                                .passwordParameter("contrasena")
+                                                .defaultSuccessUrl("/index", false)
+                                                .permitAll())
+                                .logout(logout -> logout
+                                                .logoutUrl("/logout")
+                                                .logoutSuccessUrl("/login?logout")
+                                                .permitAll())
+                                .build();
+        }
 
 }
