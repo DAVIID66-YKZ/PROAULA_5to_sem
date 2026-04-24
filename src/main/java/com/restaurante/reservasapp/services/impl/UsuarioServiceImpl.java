@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.restaurante.reservasapp.models.Usuario;
+import com.restaurante.reservasapp.Entity.Rol;
+import com.restaurante.reservasapp.Entity.UsuarioEntity;
 import com.restaurante.reservasapp.repository.UsuarioRepository;
 import com.restaurante.reservasapp.services.UsuarioService;
 
@@ -20,14 +21,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public Usuario guardarUsuario(Usuario usuario) {
+    public UsuarioEntity guardarUsuario(UsuarioEntity usuario) {
         usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
-        usuario.setRol("USER");
+        usuario.setRol(Rol.CLIENTE);
         return repo.save(usuario);
     }
 
     @Override
-    public Usuario obtenerUsuario(String id) {
+    public UsuarioEntity obtenerUsuario(String id) {
         return repo.findById(id).orElse(null);
     }
 
@@ -37,7 +38,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public List<Usuario> listarUsuarios() {
+    public List<UsuarioEntity> listarUsuarios() {
         return repo.findAll();
     }
 

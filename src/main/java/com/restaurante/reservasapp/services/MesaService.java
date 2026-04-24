@@ -2,15 +2,15 @@ package com.restaurante.reservasapp.services;
 
 import java.util.List;
 
-import com.restaurante.reservasapp.models.Mesa;
+import com.restaurante.reservasapp.Entity.MesaEntity;
 
 public interface MesaService {
 
-    public Mesa guardarMesa(Mesa mesa);
+    public MesaEntity guardarMesa(MesaEntity mesa);
 
-    public Mesa obtenerMesa(String id);
+    public MesaEntity obtenerMesa(String id);
 
     public void eliminarMesa(String id);
 
-    public List<Mesa> listarMesas();
+    public List<MesaEntity> listarMesas();
 }

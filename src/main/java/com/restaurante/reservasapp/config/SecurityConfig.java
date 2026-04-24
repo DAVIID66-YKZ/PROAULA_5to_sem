@@ -1,51 +1,54 @@
 package com.restaurante.reservasapp.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.restaurante.reservasapp.services.UsuarioSeguridadService;
+import com.restaurante.reservasapp.Jwt.JwtAuthenticationFilter;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-        @Autowired
-        private UsuarioSeguridadService usuarioSeguridadService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthenticationProvider authProvider;
 
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
-        }
-
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-                return http
-                                .csrf(csrf -> csrf.disable())
-                                .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/login", "/loginProcess", "/usuarios/guardar",
-                                                                "/css/**", "/index", "/", "/imagenes/**")
-                                                .permitAll()
-                                                .anyRequest().authenticated())
-                                .userDetailsService(usuarioSeguridadService)
-                                .formLogin(form -> form
-                                                .loginPage("/login")
-                                                .loginProcessingUrl("/loginProcess")
-                                                .usernameParameter("correo")
-                                                .passwordParameter("contrasena")
-                                                .defaultSuccessUrl("/index", false)
-                                                .permitAll())
-                                .logout(logout -> logout
-                                                .logoutUrl("/logout")
-                                                .logoutSuccessUrl("/login?logout")
-                                                .permitAll())
-                                .build();
-        }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
+    {
+        return http
+            .csrf(csrf -> 
+                csrf
+                .disable())
+.authorizeHttpRequests(authRequest ->
+    authRequest
+.requestMatchers(
+        "/auth/**",
+        "/index",
+        "/",
+        "/css/**",
+        "/js/**",
+        "/images/**",
+        "/login"
+).permitAll()
+.anyRequest().authenticated()
+)
+            .sessionManagement(sessionManager->
+                sessionManager 
+                  .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authenticationProvider(authProvider)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+            
+            
+    }
 
 }

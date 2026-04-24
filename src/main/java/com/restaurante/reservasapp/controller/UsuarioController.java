@@ -3,7 +3,7 @@ package com.restaurante.reservasapp.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.restaurante.reservasapp.models.Usuario;
+import com.restaurante.reservasapp.Entity.UsuarioEntity;
 import com.restaurante.reservasapp.services.UsuarioService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,12 +23,12 @@ public class UsuarioController {
     }
 
     @PostMapping("/guardar")
-    public Usuario guardarUsuario(@RequestBody Usuario usuario) {
+    public UsuarioEntity guardarUsuario(@RequestBody UsuarioEntity usuario) {
         return this.usuario.guardarUsuario(usuario);
     }
 
     @GetMapping("/listar")
-    public List<Usuario> getMethodName() {
+    public List<UsuarioEntity> getMethodName() {
         return usuario.listarUsuarios();
     }
 
