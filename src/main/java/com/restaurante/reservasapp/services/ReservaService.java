@@ -2,16 +2,16 @@ package com.restaurante.reservasapp.services;
 
 import java.util.List;
 
-import com.restaurante.reservasapp.Entity.ReservaEnity;
+import com.restaurante.reservasapp.Entity.ReservaEntity;
 
 public interface ReservaService {
 
-    public ReservaEnity guardarReserva(ReservaEnity reserva);
+    public ReservaEntity guardarReserva(ReservaEntity reserva);
 
-    public ReservaEnity obtenerReserva(String id);
+    public ReservaEntity obtenerReserva(String id);
 
     public void eliminarReserva(String id);
 
-    public List<ReservaEnity> listarReservas();
+    public List<ReservaEntity> listarReservas();
 
 }

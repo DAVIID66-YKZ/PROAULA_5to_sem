@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.restaurante.reservasapp.Entity.ReservaEnity;
+import com.restaurante.reservasapp.Entity.ReservaEntity;
 import com.restaurante.reservasapp.repository.ReservaRepository;
 import com.restaurante.reservasapp.services.ReservaService;
 
@@ -16,12 +16,12 @@ public class ReservaServiceImpl implements ReservaService {
     private ReservaRepository repo;
 
     @Override
-    public ReservaEnity guardarReserva(ReservaEnity reserva) {
+    public ReservaEntity guardarReserva(ReservaEntity reserva) {
         return repo.save(reserva);
     }
 
     @Override
-    public ReservaEnity obtenerReserva(String id) {
+    public ReservaEntity obtenerReserva(String id) {
         return repo.findById(id).orElse(null);
     }
 
@@ -31,7 +31,7 @@ public class ReservaServiceImpl implements ReservaService {
     }
 
     @Override
-    public List<ReservaEnity> listarReservas() {
+    public List<ReservaEntity> listarReservas() {
         return repo.findAll();
     }
 

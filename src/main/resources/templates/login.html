@@ -1,80 +1,42 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - ReservasApp</title>
+    
+    <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/login.css">
+    <script src="/js/login.js" defer></script>
 
-    <script>
-        async function login(event) {
-            event.preventDefault();
-
-            const correo = document.getElementById("correo").value;
-            const contrasena = document.getElementById("contrasena").value;
-
-            try {
-                const response = await fetch("/auth/login", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        correo,
-                        contrasena
-                    })
-                });
-
-                if (!response.ok) {
-                    alert("Credenciales incorrectas");
-                    return;
-                }
-
-                const data = await response.json();
-
-                // guardar token
-                localStorage.setItem("token", data.token);
-
-                // redirigir
-                window.location.href = "/index";
-
-            } catch (error) {
-                console.error(error);
-                alert("Error en el login");
-            }
-        }
-    </script>
 </head>
-
 <body>
 
-<div class="login-container">
+    <div class="login-container">
+        <form onsubmit="login(event)" class="login-form">
+            
+            <h1 class="login-title">Bienvenido</h1>
+            <p class="login-subtitle">Introduce tus datos para continuar</p>
 
-    <form onsubmit="login(event)" class="login-form">
+            <div class="input-group">
+                <label for="correo" class="login-label">Correo Electrónico</label>
+                <input type="email" id="correo" class="login-input" placeholder="ejemplo@correo.com" required>
+            </div>
 
-        <h2>Iniciar Sesión</h2>
+            <div class="input-group">
+                <label for="contrasena" class="login-label">Contraseña</label>
+                <input type="password" id="contrasena" class="login-input" placeholder="••••••••" required>
+            </div>
 
-        <div>
-            <label>Correo</label>
-            <input type="text" id="correo" required>
-        </div>
+            <button type="submit" class="login-button">ENTRAR</button>
 
-        <div>
-            <label>Contraseña</label>
-            <input type="password" id="contrasena" required>
-        </div>
+            <p style="text-align: center; font-size: 0.9rem;">
+                ¿No tienes cuenta? 
+                <a href="/register" class="login-links">Regístrate</a>
+            </p>
 
-        <button type="submit">Entrar</button>
-
-        <p>
-            ¿No tienes cuenta?
-            <a href="/register">Regístrate</a>
-        </p>
-
-    </form>
-
-</div>
+        </form>
+    </div>
 
 </body>
 </html>

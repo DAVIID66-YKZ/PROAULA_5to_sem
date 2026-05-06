@@ -30,16 +30,16 @@ public class SecurityConfig {
                 .disable())
 .authorizeHttpRequests(authRequest ->
     authRequest
-.requestMatchers(
-        "/auth/**",
-        "/index",
-        "/",
-        "/css/**",
-        "/js/**",
-        "/images/**",
-        "/login"
-).permitAll()
-.anyRequest().authenticated()
+        .requestMatchers(
+            "/auth/**",
+            "/index",
+            "/",
+            "/css/**",
+            "/js/**",
+            "/imagenes/**", 
+            "/login"
+        ).permitAll()
+        .anyRequest().authenticated()
 )
             .sessionManagement(sessionManager->
                 sessionManager 

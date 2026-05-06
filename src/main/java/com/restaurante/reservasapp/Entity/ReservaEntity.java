@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "reservas")
-public class ReservaEnity {
+public class ReservaEntity {
 
     @Id
     private String id;
