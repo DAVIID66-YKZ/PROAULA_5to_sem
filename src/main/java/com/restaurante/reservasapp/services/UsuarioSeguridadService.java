@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.springframework.stereotype.Service;
 
-import com.restaurante.reservasapp.models.Usuario;
+import com.restaurante.reservasapp.Entity.UsuarioEntity;
 import com.restaurante.reservasapp.repository.UsuarioRepository;
 
 @Service
@@ -21,13 +21,13 @@ public class UsuarioSeguridadService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Usuario usuario = repo.findByCorreo(username)
+        UsuarioEntity usuario = repo.findByCorreo(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con correo: " + username));
 
         return User.builder()
                 .username(usuario.getCorreo())
                 .password(usuario.getContrasena())
-                .roles(usuario.getRol())
+                .roles(usuario.getRol().name())
                 .build();
     }
 

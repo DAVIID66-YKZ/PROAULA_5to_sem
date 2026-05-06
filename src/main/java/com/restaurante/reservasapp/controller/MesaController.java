@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.restaurante.reservasapp.models.Mesa;
+import com.restaurante.reservasapp.Entity.MesaEntity;
 import com.restaurante.reservasapp.services.MesaService;
 
 @RestController
@@ -22,12 +22,12 @@ public class MesaController {
     }
 
     @GetMapping("/listar")
-    public List<Mesa> listarMesas() {
+    public List<MesaEntity> listarMesas() {
         return mesa.listarMesas();
     }
 
     @PostMapping("/guardar")
-    public Mesa guardarMesa(@RequestBody Mesa mesa) {
+    public MesaEntity guardarMesa(@RequestBody MesaEntity mesa) {
         return this.mesa.guardarMesa(mesa);
     }
 

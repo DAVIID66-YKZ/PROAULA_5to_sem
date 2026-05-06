@@ -1,43 +1,80 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesion</title>
-    <link rel="stylesheet" th:href="@{/css/variables.css}">
-    <link rel="stylesheet" th:href="@{/css/login.css}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
+    <title>Login</title>
+
+    <link rel="stylesheet" href="/css/login.css">
+
+    <script>
+        async function login(event) {
+            event.preventDefault();
+
+            const correo = document.getElementById("correo").value;
+            const contrasena = document.getElementById("contrasena").value;
+
+            try {
+                const response = await fetch("/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        correo,
+                        contrasena
+                    })
+                });
+
+                if (!response.ok) {
+                    alert("Credenciales incorrectas");
+                    return;
+                }
+
+                const data = await response.json();
+
+                // guardar token
+                localStorage.setItem("token", data.token);
+
+                // redirigir
+                window.location.href = "/index";
+
+            } catch (error) {
+                console.error(error);
+                alert("Error en el login");
+            }
+        }
+    </script>
 </head>
 
 <body>
-    <div class="login-container">
-        <form method="post" th:action="@{/loginProcess}" class="login-form">
 
-            <h2 class="login-title">
-                Bienvenido de nuevo</h2>
+<div class="login-container">
 
-            <p class="login-subtitle"> A TU RESTAURANTE FAVORITO </p>
+    <form onsubmit="login(event)" class="login-form">
 
-            <div class="input-group">
-                <label class="login-label">CORREO ELECTRÓNICO</label>
-                <input type="text" name="correo" class="login-input">
-            </div>
-            <div class="input-group">
-                <label class="login-label">CONTRASEÑA</label>
-                <input type="password" name="contrasena" class="login-input">
-            </div>
+        <h2>Iniciar Sesión</h2>
 
-            <button type="submit" value="Entrar" class="login-button">INICIAR SESIÓN</button>
+        <div>
+            <label>Correo</label>
+            <input type="text" id="correo" required>
+        </div>
 
-            <p> ¿Aun no tienes cuenta? <a href="/" class="login-links">Regístrate aquí</a> </p>
-        </form>
+        <div>
+            <label>Contraseña</label>
+            <input type="password" id="contrasena" required>
+        </div>
 
-    </div>
+        <button type="submit">Entrar</button>
+
+        <p>
+            ¿No tienes cuenta?
+            <a href="/register">Regístrate</a>
+        </p>
+
+    </form>
+
+</div>
+
 </body>
-
 </html>
