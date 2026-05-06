@@ -30,7 +30,8 @@ public class SecurityConfig {
                                 .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/login", "/loginProcess", "/usuarios/guardar",
-                                                                "/css/**", "/index", "/", "/imagenes/**")
+                                                                "/css/**", "/index", "/", "/imagenes/**",
+                                                                "/mesas/guardar")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .userDetailsService(usuarioSeguridadService)
