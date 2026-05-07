@@ -30,15 +30,15 @@ public class SecurityConfig {
                 .disable())
 .authorizeHttpRequests(authRequest ->
     authRequest
-        .requestMatchers(
-            "/auth/**",
-            "/index",
-            "/",
-            "/css/**",
-            "/js/**",
-            "/imagenes/**", 
-            "/login"
-        ).permitAll()
+.requestMatchers(
+    "/auth/**",
+    "/css/**",
+    "/js/**",
+    "/imagenes/**", 
+    "/login", 
+    "/register", // Esta es la ruta que habilitaste
+    "/"
+).permitAll()
         .anyRequest().authenticated()
 )
             .sessionManagement(sessionManager->
