@@ -22,33 +22,28 @@ public class SecurityConfig {
     private final AuthenticationProvider authProvider;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
-    {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .csrf(csrf -> 
-                csrf
-                .disable())
-.authorizeHttpRequests(authRequest ->
-    authRequest
-.requestMatchers(
-    "/auth/**",
-    "/css/**",
-    "/js/**",
-    "/imagenes/**", 
-    "/login", 
-    "/register", // Esta es la ruta que habilitaste
-    "/"
-).permitAll()
-        .anyRequest().authenticated()
-)
-            .sessionManagement(sessionManager->
-                sessionManager 
-                  .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authenticationProvider(authProvider)
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .build();
-            
-            
+                .csrf(csrf -> csrf
+                        .disable())
+                .authorizeHttpRequests(authRequest -> authRequest
+                        .requestMatchers(
+                                "/auth/**",
+                                "/css/**",
+                                "/js/**",
+                                "/imagenes/**",
+                                "/login",
+                                "/register", // Esta es la ruta que habilitaste
+                                "/",
+                                "/iconos/**")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement(sessionManager -> sessionManager
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authProvider)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+
     }
 
 }

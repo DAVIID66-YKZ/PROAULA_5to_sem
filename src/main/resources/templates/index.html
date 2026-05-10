@@ -18,7 +18,7 @@
 <body>
     <header th:replace="~{fragmentos/nav :: navbar}"></header>
 
-    <section class="hero">
+    <section id="inicio" class="hero">
         <div class="hero-contenido">
             <h1>The Culinary <br> Manuscript</h1>
             <p class="hero-texto">Disfruta de la Mejor Comida en un Ambiente Acogedor.</p>
@@ -69,11 +69,80 @@
         </div>
     </section>
 
+    <section class="about">
+        <div class="about-contenedor">
+            <div class="about-image"></div>
+            <div class="about-info">
+                <h2>NUESTRA RECOMENDACIÓN</h2>
+                <h3>¿Por Qué Elegir Nuestro Restaurante?</h3>
+                <p>En nuestro restaurante, cada plato es preparado con pasión, ingredientes de alta calidad y una
+                    atención
+                    especial a cada detalle. Creemos que comer no es solo alimentarse, sino vivir una experiencia única
+                    que
+                    se disfruta y se recuerda.</p>
+                <div class="about-benefits">
+                    <div class="benefit">
+                        <h4>Ingredientes Frescos</h4>
+                        <p>Seleccionamos cuidadosamente ingredientes de alta calidad para garantizar frescura y sabor en
+                            cada
+                            plato.</p>
+                    </div>
+                    <div class="benefit">
+                        <h4>Excelente Atención</h4>
+                        <p>Nuestro equipo está comprometido con brindar un servicio amable, rápido y profesional.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <section id="contacto">
+        <div class="contacto-contenedor">
+            <div class="info-contacto">
+                <h2>Visitanos</h2>
 
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">Cerrar sesión</button>
-    </form>
+                <h3>
+                    <img class="icono" th:src="@{/iconos/map.svg}" alt="">
+                    Ubicación
+                </h3>
+                <p>Calle Principal 123, Ciudad, País</p>
+
+                <h3>
+                    <img class="icono" th:src="@{/iconos/reloj.svg}" alt="">
+                    Horario
+                </h3>
+                <p>Lunes a Viernes: 10:00 AM - 10:00 PM</p>
+                <p>Sábados y Domingos: 12:00 PM - 11:00 PM</p>
+
+                <h3>
+                    <img class="icono" th:src="@{/iconos/mail.svg}" alt="">
+                    Contacto
+                </h3>
+                <p>Teléfono: +1 234 567 890</p>
+                <p>Email: info@restaurante.com</p>
+            </div>
+            <div class="ubicacion">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1466.46676897806!2d-75.50372990000001!3d10.4053763!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8ef625961908729f%3A0xf1b3792d83eed6e4!2sEdificio%20Cedesarrollo%20Comfenalco!5e1!3m2!1ses-419!2sco!4v1778440167301!5m2!1ses-419!2sco"
+                    style="border:0;" allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-contenedor">
+            <h2>The Culinary Manuscript</h2>
+            <ul>
+                <li><a href="#">Contacto</a></li>
+                <li><a href="#">Politica de Privacidad</a></li>
+                <li><a href="#">Términos y Condiciones</a></li>
+                <li><a href="#">Ubicacion</a></li>
+            </ul>
+            <p>© 2024 The Culinary Manuscript.</p>
+        </div>
+
+    </footer>
 </body>
 
 </html>
