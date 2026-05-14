@@ -27,7 +27,7 @@ async function login(event) {
         localStorage.setItem("token", data.token);
 
         // Redirigir al home
-        window.location.href = "/index";
+        window.location.href = "/usuarios/bienvenida";
 
     } catch (error) {
         console.error("Error en el login:", error);

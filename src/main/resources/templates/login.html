@@ -7,10 +7,12 @@
     
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
     <script src="/js/login.js" defer></script>
 
 </head>
 <body>
+     <header th:replace="~{fragmentos/nav :: navbar}"></header>
 
     <div class="login-container">
         <form onsubmit="login(event)" class="login-form">
@@ -37,6 +39,7 @@
 
         </form>
     </div>
+    <footer th:replace="~{fragmentos/footer :: footer}"></footer>
 
 </body>
 </html>
