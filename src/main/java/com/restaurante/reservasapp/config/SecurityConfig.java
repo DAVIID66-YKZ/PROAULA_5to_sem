@@ -31,6 +31,7 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/css/**",
                                 "/js/**",
+                                "/dashboard/**",
                                 "/imagenes/**",
                                 "/login",
                                 "/register", // Esta es la ruta que habilitaste

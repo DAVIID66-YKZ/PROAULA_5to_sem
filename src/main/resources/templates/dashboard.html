@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - El Manuscrito Culinario</title>
+   <link rel="stylesheet" href="/css/dashboard.css">
+<script src="/js/dashboard.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">Gestión</h1>
+                <p class="logo-subtitle">CONSOLA DE ADMINISTRACIÓN</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+    <a href="#" class="nav-item active" data-section="dashboard">
+        <span class="nav-icon">
+            <img src="/iconos/grafico-de-barras.png" alt="Panel">
+        </span>
+        <span>PANEL</span>
+    </a>
+
+    <a href="#" class="nav-item" data-section="mesas">
+        <span class="nav-icon">
+            <img src="/iconos/comedor.png" alt="Mesas">
+        </span>
+        <span>GESTIONAR MESAS</span>
+    </a>
+
+    <a href="#" class="nav-item" data-section="reservas">
+        <span class="nav-icon">
+            <img src="/iconos/calendario.png" alt="Reservas">
+        </span>
+        <span>RESERVAS</span>
+    </a>
+
+    <a href="#" class="nav-item" data-section="usuarios">
+        <span class="nav-icon">
+            <img src="/iconos/gestion.png" alt="Usuarios">
+        </span>
+        <span>GESTIONAR USUARIOS</span>
+    </a>
+
+    <a href="#" class="nav-item" data-section="personal">
+        <span class="nav-icon">
+            <img src="/iconos/equipo.png" alt="Personal">
+        </span>
+        <span>PERSONAL</span>
+    </a>
+</nav>
+            <div class="sidebar-footer">
+                <a href="#" class="footer-link"><img src="/iconos/icon.png" alt="Soporte" class="footer-icon">Soporte</a>
+               <a href="#" class="footer-link" onclick="logout()">
+                <img src="/iconos/cerrar-sesion.png" alt="Cerrar sesión" class="logout-icon"></a>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+            
+            <!-- ===== SECCIÓN DASHBOARD ===== -->
+            <section id="dashboard" class="content-section active">
+                <header class="section-header">
+                    <div>
+                        <h1>Registro de Reservas</h1>
+                        <p>Supervisa las reservas actuales y la logística de huéspedes.</p>
+                    </div>
+                    <div class="admin-profile">
+                        <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
+                        <span class="profile-name">MAÎTRE D'</span>
+                        <div class="profile-avatar"></div>
+                    </div>
+                </header>
+
+                <!-- Tarjetas de Estadísticas -->
+                <div class="stats-container">
+                    <div class="stat-card">
+                       <img src="/iconos/icons8.png" alt="Huéspedes" class="stat-icon-img">
+                        <div class="stat-content">
+                            <p class="stat-label">OCUPACIÓN</p>
+                            <h2 class="stat-value" id="ocupancia">84%</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <img src="/iconos/capacidad.png" alt="Huéspedes" class="stat-icon-img">
+                        <div class="stat-content">
+                            <p class="stat-label">TOTAL DE HUÉSPEDES</p>
+                            <h2 class="stat-value" id="totalHuespedes">142</h2>
+                            <span class="stat-subtitle">+12 DEL TURNO ANTERIOR</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <img src="/iconos/espera.png" alt="Huéspedes" class="stat-icon-img">
+                        <div class="stat-content">
+                            <p class="stat-label">LISTA DE ESPERA</p>
+                            <h2 class="stat-value" id="listaEspera">08</h2>
+                            <span class="stat-subtitle">TIEMPO ESTIMADO DE ESPERA: 20M</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Reservas Recientes -->
+                <section class="reservas-section">
+                    <h2 class="section-title">Reservas Recientes</h2>
+                    
+                    <div class="reservas-controls">
+                        <input type="text" id="buscarHuesped" class="search-input" placeholder="BUSCAR UN HUÉSPED">
+                        <button class="filter-btn"><img src="/iconos/FILTRO.png" alt="Filtros" class="filter-icon"></button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="reservas-table">
+                            <thead>
+                                <tr>
+                                    <th>NOMBRE DEL HUÉSPED</th>
+                                    <th>FECHA Y HORA</th>
+                                    <th>NÚMERO DE PERSONAS</th>
+                                    <th>MESA</th>
+                                    <th>ESTADO</th>
+                                    <th>ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservasTableBody">
+                                <!-- Se cargan datos aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination">
+                        <button class="btn-pagination" onclick="paginaAnterior()">Anterior</button>
+                        <span class="page-info">Mostrando <span id="paginaActual">1</span> de <span id="totalPaginas">5</span> reservas</span>
+                        <button class="btn-pagination" onclick="paginaSiguiente()">Siguiente</button>
+                    </div>
+                </section>
+            </section>
+
+            <!-- ===== SECCIÓN MESAS ===== -->
+            <section id="mesas" class="content-section">
+                <header class="section-header">
+                    <div>
+                        <h1>Configuración de Mesas</h1>
+                        <p>Organiza el diseño de tu piso de comedor. Ajusta la capacidad y disponibilidad para orquestar el flujo de la noche.</p>
+                    </div>
+                    <div class="admin-profile">
+                        <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
+                        <span class="profile-name">MAÎTRE D'</span>
+                        <div class="profile-avatar"></div>
+                    </div>
+                </header>
+
+                <div class="mesas-container">
+                    <!-- Panel Izquierdo: Crear/Editar Mesa -->
+                    <div class="mesa-form-panel">
+                       <h3 class="titulo-icono">
+                 <img src="/iconos/restauran.png" alt="Mesa" class="icono-titulo">
+                          Gestionar Mesa</h3>
+                        
+                        <form id="formMesa" class="mesa-form">
+                            <div class="form-group">
+                                <label>NÚMERO DE MESA</label>
+                                <input type="text" id="numeroMesa" placeholder="ej. 12A" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>CAPACIDAD</label>
+                                <div class="capacity-input">
+                                    <input type="number" id="capacidad" placeholder="4" min="1" required>
+                                    <span class="capacity-icon"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>UBICACIÓN</label>
+                                <input type="text" id="ubicacion" placeholder="ej. Lado de la Ventana A" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Estado de Disponibilidad</label>
+                                <p>Habilitar para reservas en vivo</p>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="activa" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn-save">GUARDAR MESA</button>
+                            <button type="button" class="btn-clear" onclick="limpiarFormulario()">LIMPIAR FORMULARIO</button>
+                        </form>
+
+                        <div class="mesa-image-placeholder">
+                            <div class="placeholder-text">El Piso del Manuscrito</div>
+                            <div class="placeholder-subtitle">Colocación estratégica de huéspedes</div>
+                        </div>
+                    </div>
+
+                    <!-- Panel Derecho: Lista de Mesas -->
+                    <div class="mesas-registry">
+                        <div class="registry-header">
+                            <h3>Registro del Piso</h3>
+                            <div class="registry-stats">
+                                <span class="badge active-badge">ACTIVAS: <span id="mesasActivas">14</span></span>
+                                <span class="badge total-badge">TOTAL: <span id="mesasTotales">20</span></span>
+                            </div>
+                        </div>
+
+                        <div class="mesas-list" id="mesasListContainer">
+                            <!-- Se cargan datos aquí -->
+                        </div>
+
+                        <div class="pagination-mesas">
+                            <button class="btn-pagination" onclick="mesaAnterior()">Anterior</button>
+                            <button class="btn-pagination" onclick="mesaSiguiente()">Siguiente</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== SECCIÓN RESERVAS ===== -->
+            <section id="reservas" class="content-section">
+                <header class="section-header">
+                    <div>
+                        <h1>Todas las Reservas</h1>
+                        <p>Vista completa de todas las reservas y citas.</p>
+                    </div>
+                    <div class="admin-profile">
+                        <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
+                        <span class="profile-name">pepi</span>
+                        <div class="profile-avatar">
+                <img src="" alt="Admin" class="avatar-icono">
+            </div>
+                    </div>
+                </header>
+
+                <div class="reservas-all-section">
+                    <div class="reservas-filters">
+                        <input type="text" id="buscarReserva" class="search-input" placeholder="Buscar reservas...">
+                        <select id="filtroEstado" class="filter-select">
+                            <option value="">Todos los Estados</option>
+                            <option value="CONFIRMADA">Confirmada</option>
+                            <option value="PENDIENTE">Pendiente</option>
+                            <option value="LLEGADA">Llegada</option>
+                            <option value="CANCELADA">Cancelada</option>
+                        </select>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="reservas-table-all">
+                            <thead>
+                                <tr>
+                                    <th>HUÉSPED</th>
+                                    <th>FECHA Y HORA</th>
+                                    <th>NÚMERO DE PERSONAS</th>
+                                    <th>MESA</th>
+                                    <th>ESTADO</th>
+                                    <th>TIPO DE EVENTO</th>
+                                    <th>ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservasAllTableBody">
+                                <!-- Se cargan datos aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== SECCIÓN USUARIOS ===== -->
+            <section id="usuarios" class="content-section">
+                <header class="section-header">
+                    <div>
+                        <h1>Gestionar Usuarios</h1>
+                        <p>Controla cuentas de usuario y permisos.</p>
+                    </div>
+                    <div class="admin-profile">
+                        <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
+                        <span class="profile-name">pepi</span>
+                        <div class="profile-avatar">
+                            <img src="/iconos/capacidad.png" alt="Admin" class="avatar-icono">
+                        </div>
+                    </div>
+                </header>
+                <div class="content-placeholder">
+                    <p> Gesti</p>
+                </div>
+            </section>
+
+            <!-- ===== SECCIÓN PERSONAL ===== -->
+            <section id="personal" class="content-section">
+                <header class="section-header">
+                    <div>
+                        <h1>Gestión de Personal</h1>
+                        <p>Gestiona tu personal de restaurante.</p>
+                    </div>
+                    <div class="admin-profile">
+                        <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
+                        <span class="profile-name">M'</span>
+                        <div class="profile-avatar"></div>
+                    </div>
+                </header>
+                <div class="content-placeholder">
+                    <p>Ges.</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+   
+  
+</body>
+</html>

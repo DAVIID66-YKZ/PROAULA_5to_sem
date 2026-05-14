@@ -29,4 +29,8 @@ public class ViewController {
     public String index() {
         return "index";
     }
+       @GetMapping("dashboard")
+    public String dashboard() {
+        return "dashboard";
+    }
 }
