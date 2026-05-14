@@ -14,8 +14,8 @@ public class MesaEntity {
 
     @Id
     private String id;
-
     private int numero;
     private int capacidad;
     private boolean disponible;
+    private String sector; // "Mesa-Ventana" o "Mesa-Alcoba"
 }
