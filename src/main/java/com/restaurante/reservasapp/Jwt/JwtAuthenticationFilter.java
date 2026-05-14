@@ -35,18 +35,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 System.out.println("Intentando acceder a: " + path);
 
-    if (path.contains("/usuarios/bienvenida") || 
-        path.contains("/auth/") || 
-        path.contains("/login") || 
-        path.contains("/register") ||
-        path.contains("/css/") || 
-        path.contains("/js/") || 
-        path.equals("/") || 
-        path.equals("/index")) {
-        
-        filterChain.doFilter(request, response);
-        return;
-    }
+if (path.contains("/usuarios/bienvenida") ||
+    path.contains("/auth/") ||
+    path.contains("/login") ||
+    path.contains("/register") ||
+
+    path.contains("/css/") ||
+    path.contains("/js/") ||
+    path.contains("/imagenes/") ||
+    path.contains("/iconos/") ||
+
+    path.equals("/") ||
+    path.equals("/index") ||
+    path.equals("/menu")) {
+
+    filterChain.doFilter(request, response);
+    return;
+}
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 

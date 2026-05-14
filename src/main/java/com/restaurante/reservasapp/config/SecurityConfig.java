@@ -31,7 +31,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**")
                                                 .permitAll()
                                                 // 2. Rutas públicas de navegación y auth
-                                                .requestMatchers("/", "/index", "/login", "/register", "/auth/**",
+                                                .requestMatchers("/", "/index", "/login", "/register","/imagenes/**", "/auth/**", "/menu",
                                                                 "/legal/**")
                                                 .permitAll()
                                                 // 3. TU ENDPOINT DE PRUEBA (Ponlo explícito aquí)

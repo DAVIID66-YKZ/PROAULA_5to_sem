@@ -35,4 +35,9 @@ public class ViewController {
         return "legal/privacidad";
     }
 
+        @GetMapping("/menu")
+    public String menu() {
+        return "menu";
+    }
+
 }
