@@ -31,11 +31,11 @@ public class SecurityConfig {
                                                 .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**")
                                                 .permitAll()
                                                 // 2. Rutas públicas de navegación y auth
-                                                .requestMatchers("/", "/index", "/login", "/register", "/auth/**",
-                                                                "/legal/**")
+
+                                                .requestMatchers("/","/reserva", "/index", "/login", "/register", "/auth/**","/legal/**")
                                                 .permitAll()
                                                 // 3. TU ENDPOINT DE PRUEBA (Ponlo explícito aquí)
-                                                .requestMatchers("/usuarios/bienvenida").permitAll()
+                                                .requestMatchers("/usuarios/bienvenida","/mesas/guardar","/reservas/guardar").permitAll()
                                                 // 4. Todo lo demás protegido
                                                 .anyRequest().authenticated())
                                 .sessionManagement(sessionManager -> sessionManager

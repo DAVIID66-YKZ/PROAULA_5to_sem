@@ -22,7 +22,6 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse login(LoginRequest request) {
-
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getCorreo(),
@@ -30,17 +29,17 @@ public class AuthService {
                 )
         );
 
-        // 🔥 SIEMPRE cargar desde BD (IMPORTANTE)
+        // Se carga el usuario desde la BD para obtener su ID real
         UsuarioEntity user = userRepository.findByCorreo(request.getCorreo())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         return AuthResponse.builder()
                 .token(jwtService.getToken(user))
+                .usuarioId(user.getId()) // 🔥 Se agrega el ID a la respuesta
                 .build();
     }
 
     public AuthResponse register(RegisterRequest request) {
-
         if (userRepository.findByCorreo(request.getCorreo()).isPresent()) {
             throw new RuntimeException("El correo ya está registrado");
         }
@@ -55,12 +54,12 @@ public class AuthService {
                 .rol(Rol.CLIENTE)
                 .build();
 
-        // 🔥 guardar usuario
+        // Se guarda el usuario y se captura el objeto retornado con su ID
         UsuarioEntity savedUser = userRepository.save(user);
 
-        // 🔥 generar token con usuario REAL guardado
         return AuthResponse.builder()
                 .token(jwtService.getToken(savedUser))
+                .usuarioId(savedUser.getId()) // 🔥 Se agrega el ID recién generado
                 .build();
     }
 }
