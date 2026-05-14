@@ -9,7 +9,7 @@ public class ViewController {
     // Maneja la página principal (localhost:8080/)
     @GetMapping("/")
     public String home() {
-        return "index"; 
+        return "index";
     }
 
     // Maneja el login (localhost:8080/login)
@@ -23,10 +23,16 @@ public class ViewController {
     public String register() {
         return "register";
     }
-    
+
     // Maneja el index si tienes una ruta específica para él
     @GetMapping("/index")
     public String index() {
         return "index";
     }
+
+    @GetMapping("/legal/privacidad")
+    public String privacidad() {
+        return "legal/privacidad";
+    }
+
 }
