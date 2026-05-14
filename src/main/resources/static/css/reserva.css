@@ -1,0 +1,236 @@
+/************************************************ 
+   BASE Y RESET
+************************************************/
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #000; /* Fondo negro para evitar el blanco abajo */
+}
+
+body {
+    color: var(--color-text);
+    font-family: 'Manrope', sans-serif;
+}
+
+/************************************************ 
+   CONTENEDOR HERO (Fondo B&N Aislado)
+************************************************/
+.reserva-hero {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    padding: 140px 20px 80px;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.reserva-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Degradado que funde a negro absoluto al final */
+    background: linear-gradient(to bottom, 
+                    rgba(0,0,0,0.6) 0%, 
+                    rgba(0,0,0,0.8) 75%, 
+                    #000 100%), 
+                url('../imagenes/reservaback.webp') no-repeat center center/cover;
+    filter: grayscale(100%); /* Imagen de fondo en Blanco y Negro */
+    background-attachment: fixed;
+    z-index: -1;
+}
+
+/************************************************ 
+   TARJETA DE RESERVA
+************************************************/
+.reserva-card-contenedor {
+    display: flex;
+    width: 100%;
+    max-width: 1100px;
+    background-color: #121212; 
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    position: relative;
+}
+
+/************************************************ 
+   LADO VISUAL (Izquierdo)
+************************************************/
+.reserva-visual {
+    flex: 1;
+    position: relative;
+    background: url('../imagenes/reserva.webp') no-repeat center center/cover;
+    min-height: 650px;
+}
+
+@media (max-width: 992px) {
+    .reserva-visual { display: none; }
+}
+
+.reserva-visual-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 50px 40px;
+    background: linear-gradient(transparent, #121212 95%);
+    box-sizing: border-box;
+}
+
+.serif-gold {
+    color: var(--color-primary);
+    font-family: "Noto Serif", serif;
+    font-size: 2.5rem;
+    line-height: 1.1;
+    margin-bottom: 20px;
+}
+
+.reserva-visual-texto {
+    color: #888;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/************************************************ 
+   LADO FORMULARIO (Derecho)
+************************************************/
+.reserva-form-section {
+    flex: 1.2;
+    padding: 60px; /* Mayor separación interna */
+    background-color: #121212;
+}
+
+.reserva-badge {
+    color: var(--color-primary);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    font-weight: 700;
+}
+
+.reserva-titulo-form {
+    color: var(--color-secondary);
+    font-family: "Noto Serif", serif;
+    font-size: 3.5rem; /* Título más imponente */
+    margin: 15px 0 45px;
+}
+
+.reserva-grid-inputs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px; /* Más espacio entre columnas */
+    margin-bottom: 40px;
+}
+
+.input-grupo-reserva label {
+    display: block;
+    color: #777;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.input-grupo-reserva input, 
+.input-grupo-reserva select {
+    width: 100%;
+    background-color: #1a1a1a;
+    border: none;
+    border-bottom: 1px solid #333;
+    padding: 14px;
+    color: white;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+}
+
+/************************************************ 
+   SELECTOR DE EXPERIENCIA
+************************************************/
+.reserva-label-seccion {
+    display: block;
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.reserva-experiencia-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.exp-card input { display: none; }
+
+.exp-ui {
+    background-color: #181818;
+    border: 1px solid #2a2a2a;
+    padding: 25px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.exp-card input:checked + .exp-ui {
+    border-color: var(--color-primary);
+    background-color: rgba(212, 175, 55, 0.05);
+}
+
+.exp-ui .material-symbols-outlined {
+    color: var(--color-primary);
+    font-size: 28px;
+}
+
+.exp-nombre {
+    display: block;
+    color: var(--color-secondary);
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.exp-detalle {
+    font-size: 10px;
+    color: #666;
+}
+
+/************************************************ 
+   BOTÓN Y NOTA
+************************************************/
+.reserva-btn-confirmar {
+    width: 100%;
+    background-color: var(--color-primary);
+    color: #000;
+    border: none;
+    padding: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-radius: 10px;
+    margin-top: 45px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.reserva-btn-confirmar:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+}
+
+.reserva-nota {
+    text-align: center;
+    color: #555;
+    font-size: 11px;
+    margin-top: 25px;
+    line-height: 1.5;
+}

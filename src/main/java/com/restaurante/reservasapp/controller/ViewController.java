@@ -29,4 +29,8 @@ public class ViewController {
     public String index() {
         return "index";
     }
+        @GetMapping("/reserva")
+    public String reserva() {
+        return "reserva";
+    }
 }

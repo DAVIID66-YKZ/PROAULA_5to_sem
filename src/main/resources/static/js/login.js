@@ -10,10 +10,7 @@ async function login(event) {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                correo,
-                contrasena
-            })
+            body: JSON.stringify({ correo, contrasena })
         });
 
         if (!response.ok) {
@@ -23,10 +20,13 @@ async function login(event) {
 
         const data = await response.json();
 
-        // Guardar el token para futuras peticiones
+        // Guardar token para autorizar peticiones futuras
         localStorage.setItem("token", data.token);
 
-        // Redirigir al home
+        // 🔥 CRUCIAL: Guardar el usuarioId para enviarlo en las reservas
+        localStorage.setItem("usuarioId", data.usuarioId);
+
+        // Redirigir al usuario
         window.location.href = "/usuarios/bienvenida";
 
     } catch (error) {
