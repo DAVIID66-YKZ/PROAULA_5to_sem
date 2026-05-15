@@ -11,7 +11,7 @@
     
     <link rel="stylesheet" th:href="@{/css/variables.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-    <link rel="stylesheet" th:href="@{/css/nav.css}">
+    <link rel="stylesheet" th:href="@{/css/navCliente.css}">
     <link rel="stylesheet" th:href="@{/css/sidebar.css}">
 </head>
 <body class="manuscript-theme">
@@ -22,7 +22,7 @@
 
         <div class="main-content">
             
-            <header th:replace="~{fragmentos/nav :: navbar}"></header>
+            <header th:replace="~{fragmentos/navCliente :: navbarLogueado}"></header>
 
             <main class="dashboard-container">
                 
@@ -162,5 +162,6 @@
     </div>
 
     <script th:src="@{/js/sidebar.js}"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
 </body>
 </html>

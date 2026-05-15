@@ -2,22 +2,19 @@
    ESTILOS DE RESERVA - THE CULINARY MANUSCRIPT
    ================================================================ */
 
-/* 1. Contenedor Principal (Layout) 
-   Asegura que la tarjeta esté centrada respecto al espacio del Sidebar */
 .reserva-hero-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 80px); /* Resta la altura aproximada del nav */
+    min-height: calc(100vh - 80px);
     padding: 20px;
     width: 100%;
 }
 
-/* 2. La Tarjeta (Full Card) */
 .reserva-card-full {
     display: flex;
     width: 100%;
-    max-width: 1100px;
+    max-width: 1150px; /* Aumentado un poco para las 3 columnas */
     background-color: #121212;
     border-radius: 15px;
     overflow: hidden;
@@ -25,9 +22,8 @@
     box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
 }
 
-/* 3. Lado Visual (Imagen Izquierda) */
 .reserva-visual {
-    flex: 1;
+    flex: 0.8; /* Ajustado para dar más espacio al formulario */
     position: relative;
     background: url('../imagenes/reserva.webp') no-repeat center center/cover;
     min-height: 600px;
@@ -43,10 +39,22 @@
     box-sizing: border-box;
 }
 
-/* 4. Lado Formulario (Derecha) */
+.serif-gold {
+    font-family: 'Noto Serif', serif;
+    color: #d4af37;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+}
+
+.reserva-visual-texto {
+    color: #888;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
 .reserva-form-section {
-    flex: 1.2;
-    padding: 50px 45px;
+    flex: 1.4;
+    padding: 50px 40px;
     background-color: #121212;
     display: flex;
     flex-direction: column;
@@ -64,12 +72,11 @@
 
 .reserva-titulo-form {
     font-family: 'Noto Serif', serif;
-    font-size: 3.5rem;
+    font-size: 3.2rem;
     color: #fff;
     margin-bottom: 30px;
 }
 
-/* 5. Grid de Inputs (Fecha, Hora, Personas) */
 .reserva-grid-inputs {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -94,41 +101,51 @@
     color: white;
     border-radius: 6px;
     outline: none;
+    font-family: inherit;
 }
 
-/* 6. Selector de Experiencia (Los Botones) */
+/* --- CALENDARIO NEGRO --- */
+input[type="date"] {
+    color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(0.8) sepia(100%) saturate(10000%) hue-rotate(10deg);
+    cursor: pointer;
+}
+
+/* --- SELECTOR DE EXPERIENCIAS (3 COLUMNAS) --- */
 .reserva-label-seccion {
     display: block;
     color: #888;
-    font-size: 14px;
+    font-size: 13px;
     margin-bottom: 15px;
 }
 
 .reserva-experiencia-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
 }
 
-/* Ocultamos el radio nativo */
 .exp-card input { 
     display: none; 
 }
 
-/* Caja del botón */
 .exp-ui {
     background-color: #181818;
     border: 1px solid #2a2a2a;
-    padding: 20px;
+    padding: 15px 10px;
     border-radius: 12px;
     display: flex;
+    flex-direction: column; /* Icono arriba, texto abajo para ahorrar espacio */
     align-items: center;
-    gap: 15px;
+    text-align: center;
+    gap: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-/* 🔥 ESTADO SELECCIONADO: Borde dorado Manuscript */
 .exp-card input:checked + .exp-ui {
     border: 1px solid #d4af37 !important;
     background-color: rgba(212, 175, 55, 0.05);
@@ -136,32 +153,32 @@
 
 .exp-ui .material-symbols-outlined {
     color: #d4af37;
-    font-size: 24px;
+    font-size: 28px;
 }
 
 .exp-nombre {
     display: block;
     color: #fff;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 13px;
 }
 
 .exp-detalle {
-    font-size: 11px;
-    color: #666;
+    font-size: 10px;
+    color: #555;
 }
 
-/* 7. Botón de Acción Principal */
+/* --- BOTÓN Y NOTA --- */
 .reserva-btn-confirmar {
     width: 100%;
     background-color: #d4af37;
     color: #000;
     border: none;
-    padding: 20px;
+    padding: 18px;
     font-weight: 800;
     letter-spacing: 2px;
     border-radius: 10px;
-    margin-top: 35px;
+    margin-top: 30px;
     cursor: pointer;
     transition: 0.3s;
     text-transform: uppercase;
@@ -174,14 +191,15 @@
 
 .reserva-nota {
     text-align: center;
-    color: #555;
-    font-size: 11px;
+    color: #444;
+    font-size: 10px;
     margin-top: 20px;
+    line-height: 1.4;
 }
 
-/* Responsivo para móviles */
-@media (max-width: 900px) {
+/* Responsivo */
+@media (max-width: 1000px) {
     .reserva-card-full { flex-direction: column; }
-    .reserva-visual { display: none; }
-    .reserva-grid-inputs { grid-template-columns: 1fr; }
+    .reserva-visual { min-height: 300px; flex: none; width: 100%; }
+    .reserva-experiencia-grid { grid-template-columns: 1fr; }
 }

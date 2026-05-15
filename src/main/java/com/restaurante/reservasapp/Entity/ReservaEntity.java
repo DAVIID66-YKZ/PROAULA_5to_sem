@@ -14,11 +14,10 @@ public class ReservaEntity {
 
     @Id
     private String id;
-
     private String fecha;
     private String hora;
     private int numeroPersonas;
-
     private String usuarioId;
-    private String mesaId;
+    private String mesaId; // Guardará el ID técnico de la mesa
+    private String experiencia; // 🔥 NUEVO: Guardará "Mesa-Ventana" o "Mesa-Alcoba"
 }
