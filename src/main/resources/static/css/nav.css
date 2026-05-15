@@ -99,3 +99,17 @@ h2 {
 .footer-contenedor ul li a:hover {
     color: var(--color-primary);
 }
+/* //////// Side bar //////// */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #111; /* Negro profundo */
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+

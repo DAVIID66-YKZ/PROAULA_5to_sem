@@ -21,23 +21,21 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getCorreo(),
-                        request.getContrasena()
-                )
-        );
+public AuthResponse login(LoginRequest request) {
+    authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(request.getCorreo(), request.getContrasena())
+    );
 
-        // Se carga el usuario desde la BD para obtener su ID real
-        UsuarioEntity user = userRepository.findByCorreo(request.getCorreo())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    UsuarioEntity user = userRepository.findByCorreo(request.getCorreo())
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        return AuthResponse.builder()
-                .token(jwtService.getToken(user))
-                .usuarioId(user.getId()) // 🔥 Se agrega el ID a la respuesta
-                .build();
-    }
+    return AuthResponse.builder()
+            .token(jwtService.getToken(user))
+            .usuarioId(user.getId())
+            .nombre(user.getNombre())
+            .rol(user.getRol().name()) // 🔥 Enviamos el nombre del Rol (CLIENTE, ADMIN, etc.)
+            .build();
+}
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.findByCorreo(request.getCorreo()).isPresent()) {

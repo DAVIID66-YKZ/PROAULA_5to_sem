@@ -45,6 +45,7 @@ System.out.println("Intentando acceder a: " + path);
         path.contains("/reserva") ||
         path.contains("/css/") || 
         path.contains("/js/") || 
+        path.contains("/dashboard") || 
         path.equals("/") || 
         path.equals("/index")||
         path.equals("/menu")) {

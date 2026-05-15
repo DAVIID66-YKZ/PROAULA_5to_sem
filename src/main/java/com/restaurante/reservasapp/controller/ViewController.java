@@ -44,6 +44,8 @@ public class ViewController {
     public String menu() {
         return "menu";
     }
-
-
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
+    }
 }

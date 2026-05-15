@@ -45,7 +45,7 @@ async function guardarReserva(event) {
 
         if (response.ok) {
             alert("¡Reserva exitosa! Mesa asignada automáticamente.");
-            window.location.href = "/usuarios/bienvenida";
+            window.location.href = "/reserva";
         } else {
             // Manejo de errores del backend (ej: No hay mesas, error de capacidad, etc.)
             const errorMsg = await response.text();
