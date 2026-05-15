@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - The Culinary Manuscript</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+</head>
+<body class="manuscript-theme">
+
+    <div class="dashboard-wrapper">
+        
+        <div th:replace="~{fragmentos/sidebar :: sidebar}"></div>
+
+        <div class="main-content">
+            
+            <header th:replace="~{fragmentos/nav :: navbar}"></header>
+
+            <main class="dashboard-container">
+                
+                <section class="welcome-block">
+                    <div class="welcome-text">
+                        <h1>Welcome back, <span class="user-name serif-italic">Julian</span></h1>
+                        <p>Your curated table awaits. Browse your upcoming evenings or manuscript a new chapter at our hearth.</p>
+                    </div>
+                    <button class="btn-new-reservation">
+                        <span class="material-symbols-outlined icon-small">menu_book</span>
+                        New Reservation
+                    </button>
+                </section>
+
+                <div class="booking-grid">
+                    
+                    <article class="card featured-booking">
+                        <div class="card-status-bar">
+                            <span class="status-dot"></span>
+                            UPCOMING TONIGHT
+                        </div>
+                        <div class="featured-content">
+                            <div class="booking-image-wrapper">
+                                <img th:src="@{/imagenes/tables/grand-conservatory.jpg}" alt="Grand Conservatory table view">
+                            </div>
+                            <div class="booking-details-wrapper">
+                                <h2 class="serif-title">Grand Conservatory</h2>
+                                <p class="booking-description">Experience the botanical elegance under the glass pavilion.</p>
+                                
+                                <div class="booking-meta-info">
+                                    <div class="meta-item">
+                                        <span class="meta-label">DATE</span>
+                                        <span class="meta-value">May 24, 2026</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">TIME</span>
+                                        <span class="meta-value">08:30 PM</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">GUESTS</span>
+                                        <span class="meta-value">4 People</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">TABLE</span>
+                                        <span class="meta-value">Table 12</span>
+                                    </div>
+                                </div>
+                                <a href="#" class="link-manage">Manage Details <span class="material-symbols-outlined">chevron_right</span></a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="card status-card">
+                        <div class="status-icon-wrapper">
+                            <span class="material-symbols-outlined shield-icon">verified_user</span>
+                        </div>
+                        <h2 class="serif-title">Manuscript Status</h2>
+                        <p class="status-text">You are currently a <span class="gold-text">Gold Member</span>. You have priority access to weekend reservations.</p>
+                        
+                        <div class="progress-container">
+                            <div class="progress-labels">
+                                <span>Total Visits</span>
+                                <span>14</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: 75%;"></div>
+                            </div>
+                            <p class="progress-subtext">6 more visits to Platinum</p>
+                        </div>
+                        
+                        <button class="btn-outline-gold">MEMBERSHIP PERKS</button>
+                    </article>
+
+                </div>
+
+                <section class="future-bookings-section">
+                    <div class="section-header">
+                        <h3 class="section-title">FUTURE BOOKINGS</h3>
+                        <a href="#" class="link-view-history">VIEW HISTORY</a>
+                    </div>
+
+                    <div class="booking-list-item">
+                        <div class="item-icon-box">
+                            <span class="material-symbols-outlined">calendar_today</span>
+                        </div>
+                        <div class="item-description">
+                            <h4 class="serif-sub-title">The Library Nook</h4>
+                            <p>Quiet, secluded seating for intimate conversations.</p>
+                        </div>
+                        <div class="item-meta">
+                            <span class="meta-label">DATE</span>
+                            <span class="meta-value">June 12, 2026</span>
+                        </div>
+                        <div class="item-meta">
+                            <span class="meta-label">TIME</span>
+                            <span class="meta-value">07:00 PM</span>
+                        </div>
+                        <div class="item-meta">
+                            <span class="meta-label">GUESTS</span>
+                            <span class="meta-value">2 People</span>
+                        </div>
+                        <div class="item-actions">
+                            <button class="icon-btn-action"><span class="material-symbols-outlined">edit</span></button>
+                            <button class="icon-btn-action btn-danger"><span class="material-symbols-outlined">cancel</span></button>
+                        </div>
+                    </div>
+
+                    <div class="booking-list-item">
+                        <div class="item-icon-box">
+                            <span class="material-symbols-outlined">calendar_today</span>
+                        </div>
+                        <div class="item-description">
+                            <h4 class="serif-sub-title">Chef's Counter</h4>
+                            <p>Front-row seats to the culinary action.</p>
+                        </div>
+                        <div class="item-meta">
+                            <span class="meta-label">DATE</span>
+                            <span class="meta-value">July 15, 2026</span>
+                        </div>
+                        <div class="item-meta">
+                            <span class="meta-label">TIME</span>
+                            <span class="meta-value">09:00 PM</span>
+                        </div>
+                        <div class="item-meta">
+                            <span class="meta-label">GUESTS</span>
+                            <span class="meta-value">2 People</span>
+                        </div>
+                        <div class="item-actions">
+                            <button class="icon-btn-action"><span class="material-symbols-outlined">edit</span></button>
+                            <button class="icon-btn-action btn-danger"><span class="material-symbols-outlined">cancel</span></button>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script th:src="@{/js/sidebar.js}"></script>
+</body>
+</html>

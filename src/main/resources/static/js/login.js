@@ -7,9 +7,7 @@ async function login(event) {
     try {
         const response = await fetch("/auth/login", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ correo, contrasena })
         });
 
@@ -20,14 +18,21 @@ async function login(event) {
 
         const data = await response.json();
 
-        // Guardar token para autorizar peticiones futuras
+        // 1. Guardar datos en el navegador
         localStorage.setItem("token", data.token);
-
-        // 🔥 CRUCIAL: Guardar el usuarioId para enviarlo en las reservas
         localStorage.setItem("usuarioId", data.usuarioId);
+        localStorage.setItem("nombreUsuario", data.nombre);
+        localStorage.setItem("rol", data.rol); // 🔥 Guardamos el rol para validaciones futuras
 
-        // Redirigir al usuario
-        window.location.href = "/usuarios/bienvenida";
+        // 2. VERIFICACIÓN DE ROL PARA REDIRECCIÓN
+        if (data.rol === "CLIENTE") {
+            window.location.href = "/dashboard";
+        } else if (data.rol === "ADMIN") {
+            window.location.href = "/admin/panel"; // O la ruta que tengas para admin
+        } else {
+            // Caso por defecto si hay otros roles
+            window.location.href = "/index";
+        }
 
     } catch (error) {
         console.error("Error en el login:", error);

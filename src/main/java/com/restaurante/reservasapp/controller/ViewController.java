@@ -33,4 +33,8 @@ public class ViewController {
     public String reserva() {
         return "reserva";
     }
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
+    }
 }

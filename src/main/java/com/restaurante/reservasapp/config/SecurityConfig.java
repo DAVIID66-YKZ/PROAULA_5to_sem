@@ -34,7 +34,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/","/reserva", "/index", "/login", "/register", "/auth/**")
                                                 .permitAll()
                                                 // 3. TU ENDPOINT DE PRUEBA (Ponlo explícito aquí)
-                                                .requestMatchers("/usuarios/bienvenida","/mesas/guardar","/reservas/guardar").permitAll()
+                                                .requestMatchers("/usuarios/bienvenida","/mesas/guardar","/reservas/guardar","/dashboard").permitAll()
                                                 // 4. Todo lo demás protegido
                                                 .anyRequest().authenticated())
                                 .sessionManagement(sessionManager -> sessionManager

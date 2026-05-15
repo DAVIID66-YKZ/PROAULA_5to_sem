@@ -3,126 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservas - The Culinary Manuscript</title>
+    <title>Reservar - The Culinary Manuscript</title>
     
-    <!-- Fuentes y Material Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     
-    <!-- Vinculación de tus estilos -->
     <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/reserva.css}">
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
     <link rel="stylesheet" th:href="@{/css/nav.css}">
-    <link rel="stylesheet" th:href="@{/css/footer.css}">
-</head>
-<body>
-    <!-- Fragmento de navegación -->
-    <header th:replace="~{fragmentos/nav :: navbar}"></header>
+<body class="dashboard-layout">
 
-    <main class="reserva-hero">
-        <div class="reserva-card-contenedor">
-            <!-- Lado Izquierdo: Imagen editorial -->
-            <section class="reserva-visual">
-                <div class="reserva-visual-overlay">
-                    <h2 class="serif-gold">Reserva tu mesa en la historia</h2>
-                    <p class="reserva-visual-texto">
-                        Disfruta de una sinfonía de sabores creada por nuestros chefs expertos. 
-                        Cada reserva es la promesa de una velada inolvidable.
-                    </p>
-                </div>
-            </section>
+    <div th:replace="~{fragmentos/sidebar :: sidebar}"></div>
 
-            <!-- Lado Derecho: Formulario -->
-            <section class="reserva-form-section">
-                <div class="reserva-form-header">
-                    <span class="reserva-badge">Solicitud de reserva</span>
-                    <h1 class="reserva-titulo-form">Reservar</h1>
-                </div>
+    <div class="dashboard-main">
+        
+        <header th:replace="~{fragmentos/nav :: navbar}"></header>
 
-                <!-- Se usa onsubmit para manejar el envío asíncrono con reserva.js -->
-                <form onsubmit="guardarReserva(event)" class="reserva-form">
-                    
-                    <!-- Fila 1: Datos de llegada (Sincronizados con ReservaEntity) -->
-                    <div class="reserva-grid-inputs">
-                        <div class="input-grupo-reserva">
-                            <label for="fecha">Fecha de llegada</label>
-                            <!-- El ID coincide con el que busca el script reserva.js -->
-                            <input type="date" id="fecha" name="fecha" required>
-                        </div>
-                        <div class="input-grupo-reserva">
-                            <label for="hora">Hora preferida</label>
-                            <select id="hora" name="hora">
-                                <option value="10:00">10:00 AM</option>
-                                <option value="11:00">11:00 AM</option>
-                                <option value="12:00">12:00 PM</option>
-                                <option value="13:00">01:00 PM</option>
-                                <option value="14:00">02:00 PM</option>
-                                <option value="15:00">03:00 PM</option>
-                                <option value="16:00">04:00 PM</option>
-                                <option value="17:00">05:00 PM</option>
-                                <option value="18:00">06:00 PM</option>
-                                <option value="19:00">07:00 PM</option>
-                                <option value="20:00" selected>08:00 PM</option>
-                                <option value="21:00">09:00 PM</option>
-                                <option value="22:00">10:00 PM</option>
-                            </select>
-                        </div>
-                        <div class="input-grupo-reserva">
-                            <label for="personas">Invitados</label>
-                            <!-- Se usa id="personas" para capturarlo como numeroPersonas en el JSON -->
-                            <input type="number" id="personas" name="personas" min="1" max="12" value="2">
-                        </div>
+        <main class="reserva-hero-container">
+            <div class="reserva-card-full">
+                
+                <section class="reserva-visual">
+                    <div class="reserva-visual-overlay">
+                        <h2 class="serif-gold">Reserva tu mesa <br> en la historia</h2>
+                        <p class="reserva-visual-texto">
+                            Disfruta de una sinfonía de sabores creada por nuestros chefs expertos. 
+                            Cada reserva es la promesa de una velada inolvidable.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="reserva-form-section">
+                    <div class="reserva-form-header">
+                        <span class="reserva-badge">Solicitud de reserva</span>
+                        <h1 class="reserva-titulo-form">Reservar</h1>
                     </div>
 
-                    <!-- Fila 2: Selector de experiencia (Mapeado a mesaId) -->
-                    <div class="reserva-experiencia">
-                        <label class="reserva-label-seccion">Select Your Experience</label>
-                        <div class="reserva-experiencia-grid">
-                            
-                            <!-- Opción Ventana -->
-                            <label class="exp-card">
-                                <!-- El valor aquí es lo que se guardará como mesaId -->
-                                <input type="radio" name="experiencia" value="Mesa-Ventana" checked>
-                                <div class="exp-ui">
-                                    <span class="material-symbols-outlined">window</span>
-                                    <div class="exp-content">
-                                        <span class="exp-nombre">Lado de la ventana</span>
-                                        <span class="exp-detalle">City Views</span>
-                                    </div>
-                                </div>
-                            </label>
-
-                            <!-- Opción Alcoba -->
-                            <label class="exp-card">
-                                <input type="radio" name="experiencia" value="Mesa-Alcoba">
-                                <div class="exp-ui">
-                                    <span class="material-symbols-outlined">meeting_room</span>
-                                    <div class="exp-content">
-                                        <span class="exp-nombre">La alcoba</span>
-                                        <span class="exp-detalle">Privado</span>
-                                    </div>
-                                </div>
-                            </label>
-
+                    <form onsubmit="guardarReserva(event)" class="reserva-form-actual">
+                        
+                        <div class="reserva-grid-inputs">
+                            <div class="input-grupo-reserva">
+                                <label for="fecha">Fecha de llegada</label>
+                                <input type="date" id="fecha" required>
+                            </div>
+                            <div class="input-grupo-reserva">
+                                <label for="hora">Hora preferida</label>
+                                <select id="hora">
+                                    <option value="20:00" selected>08:00 PM</option>
+                                    <option value="21:00">09:00 PM</option>
+                                </select>
+                            </div>
+                            <div class="input-grupo-reserva">
+                                <label for="personas">Invitados</label>
+                                <input type="number" id="personas" min="1" max="12" value="2">
+                            </div>
                         </div>
-                    </div>
 
-                    <button type="submit" class="reserva-btn-confirmar">Confirm Reservation</button>
-                    
-                    <p class="reserva-nota">
-                        Se recomienda vestimenta formal. Recibirá un correo electrónico de confirmación.
-                    </p>
-                </form>
-            </section>
-        </div>
-    </main>
+                        <div class="reserva-experiencia">
+                            <label class="reserva-label-seccion">Select Your Experience</label>
+                            <div class="reserva-experiencia-grid">
+                                
+                                <label class="exp-card">
+                                    <input type="radio" name="experiencia" value="Mesa-Ventana" checked>
+                                    <div class="exp-ui">
+                                        <span class="material-symbols-outlined">window</span>
+                                        <div class="exp-content">
+                                            <span class="exp-nombre">Lado de la ventana</span>
+                                            <span class="exp-detalle">City Views</span>
+                                        </div>
+                                    </div>
+                                </label>
 
-    <!-- Fragmento de pie de página -->
-    <footer th:replace="~{fragmentos/footer :: footer}"></footer>
+                                <label class="exp-card">
+                                    <input type="radio" name="experiencia" value="Mesa-Alcoba">
+                                    <div class="exp-ui">
+                                        <span class="material-symbols-outlined">meeting_room</span>
+                                        <div class="exp-content">
+                                            <span class="exp-nombre">La alcoba</span>
+                                            <span class="exp-detalle">Privado</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
 
-    <!-- Lógica de envío de datos -->
+                        <button type="submit" class="reserva-btn-confirmar">CONFIRM RESERVATION</button>
+                        
+                        <p class="reserva-nota">
+                            Se recomienda vestimenta formal. Recibirá un correo electrónico de confirmación.
+                        </p>
+                    </form>
+                </section>
+            </div>
+        </main>
+    </div>
+
     <script th:src="@{/js/reserva.js}"></script>
+    <script th:src="@{/js/sidebar.js}"></script>
 </body>
 </html>

@@ -11,5 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthResponse {
     String token;
-    String usuarioId; // Importante para vincular la reserva después
+    String usuarioId;
+    String nombre;
+    String rol; 
 }

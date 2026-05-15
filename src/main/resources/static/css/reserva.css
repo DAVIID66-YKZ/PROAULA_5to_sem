@@ -1,78 +1,36 @@
-/************************************************ 
-   BASE Y RESET
-************************************************/
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: #000; /* Fondo negro para evitar el blanco abajo */
-}
+/* ================================================================
+   ESTILOS DE RESERVA - THE CULINARY MANUSCRIPT
+   ================================================================ */
 
-body {
-    color: var(--color-text);
-    font-family: 'Manrope', sans-serif;
-}
-
-/************************************************ 
-   CONTENEDOR HERO (Fondo B&N Aislado)
-************************************************/
-.reserva-hero {
-    position: relative;
-    min-height: 100vh;
-    width: 100%;
+/* 1. Contenedor Principal (Layout) 
+   Asegura que la tarjeta esté centrada respecto al espacio del Sidebar */
+.reserva-hero-container {
     display: flex;
     justify-content: center;
-    align-items: center; 
-    padding: 140px 20px 80px;
-    box-sizing: border-box;
-    z-index: 1;
-}
-
-.reserva-hero::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
+    align-items: center;
+    min-height: calc(100vh - 80px); /* Resta la altura aproximada del nav */
+    padding: 20px;
     width: 100%;
-    height: 100%;
-    /* Degradado que funde a negro absoluto al final */
-    background: linear-gradient(to bottom, 
-                    rgba(0,0,0,0.6) 0%, 
-                    rgba(0,0,0,0.8) 75%, 
-                    #000 100%), 
-                url('../imagenes/reservaback.webp') no-repeat center center/cover;
-    filter: grayscale(100%); /* Imagen de fondo en Blanco y Negro */
-    background-attachment: fixed;
-    z-index: -1;
 }
 
-/************************************************ 
-   TARJETA DE RESERVA
-************************************************/
-.reserva-card-contenedor {
+/* 2. La Tarjeta (Full Card) */
+.reserva-card-full {
     display: flex;
     width: 100%;
     max-width: 1100px;
-    background-color: #121212; 
+    background-color: #121212;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
     border: 1px solid rgba(212, 175, 55, 0.15);
-    position: relative;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
 }
 
-/************************************************ 
-   LADO VISUAL (Izquierdo)
-************************************************/
+/* 3. Lado Visual (Imagen Izquierda) */
 .reserva-visual {
     flex: 1;
     position: relative;
     background: url('../imagenes/reserva.webp') no-repeat center center/cover;
-    min-height: 650px;
-}
-
-@media (max-width: 992px) {
-    .reserva-visual { display: none; }
+    min-height: 600px;
 }
 
 .reserva-visual-overlay {
@@ -80,86 +38,70 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    padding: 50px 40px;
+    padding: 40px;
     background: linear-gradient(transparent, #121212 95%);
     box-sizing: border-box;
 }
 
-.serif-gold {
-    color: var(--color-primary);
-    font-family: "Noto Serif", serif;
-    font-size: 2.5rem;
-    line-height: 1.1;
-    margin-bottom: 20px;
-}
-
-.reserva-visual-texto {
-    color: #888;
-    font-size: 0.95rem;
-    line-height: 1.6;
-}
-
-/************************************************ 
-   LADO FORMULARIO (Derecho)
-************************************************/
+/* 4. Lado Formulario (Derecha) */
 .reserva-form-section {
     flex: 1.2;
-    padding: 60px; /* Mayor separación interna */
+    padding: 50px 45px;
     background-color: #121212;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .reserva-badge {
-    color: var(--color-primary);
+    color: #d4af37;
     text-transform: uppercase;
     font-size: 10px;
-    letter-spacing: 2.5px;
+    letter-spacing: 2px;
     font-weight: 700;
+    margin-bottom: 5px;
 }
 
 .reserva-titulo-form {
-    color: var(--color-secondary);
-    font-family: "Noto Serif", serif;
-    font-size: 3.5rem; /* Título más imponente */
-    margin: 15px 0 45px;
+    font-family: 'Noto Serif', serif;
+    font-size: 3.5rem;
+    color: #fff;
+    margin-bottom: 30px;
 }
 
+/* 5. Grid de Inputs (Fecha, Hora, Personas) */
 .reserva-grid-inputs {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 25px; /* Más espacio entre columnas */
-    margin-bottom: 40px;
+    gap: 15px;
+    margin-bottom: 30px;
 }
 
 .input-grupo-reserva label {
-    display: block;
-    color: #777;
-    font-size: 9px;
+    font-size: 10px;
+    color: #555;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    display: block;
 }
 
 .input-grupo-reserva input, 
 .input-grupo-reserva select {
     width: 100%;
     background-color: #1a1a1a;
-    border: none;
-    border-bottom: 1px solid #333;
-    padding: 14px;
+    border: 1px solid #333;
+    padding: 12px;
     color: white;
     border-radius: 6px;
-    font-size: 14px;
     outline: none;
 }
 
-/************************************************ 
-   SELECTOR DE EXPERIENCIA
-************************************************/
+/* 6. Selector de Experiencia (Los Botones) */
 .reserva-label-seccion {
     display: block;
     color: #888;
     font-size: 14px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .reserva-experiencia-grid {
@@ -168,69 +110,78 @@ body {
     gap: 20px;
 }
 
-.exp-card input { display: none; }
+/* Ocultamos el radio nativo */
+.exp-card input { 
+    display: none; 
+}
 
+/* Caja del botón */
 .exp-ui {
     background-color: #181818;
     border: 1px solid #2a2a2a;
-    padding: 25px;
+    padding: 20px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     gap: 15px;
     cursor: pointer;
-    transition: 0.3s ease;
+    transition: all 0.3s ease;
 }
 
+/* 🔥 ESTADO SELECCIONADO: Borde dorado Manuscript */
 .exp-card input:checked + .exp-ui {
-    border-color: var(--color-primary);
+    border: 1px solid #d4af37 !important;
     background-color: rgba(212, 175, 55, 0.05);
 }
 
 .exp-ui .material-symbols-outlined {
-    color: var(--color-primary);
-    font-size: 28px;
+    color: #d4af37;
+    font-size: 24px;
 }
 
 .exp-nombre {
     display: block;
-    color: var(--color-secondary);
+    color: #fff;
     font-weight: 600;
     font-size: 15px;
 }
 
 .exp-detalle {
-    font-size: 10px;
+    font-size: 11px;
     color: #666;
 }
 
-/************************************************ 
-   BOTÓN Y NOTA
-************************************************/
+/* 7. Botón de Acción Principal */
 .reserva-btn-confirmar {
     width: 100%;
-    background-color: var(--color-primary);
+    background-color: #d4af37;
     color: #000;
     border: none;
     padding: 20px;
     font-weight: 800;
-    text-transform: uppercase;
     letter-spacing: 2px;
     border-radius: 10px;
-    margin-top: 45px;
+    margin-top: 35px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: 0.3s;
+    text-transform: uppercase;
 }
 
 .reserva-btn-confirmar:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+    background-color: #f0c64d;
+    transform: translateY(-2px);
 }
 
 .reserva-nota {
     text-align: center;
     color: #555;
     font-size: 11px;
-    margin-top: 25px;
-    line-height: 1.5;
+    margin-top: 20px;
+}
+
+/* Responsivo para móviles */
+@media (max-width: 900px) {
+    .reserva-card-full { flex-direction: column; }
+    .reserva-visual { display: none; }
+    .reserva-grid-inputs { grid-template-columns: 1fr; }
 }
