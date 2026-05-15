@@ -30,20 +30,26 @@ public class ViewController {
         return "index";
     }
 
-        @GetMapping("/reserva")
+    @GetMapping("/reserva")
     public String reserva() {
         return "reserva";
     }
-        @GetMapping("/legal/privacidad")
+
+    @GetMapping("/legal/privacidad")
     public String privacidad() {
         return "legal/privacidad";
     }
 
+    @GetMapping("/legal/terminosYCondiciones")
+    public String terminosYCondiciones() {
+        return "legal/terminosYCondiciones";
+    }
 
-        @GetMapping("/menu")
+    @GetMapping("/menu")
     public String menu() {
         return "menu";
     }
+
     @GetMapping("/dashboard")
     public String dashboard() {
         return "dashboard";

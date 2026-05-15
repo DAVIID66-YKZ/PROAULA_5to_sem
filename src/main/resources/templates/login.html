@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - ReservasApp</title>
-    
+
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/login.css">
     <link rel="stylesheet" th:href="@{/css/nav.css}">
     <script src="/js/login.js" defer></script>
 
 </head>
+
 <body>
-     <header th:replace="~{fragmentos/nav :: navbar}"></header>
+    <header th:replace="~{fragmentos/nav :: navbar}"></header>
 
     <div class="login-container">
         <form onsubmit="login(event)" class="login-form">
-            
+
             <h1 class="login-title">Bienvenido</h1>
             <p class="login-subtitle">Introduce tus datos para continuar</p>
 
@@ -30,10 +32,10 @@
                 <input type="password" id="contrasena" class="login-input" placeholder="••••••••" required>
             </div>
 
-            <button type="submit" class="login-button">ENTRAR</button>
+            <button type="submit" class="login-button">INGRESAR</button>
 
             <p style="text-align: center; font-size: 0.9rem;">
-                ¿No tienes cuenta? 
+                ¿No tienes cuenta?
                 <a href="/register" class="login-links">Regístrate</a>
             </p>
 
@@ -42,4 +44,5 @@
     <footer th:replace="~{fragmentos/footer :: footer}"></footer>
 
 </body>
+
 </html>

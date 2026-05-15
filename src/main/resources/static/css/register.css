@@ -1,27 +1,30 @@
 /**************** REGISTER PAGE ****************/
+body {
+    background:
+        radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.2), transparent 55%),
+        radial-gradient(circle at 75% 75%, rgba(212, 175, 55, 0.1), transparent 60%),
+        radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.6), transparent 70%),
+        #121212;
+    min-height: 100vh;
+}
 
 .register-page {
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    
-    /* El mismo fondo exacto que proporcionaste */
-    background: 
-        radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.2), transparent 55%),
-        radial-gradient(circle at 75% 75%, rgba(212, 175, 55, 0.1), transparent 60%),
-        radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.6), transparent 70%),
-        #121212;
 
+    /* El mismo fondo exacto que proporcionaste */
     /* Ajuste de padding para evitar que el nav tape el contenido */
-    padding: 100px 20px; 
+    padding: 100px 20px;
 }
 
 /**************** CONTAINER ****************/
 
 .register-container {
     width: 100%;
-    max-width: 600px; /* Un poco más ancho para el grid de nombre/apellido */
+    max-width: 600px;
+    /* Un poco más ancho para el grid de nombre/apellido */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -30,12 +33,14 @@
 /**************** FORM ****************/
 
 .register-form {
-    background-color: var(--color-neutral); /* Color oscuro del login */
+    background-color: var(--color-neutral);
+    /* Color oscuro del login */
     padding: 2.5rem;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     width: 100%;
-    border: 1px solid rgba(212, 175, 55, 0.1); /* Toque dorado sutil en el borde */
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    /* Toque dorado sutil en el borde */
 }
 
 /**************** TITLES ****************/
@@ -81,7 +86,8 @@
     padding: 0.7rem;
     border: none;
     border-bottom: 2px solid var(--color-primary);
-    background-color: #2a2a2a; /* Gris oscuro coherente con el estilo */
+    background-color: #2a2a2a;
+    /* Gris oscuro coherente con el estilo */
     color: white;
     height: 2.5rem;
     border-radius: 4px 4px 0 0;
@@ -111,9 +117,8 @@
 }
 
 .login-button:hover {
-    background-color: var(--color-tertiary);
-    color: var(--color-secondary);
-    transform: translateY(-2px);
+    scale: 1.05;
+    box-shadow: 0 0 12px var(--color-primary-transparent);
 }
 
 /**************** LINKS ****************/
@@ -141,7 +146,7 @@
     .register-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .register-form {
         padding: 1.5rem;
     }
