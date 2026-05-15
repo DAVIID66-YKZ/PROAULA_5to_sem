@@ -42,7 +42,9 @@ body {
     font-weight: 600;
 }
 
-/* Layout Principal */
+/* ================================================================
+   ESTRUCTURA DE LAYOUT (CORREGIDA PARA QUE NO SE TAPE)
+   ================================================================ */
 .dashboard-wrapper {
     display: flex;
     min-height: 100vh;
@@ -50,18 +52,26 @@ body {
 
 .main-content {
     flex: 1;
-    margin-left: 260px; /* Ancho del sidebar */
+    margin-left: 260px; /* Ancho del sidebar fijo */
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
 }
 
+/* Contenedor que baja el contenido para que el Nav no lo cubra */
 .dashboard-container {
     flex: 1;
-    padding: 30px 50px 50px 50px;
-    max-width: 1600px; /* Evita que se estire demasiado en pantallas gigantes */
+    /* 100px de padding superior para que se vea el "Welcome back" */
+    padding: 100px 50px 50px 50px; 
+    max-width: 1600px;
     margin: 0 auto;
     width: 100%;
 }
+
+/* ================================================================
+   SECCIONES DEL DASHBOARD
+   ================================================================ */
 
 /* 1. Sección de Bienvenida */
 .welcome-block {
@@ -111,13 +121,13 @@ body {
 /* 2. Grilla de Tarjetas */
 .booking-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr; /* 2/3 para la reserva, 1/3 para el status */
+    grid-template-columns: 2fr 1fr;
     gap: 30px;
     margin-bottom: 50px;
 }
 
 .card {
-    background-color: #111111; /* Un tono más claro que el fondo */
+    background-color: #111111;
     border: 1px solid #222222;
     border-radius: 12px;
     padding: 25px;
@@ -125,7 +135,7 @@ body {
     flex-direction: column;
 }
 
-/* Estilos de la Tarjeta Destacada (Upcoming Tonight) */
+/* Tarjeta Destacada */
 .featured-booking {
     padding: 0;
     overflow: hidden;
@@ -192,11 +202,6 @@ body {
     margin-bottom: 25px;
 }
 
-.meta-item {
-    display: flex;
-    flex-direction: column;
-}
-
 .meta-label {
     font-size: 0.75rem;
     color: #666666;
@@ -226,7 +231,7 @@ body {
     text-decoration: underline;
 }
 
-/* Estilos de la Tarjeta de Estatus (Membership) */
+/* Tarjeta Status */
 .status-card {
     align-items: center;
     text-align: center;
@@ -305,7 +310,7 @@ body {
     border-color: rgba(212, 175, 55, 0.8);
 }
 
-/* 3. Sección de Future Bookings */
+/* 3. Future Bookings */
 .future-bookings-section {
     margin-top: 20px;
 }
@@ -404,22 +409,15 @@ body {
     color: #dc3545;
 }
 
-/* Media Queries (Básico) */
+/* ================================================================
+   MANEJO DEL SIDEBAR CERRADO (Toggle)
+   ================================================================ */
+.sidebar.closed ~ .main-content {
+    margin-left: 80px;
+}
+
 @media (max-width: 1200px) {
     .booking-grid {
         grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 768px) {
-    .featured-content {
-        flex-direction: column;
-    }
-    .booking-image-wrapper {
-        width: 100%;
-        height: 150px;
-    }
-    .booking-list-item {
-        flex-wrap: wrap;
     }
 }

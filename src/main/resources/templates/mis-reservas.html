@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Reservas - The Culinary Manuscript</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard-final.css}">
+    <link rel="stylesheet" th:href="@{/css/mis-reservas.css}">
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/navCliente.css}">
+</head>
+<body class="dashboard-layout">
+
+    <div th:replace="~{fragmentos/sidebar :: sidebar}"></div>
+
+    <div class="dashboard-main">
+        <header th:replace="~{fragmentos/navCliente :: navbarLogueado}"></header>
+
+        <main class="mis-reservas-container">
+            <header class="section-header-inline">
+                <div>
+                    <span class="reserva-badge">Historial Personal</span>
+                    <h1 class="serif-title">Mis Reservas</h1>
+                </div>
+                <button class="btn-new-reservation" onclick="location.href='/reserva'">
+                    + Nueva Reserva
+                </button>
+            </header>
+
+            <div class="tabla-reservas-wrapper">
+                <table class="tabla-manuscript">
+                    <thead>
+                        <tr>
+                            <th>FECHA</th>
+                            <th>HORA</th>
+                            <th>INVITADOS</th>
+                            <th>EXPERIENCIA</th>
+                            <th>ESTADO</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaReservasBody">
+                        <tr>
+                            <td colspan="6" class="reserva-visual-texto">
+                                Consultando los archivos del manuscrito...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script th:src="@{/js/sidebar.js}"></script>
+    <script th:src="@{/js/mis-reservas.js}"></script>
+</body>
+</html>

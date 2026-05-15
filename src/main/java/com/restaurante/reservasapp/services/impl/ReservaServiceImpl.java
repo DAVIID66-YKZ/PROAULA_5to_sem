@@ -25,23 +25,34 @@ public class ReservaServiceImpl implements ReservaService {
     @Override
 @Transactional
 public ReservaEntity guardarReserva(ReservaEntity reserva) {
-    // Buscamos mesas que coincidan en sector y disponibilidad
+    // 1. Usamos el campo mesaId (que viene del front con el nombre del sector) para buscar
+    String sectorBuscado = reserva.getMesaId(); 
+
     List<MesaEntity> mesasDisponibles = mesaRepo.findAll().stream()
-            .filter(m -> m.getSector() != null && m.getSector().equals(reserva.getMesaId()))
+            .filter(m -> m.getSector() != null && m.getSector().equals(sectorBuscado))
             .filter(MesaEntity::isDisponible)
             .collect(Collectors.toList());
 
     if (mesasDisponibles.isEmpty()) {
-        throw new RuntimeException("No hay mesas disponibles en este sector actualmente.");
+        throw new RuntimeException("No hay mesas disponibles en " + sectorBuscado);
     }
 
     MesaEntity mesaAsignada = mesasDisponibles.get(0);
     mesaAsignada.setDisponible(false);
     mesaRepo.save(mesaAsignada);
 
-    reserva.setMesaId(mesaAsignada.getId()); // Aquí guardamos el ID real que ves en image_6b933b.png
+    // 2. Seteamos el ID técnico de la mesa asignada
+    reserva.setMesaId(mesaAsignada.getId()); 
+    
+    // 3. El campo 'experiencia' ya viene lleno desde el JSON del front, 
+    // así que se guardará automáticamente en MongoDB.
+    
     return reservaRepo.save(reserva);
 }
+@Override
+    public List<ReservaEntity> listarPorUsuario(String usuarioId) {
+        return reservaRepo.findByUsuarioId(usuarioId);
+    }
 
     @Override
     public ReservaEntity obtenerReserva(String id) {

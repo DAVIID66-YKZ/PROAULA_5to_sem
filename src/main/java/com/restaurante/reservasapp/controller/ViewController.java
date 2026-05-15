@@ -37,4 +37,8 @@ public class ViewController {
     public String dashboard() {
         return "dashboard";
     }
+        @GetMapping("/mis-reservas")
+    public String misReservas() {
+        return "mis-reservas";
+    } 
 }

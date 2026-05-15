@@ -35,22 +35,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 System.out.println("Intentando acceder a: " + path);
 
-    if (path.contains("/usuarios/bienvenida") || 
-        path.contains("/reservas/guardar") || 
-        path.contains("/mesas/guardar") || 
-        path.contains("/auth/") || 
-        path.contains("/login") || 
-        path.contains("/register") ||
-        path.contains("/reserva") ||
-        path.contains("/css/") || 
-        path.contains("/js/") || 
-        path.contains("/dashboard") || 
-        path.equals("/") || 
-        path.equals("/index")) {
-        
-        filterChain.doFilter(request, response);
-        return;
-    }
+// En JwtAuthenticationFilter.java, asegúrate de que estas rutas NO procesen JWT:
+// Dentro de doFilterInternal de JwtAuthenticationFilter
+if (path.equals("/") || path.equals("/login") || path.equals("/register") || 
+    path.equals("/dashboard") || path.equals("/mis-reservas") || path.equals("/reserva") ||
+    path.contains("/css/") || path.contains("/js/") || path.contains("/auth/")) {
+    
+    filterChain.doFilter(request, response);
+    return;
+}
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 

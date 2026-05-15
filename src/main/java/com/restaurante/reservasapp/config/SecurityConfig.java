@@ -3,6 +3,7 @@ package com.restaurante.reservasapp.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -22,27 +24,23 @@ public class SecurityConfig {
         private final AuthenticationProvider authProvider;
 
         @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-                return http
-                                .csrf(csrf -> csrf
-                                                .disable())
-                                .authorizeHttpRequests(authRequest -> authRequest
-                                                // 1. Recursos estáticos primero
-                                                .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**")
-                                                .permitAll()
-                                                // 2. Rutas públicas de navegación y auth
-                                                .requestMatchers("/","/reserva", "/index", "/login", "/register", "/auth/**")
-                                                .permitAll()
-                                                // 3. TU ENDPOINT DE PRUEBA (Ponlo explícito aquí)
-                                                .requestMatchers("/usuarios/bienvenida","/mesas/guardar","/reservas/guardar","/dashboard").permitAll()
-                                                // 4. Todo lo demás protegido
-                                                .anyRequest().authenticated())
-                                .sessionManagement(sessionManager -> sessionManager
-                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                                .authenticationProvider(authProvider)
-                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                                .build();
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+            // 1. Permitir que el navegador descargue los HTML y recursos
+            .requestMatchers("/", "/index", "/login", "/register", "/dashboard", "/reserva", "/mis-reservas").permitAll()
+            .requestMatchers("/css/**", "/js/**", "/imagenes/**").permitAll()
+            .requestMatchers("/auth/**").permitAll()
 
-        }
+            // 2. BLOQUEAR LOS DATOS (La API): Aquí es donde el ROL es ley
+            .requestMatchers("/reservas/**").hasRole("CLIENTE")
+            .requestMatchers("/mesas/**").hasRole("ADMIN")
+            
+            .anyRequest().authenticated()
+        )
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .build();
+}
 
 }

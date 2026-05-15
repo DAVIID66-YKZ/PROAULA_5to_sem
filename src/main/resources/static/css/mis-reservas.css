@@ -1,0 +1,176 @@
+/* ================================================================
+   ESTILOS DE MIS RESERVAS - THE CULINARY MANUSCRIPT
+   ================================================================ */
+
+/* Contenedor idéntico al de Reserva para respetar Sidebar y Nav */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Manrope', sans-serif;
+    background-color: #070707; /* Fondo ultra-oscuro */
+    color: #e0e0e0;
+    overflow-x: hidden;
+    font-weight: 400;
+}
+/* Tipografía Especial */
+.serif-italic {
+    font-family: 'Noto Serif', serif;
+    font-style: italic;
+    color: #d4af37; /* Dorado de la marca */
+}
+
+.serif-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 2rem;
+    color: #ffffff;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.serif-sub-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.2rem;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.gold-text {
+    color: #d4af37;
+    font-weight: 600;
+}
+
+.mis-reservas-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 80px); /* Ajuste exacto para el Nav */
+    padding: 40px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: transparent; /* El fondo negro viene del layout global */
+}
+
+/* --- CABECERA --- */
+.section-header-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 1150px; /* Misma anchura que la card de reserva */
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.section-header-inline .serif-title {
+    font-family: 'Noto Serif', serif;
+    color: #fff;
+    font-size: 3.2rem; /* Tamaño coherente con la otra vista */
+    margin: 0;
+}
+
+/* --- TABLA (Estilo Card de Reserva) --- */
+.tabla-reservas-wrapper {
+    width: 100%;
+    max-width: 1150px;
+    background-color: #121212; /* Mismo fondo que la card */
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+}
+
+.tabla-manuscript {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tabla-manuscript thead {
+    background-color: #1a1a1a; /* Color de los inputs de reserva */
+}
+
+.tabla-manuscript th {
+    padding: 20px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #d4af37;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.tabla-manuscript td {
+    padding: 20px;
+    color: #e0e0e0;
+    border-bottom: 1px solid #1a1a1a;
+    font-size: 0.95rem;
+}
+
+/* --- PILLS Y TEXTOS --- */
+.td-fecha {
+    color: #d4af37 !important;
+    font-family: 'Noto Serif', serif;
+    font-weight: 600;
+}
+
+.status-pill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: rgba(212, 175, 55, 0.05);
+    color: #d4af37;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+/* --- BOTONES --- */
+.btn-new-reservation {
+    background-color: #d4af37;
+    color: #000;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-new-reservation:hover {
+    background-color: #f0c64d;
+    transform: translateY(-2px);
+}
+
+.btn-icon-table {
+    background: transparent;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: 0.3s;
+}
+
+.btn-icon-table:hover {
+    color: #d4af37;
+}
+
+.btn-cancel:hover {
+    color: #ff4444 !important;
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+    .section-header-inline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+}

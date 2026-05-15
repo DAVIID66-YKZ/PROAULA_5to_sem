@@ -1,3 +1,17 @@
+
+(function() {
+    const token = localStorage.getItem("token");
+    const rol = localStorage.getItem("rol");
+
+    // Imprime en consola para que tú mismo veas qué está llegando
+    console.log("Validando sesión - Rol encontrado:", rol);
+
+    // Validamos que exista el token y que el rol sea exactamente CLIENTE
+    if (!token || String(rol).trim().toUpperCase() !== "CLIENTE") {
+        console.warn("Acceso denegado. Redirigiendo al login...");
+        window.location.href = "/login";
+    }
+})();
 document.addEventListener("DOMContentLoaded", () => {
     // 1. Validar Sesión
     const token = localStorage.getItem("token");
@@ -18,6 +32,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function cargarReservasUsuario(token) {
-    // Aquí podrías hacer un fetch a un endpoint que traiga 
-    // las reservas del usuarioId guardado
+
 }
