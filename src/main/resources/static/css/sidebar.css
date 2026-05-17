@@ -1,0 +1,147 @@
+/* --- sidebar.css --- */
+
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #111111; /* Negro profundo del panel */
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    border-right: 1px solid #222;
+    z-index: 1000;
+}
+
+.sidebar-header {
+    margin-bottom: 50px;
+    padding-left: 15px;
+}
+
+.sidebar-header h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-header p {
+    font-size: 0.7rem;
+    color: #666;
+    letter-spacing: 1.5px;
+}
+
+.sidebar-menu {
+    flex: 1; /* Empuja el footer hacia abajo */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 14px 15px;
+    color: #888;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Estado Activo (Como se ve en image_2619c0.png) */
+.sidebar-menu a.active {
+    background-color: #1a1a1a;
+    color: #d4af37; /* Dorado Manuscript */
+}
+
+.sidebar-menu a:hover {
+    color: #ffffff;
+    background-color: rgba(212, 175, 55, 0.05);
+}
+
+.sidebar-menu a .material-symbols-outlined {
+    font-size: 22px;
+}
+
+/* Footer del Sidebar */
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 1px solid #222;
+}
+
+.new-booking-btn {
+    background-color: #d4af37;
+    color: #000;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.3s;
+}
+
+.new-booking-btn:hover {
+    background-color: #f0c64d;
+}
+
+.sidebar-footer a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding-left: 10px;
+    transition: 0.3s;
+}
+
+.sidebar-footer a:hover {
+    color: #ffffff;
+}
+/* Transición suave para el sidebar */
+.sidebar {
+    transition: width 0.3s ease;
+}
+
+/* Estado cuando está CERRADO */
+.sidebar.closed {
+    width: 85px; /* Ancho reducido */
+    padding: 40px 15px;
+}
+
+/* Ocultar los textos cuando la clase .closed esté activa */
+.sidebar.closed .menu-text, 
+.sidebar.closed .sidebar-header p,
+.sidebar.closed .sidebar-header h3,
+.sidebar.closed .btn-text {
+    display: none;
+}
+
+/* Mostrar el "+" pequeño en el botón cuando esté cerrado */
+.sidebar.closed .btn-icon {
+    display: block !important;
+}
+
+/* Ajustar el contenido principal si existe */
+.dashboard-main {
+    transition: margin-left 0.3s ease;
+}
+
+.dashboard-main.expanded {
+    margin-left: 85px;
+}
+
+/* Girar el icono del botón al cerrar */
+.sidebar.closed #toggleSidebar {
+    transform: rotate(180deg);
+}

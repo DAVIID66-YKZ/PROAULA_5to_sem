@@ -7,13 +7,8 @@ async function login(event) {
     try {
         const response = await fetch("/auth/login", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                correo,
-                contrasena
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ correo, contrasena })
         });
 
         if (!response.ok) {
@@ -21,13 +16,23 @@ async function login(event) {
             return;
         }
 
-        const data = await response.json();
+// En tu función de login.js
+const data = await response.json();
 
-        // Guardar el token para futuras peticiones
-        localStorage.setItem("token", data.token);
+localStorage.setItem("token", data.token);
+localStorage.setItem("usuarioId", data.usuarioId);
+localStorage.setItem("nombreUsuario", data.nombre);
+localStorage.setItem("rol", data.rol); // 🔥 REGLA DE ORO: Debe ser 'rol'
 
-        // Redirigir al home
-        window.location.href = "/index";
+        // 2. VERIFICACIÓN DE ROL PARA REDIRECCIÓN
+        if (data.rol === "CLIENTE") {
+            window.location.href = "/dashboard";
+        } else if (data.rol === "ADMIN") {
+            window.location.href = "/admin/panel"; // O la ruta que tengas para admin
+        } else {
+            // Caso por defecto si hay otros roles
+            window.location.href = "/index";
+        }
 
     } catch (error) {
         console.error("Error en el login:", error);

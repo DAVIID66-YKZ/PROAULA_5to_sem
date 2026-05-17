@@ -35,17 +35,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // 🔥 EXCLUIR ENDPOINTS PÚBLICOS
-        if (path.startsWith("/auth")
-                || path.startsWith("/css")
-                || path.startsWith("/js")
-                || path.startsWith("/images")
-                || path.equals("/index")
-                || path.equals("/")) {
+System.out.println("Intentando acceder a: " + path);
 
-            filterChain.doFilter(request, response);
-            return;
-        }
+
+
+if (path.equals("/") || path.equals("/menu") || path.equals("/login") || path.equals("/register") || 
+    path.equals("/dashboard") || path.equals("/mis-reservas") || path.equals("/reserva") ||
+    path.contains("/css/") || path.contains("/js/") || path.contains("/auth/")) {
+    
+    filterChain.doFilter(request, response);
+    return;
+}
+
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 

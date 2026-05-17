@@ -13,6 +13,7 @@ body {
     padding: 0;
 }
 
+
 /* container */
 .login-container {
     display: flex;
@@ -51,13 +52,18 @@ body {
 
 .login-input {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.75rem;
     margin-bottom: 1.9rem;
     border: none;
     border-bottom: 2px solid var(--color-primary);
-    background-color: gray;
-    height: 2rem;
+    background-color: #2a2a2a;
+    color: var(--color-secondary);
+    border-radius: 4px 4px 0 0;
+}
 
+.login-input:focus {
+    outline: none;
+    background-color: #333;
 }
 
 .login-button {
@@ -70,11 +76,12 @@ body {
     font-size: 1rem;
     margin-top: 1.4rem;
     margin-bottom: 1.4rem;
+    transition: all 0.3s ease;
 }
 
 .login-button:hover {
-    background-color: var(--color-tertiary);
-    color: var(--color-secondary);
+    scale: 1.05;
+    box-shadow: 0 0 12px var(--color-primary-transparent);
 }
 
 .login-links {
@@ -82,4 +89,9 @@ body {
     text-decoration: none;
     font-weight: bold;
     margin-left: 0.5rem;
+}
+
+.login-input,
+.login-button {
+    box-sizing: border-box;
 }

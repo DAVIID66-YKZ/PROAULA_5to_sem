@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminos y Condiciones</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/inicio.css}">
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
+    <link rel="stylesheet" th:href="@{/css/TerminosYCondiciones.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header th:replace="~{fragmentos/nav :: navbar}"></header>
+
+    <div class="terminos-contenedor">
+        <section class="principal">
+            <div class="principal-descripcion">
+                <h2>MARCO LEGAL</h2>
+                <h3>Términos y <br><strong>Condiciones</strong></h3>
+                <p>Bienvenido a la experiencia digital de The Culinary Manuscript. El acceso y uso de nuestros servicios
+                    implica la aceptación incondicional de los acuerdos detallados a continuación, diseñados para
+                    garantizar
+                    la excelencia en cada visita.</p>
+            </div>
+            <div class="principal-img"></div>
+        </section>
+
+        <section class="terminos">
+            <div class="terminos-item item-1">
+                <img class="icono" th:src="@{/iconos/legal.svg}" alt="">
+                <h2>1. Aceptación de Términos</h2>
+                <p>Al interactuar con nuestra plataforma o realizar una reserva, usted confirma que ha leído,
+                    comprendido y aceptado quedar vinculado por estos términos. Si no está de acuerdo con alguna
+                    parte, le solicitamos abstenerse de utilizar nuestros servicios. Nos reservamos el derecho de
+                    modificar estos términos para reflejar cambios en nuestras políticas operativas o legales.</p>
+            </div>
+            <div class="terminos-item item-2">
+                <img class="icono" th:src="@{/iconos/calendario.svg}" alt="">
+                <h2>2. Política de Reservas y Cancelaciones</h2>
+                <div class="subitem-2-contenedor">
+                    <div class="subitem-2">
+
+                        <h3>Cancelaciones</h3>
+                        <p>Las cancelaciones deben realizarse con un mínimo de 48 horas de antelación. Las
+                            cancelaciones tardías o modificaciones de última hora pueden estar sujetas a un cargo
+                            por cubierto, reflejando el compromiso de nuestra cocina con los ingredientes frescos
+                            del día.</p>
+                    </div>
+                    <div class="subitem-2">
+
+                        <h3>Inasistencia</h3>
+                        <p>En caso de no presentarse sin previo aviso, The Culinary Manuscript se reserva el derecho
+                            de aplicar el cargo total de la reserva confirmada. Su mesa se mantendrá por un máximo
+                            de 20 minutos de cortesía tras la hora pactada.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="terminos-item item-3">
+                <img class="icono" th:src="@{/iconos/persona.svg}" alt="">
+                <h2>3. Código de Vestimenta y Conducta</h2>
+                <p>Mantenemos un ambiente de refinamiento y respeto. Se requiere un código de vestimenta
+                    elegante-casual. El restaurante se reserva el derecho de admisión para asegurar la armonía y
+                    privacidad de todos nuestros comensales. Cualquier conducta que perturbe la experiencia
+                    gastronómica de otros será motivo de retiro inmediato.</p>
+            </div>
+            <div class="terminos-item item-4">
+                <img class="icono" th:src="@{/iconos/c.svg}" alt="">
+                <h2>4. Propiedad Intelectual</h2>
+                <p>Todo el contenido de este sitio, incluyendo menús, fotografías, logotipos y textos descriptivos,
+                    es propiedad intelectual de The Culinary Manuscript. Queda estrictamente prohibida su
+                    reproducción total o parcial con fines comerciales sin consentimiento expreso por escrito de la
+                    dirección de la casa.</p>
+            </div>
+            <div class="terminos-item item-5">
+                <img class="icono" th:src="@{/iconos/escudo.svg}" alt="">
+                <h2>5. Responsabilidad Limitada</h2>
+                <p>The Culinary Manuscript no se hace responsable de daños indirectos derivados del uso de nuestra
+                    plataforma digital. En el ámbito presencial, no nos responsabilizamos por objetos personales
+                    dejados sin supervisión, aunque ponemos a su disposición un servicio de guardarropa seguro para
+                    su comodidad.</p>
+            </div>
+
+        </section>
+
+
+        <section class="dudas">
+            <div>
+                <p class="dudas-pregunta">¿Tiene Dudas Legales?</p>
+                <p class="dudas-descripcion">Nuestro equipo de conserjería legal está a su disposición para cualquier
+                    aclaración.</p>
+            </div>
+            <a class="reserva-link" href="#">Contactar Soporte</a>
+        </section>
+    </div>
+
+    <footer th:replace="~{fragmentos/footer :: footer}"></footer>
+</body>
+
+</html>

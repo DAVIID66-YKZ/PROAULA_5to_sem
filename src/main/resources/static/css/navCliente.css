@@ -1,0 +1,80 @@
+/* --- nav.css --- */
+
+.header {
+    width: calc(100% - 260px); /* Ancho inicial: Total menos Sidebar */
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 260px; /* Comienza donde termina el sidebar */
+    z-index: 1000;
+    transition: all 0.3s ease; /* Misma velocidad que el sidebar */
+    padding: 0 40px;
+}
+
+/* Cuando el sidebar tiene la clase .closed, el nav se ensancha */
+.sidebar.closed ~ .dashboard-main .header {
+    width: calc(100% - 85px);
+    left: 85px;
+}
+
+.nav-contenedor {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.header h2 {
+    font-family: "Noto Serif", serif;
+    color: var(--color-primary);
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.nav-links {
+    display: flex;
+    gap: 25px;
+    list-style: none;
+}
+
+.nav-item a {
+    text-decoration: none;
+    color: #888;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav-item a:hover {
+    color: var(--color-primary);
+}
+
+/* Sección Perfil Izquierda */
+.perfil-contenedor {
+    display: flex;
+    align-items: center;
+}
+
+.perfil-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s;
+}
+
+.perfil-link .material-symbols-outlined {
+    font-size: 35px;
+    font-variation-settings: 'FILL' 0, 'wght' 300;
+}
+
+.perfil-link:hover {
+    transform: scale(1.1);
+}
+
+.efecto-blur {
+    background-color: rgba(7, 7, 7, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid #222;
+}

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacidad</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/inicio.css}">
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
+    <link rel="stylesheet" th:href="@{/css/privacidad.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header th:replace="~{fragmentos/nav :: navbar}"></header>
+
+    <div class="contenedor">
+        <h2 class="titulo-principal">
+            Privacidad y <br><strong>Protocolo de Datos</strong>
+        </h2>
+        <p class="priv-descripcion">
+            Su confianza es el ingrediente más valioso en nuestra cocina. Esta política detalla cómo custodiamos su
+            información con el mismo rigor que nuestras recetas más secretas.</p>
+
+        <section class="introduccion">
+            <div class="titulos">
+                <h2>01/INTRODUCCIÓN</h2>
+                <h3>
+                    Compromiso <br>de <br>Excelencia
+                </h3>
+            </div>
+            <div class="descripcion">
+                <p>En The Culinary Manuscript, entendemos que la <br> privacidad es la base de una experiencia de lujo.
+                    Esta
+                    Política de Privacidad describe nuestras prácticas respecto a la recopilación, uso y divulgación
+                    de
+                    su información a través de nuestra plataforma digital y servicios presenciales.</p>
+                <p class="txt-resaltado">Al interactuar con nuestros servicios, usted acepta el <br>tratamiento de sus
+                    datos bajo los
+                    estándares
+                    de seguridad más estrictos de la industria gastronómica internacional.</p>
+            </div>
+        </section>
+        <section class="recopilacion">
+            <div class="titulos">
+                <h2>02/RECOPILACiÓN</h2>
+                <h3>
+                    Información que Atesoramos
+                </h3>
+            </div>
+            <div class="descripcion">
+                <div class="descripcion-item">
+                    <h4>Datos Personales</h4>
+                    <p>Recopilamos su nombre completo, dirección de correo electrónico y número de contacto para
+                        garantizar una comunicación fluida y personalizada durante su jornada culinaria.</p>
+
+                </div>
+                <div class="descripcion-item">
+                    <h4>Detalles de Reservas</h4>
+                    <p>Para elevar su experiencia, registramos preferencias dietéticas, alergias, celebraciones
+                        especiales y requisitos de disposición de mesa. Esta información es vital para que nuestro
+                        Maître D’ anticipe cada uno de sus deseos.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="uso">
+            <div class="uso-contenedor">
+                <div class="uso-txt">
+                    <h2>03/USO</h2>
+                    <h3>
+                        Arquitectura de su experiencia
+                    </h3>
+
+                    <div class="item">
+                        <img class="icono" th:src="@{/iconos/correcto.svg}" alt="">
+                        <p>Gestión y confirmación de
+                            reservas en tiempo real.</p>
+                    </div>
+
+                    <div class="item">
+                        <img class="icono" th:src="@{/iconos/correcto.svg}" alt="">
+                        <p>Personalización del menú según sus
+                            restricciones alimentarias.</p>
+                    </div>
+
+
+                    <div class="item">
+                        <img class="icono" th:src="@{/iconos/correcto.svg}" alt="">
+                        <p>Invitaciones exclusivas a catas
+                            privadas y eventos estacionales.</p>
+                    </div>
+                </div>
+                <div class="uso-img"></div>
+            </div>
+        </section>
+        <section class="expediente">
+            <h2>
+                <img class="icono" th:src="@{/iconos/interrogacion.svg}" alt="">
+            </h2>
+            <h3>
+                ¿Desea Consultar su Expediente?
+            </h3>
+            <p>Para ejercer sus derechos de acceso, rectificación o cancelación, por favor <br> contacte con nuestra
+                oficina
+                de privacidad.</p>
+            <a href="#" class="reserva-link">Contactar al Delegado de Datos</a>
+        </section>
+    </div>
+
+    <footer th:replace="~{fragmentos/footer :: footer}"></footer>
+</body>
+
+</html>

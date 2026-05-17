@@ -5,8 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.restaurante.reservasapp.Entity.UsuarioEntity;
 import com.restaurante.reservasapp.services.UsuarioService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+
 
 import java.util.List;
 
@@ -21,15 +20,13 @@ public class UsuarioController {
     public UsuarioController(UsuarioService usuario) {
         this.usuario = usuario;
     }
-
-    @PostMapping("/guardar")
-    public UsuarioEntity guardarUsuario(@RequestBody UsuarioEntity usuario) {
-        return this.usuario.guardarUsuario(usuario);
-    }
-
     @GetMapping("/listar")
     public List<UsuarioEntity> getMethodName() {
         return usuario.listarUsuarios();
     }
+    @GetMapping("/bienvenida")
+public String bienvenida() {
+    return "Inicio de sesión exitoso. ¡Bienvenido al sistema!";
+}
 
 }

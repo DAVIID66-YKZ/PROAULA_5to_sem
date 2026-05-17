@@ -1,58 +1,74 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Registro - ReservasApp</title>
 
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
+    <link rel="stylesheet" th:href="@{/css/register.css}">
 
-    <script src="/js/register.js" defer></script>
+    <script th:src="@{/js/register.js}" defer></script>
 </head>
 
 <body>
+    <!-- NAV -->
+    <header th:replace="~{fragmentos/nav :: navbar}"></header>
 
-    <div class="login-container" style="height: auto; padding: 40px 0;">
-        <form onsubmit="register(event)" class="register-form">
-            <h1 class="login-title">Crear Cuenta</h1>
+    <main class="register-page">
+        <div class="register-container">
+            <form onsubmit="register(event)" class="register-form">
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 1.5rem;">
-                <div class="input-group" style="margin-bottom: 0;">
-                    <label class="login-label">Nombre</label>
-                    <input type="text" id="nombre" class="login-input" placeholder="Tu nombre" required>
+                <h1 class="register-title">Crear Cuenta</h1>
+                <p class="register-subtitle">Completa tus datos para registrarte</p>
+
+                <!-- nombres y apellidos en grid -->
+                <div class="register-grid">
+                    <div class="input-group">
+                        <label class="login-label">Nombre</label>
+                        <input type="text" id="nombre" class="login-input" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="login-label">Apellido</label>
+                        <input type="text" id="apellido" class="login-input" required>
+                    </div>
                 </div>
-                <div class="input-group" style="margin-bottom: 0;">
-                    <label class="login-label">Apellido</label>
-                    <input type="text" id="apellido" class="login-input" placeholder="Tu apellido" required>
+
+                <div class="input-group">
+                    <label class="login-label">Correo Electrónico</label>
+                    <input type="email" id="correo" class="login-input" required>
                 </div>
-            </div>
 
-            <div class="input-group">
-                <label class="login-label">Correo Electrónico</label>
-                <input type="email" id="correo" class="login-input" placeholder="ejemplo@correo.com" required>
-            </div>
+                <div class="input-group">
+                    <label class="login-label">Contraseña</label>
+                    <input type="password" id="contrasena" class="login-input" required>
+                </div>
 
-            <div class="input-group">
-                <label class="login-label">Contraseña</label>
-                <input type="password" id="contrasena" class="login-input" placeholder="••••••••" required>
-            </div>
+                <div class="input-group">
+                    <label class="login-label">Dirección</label>
+                    <input type="text" id="direccion" class="login-input" required>
+                </div>
 
-            <div class="input-group">
-                <label class="login-label">Dirección</label>
-                <input type="text" id="direccion" class="login-input" placeholder="Calle 123..." required>
-            </div>
+                <div class="input-group">
+                    <label class="login-label">Teléfono</label>
+                    <input type="tel" id="telefono" class="login-input" required>
+                </div>
 
-            <div class="input-group">
-                <label class="login-label">Teléfono</label>
-                <input type="tel" id="telefono" class="login-input" placeholder="300 123..." required>
-            </div>
+                <button type="submit" class="login-button">REGISTRARME</button>
 
-            <button type="submit" class="login-button">REGISTRARME</button>
-        </form>
-    </div>
+                <p class="register-login">
+                    ¿Ya tienes cuenta?
+                    <a th:href="@{/login}" class="login-links">Inicia sesión</a>
+                </p>
+            </form>
+        </div>
+    </main>
 
+    <!-- FOOTER -->
+    <footer th:replace="~{fragmentos/footer :: footer}"></footer>
 </body>
-
 </html>

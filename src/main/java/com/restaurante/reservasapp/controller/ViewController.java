@@ -9,7 +9,7 @@ public class ViewController {
     // Maneja la página principal (localhost:8080/)
     @GetMapping("/")
     public String home() {
-        return "index"; 
+        return "index";
     }
 
     // Maneja el login (localhost:8080/login)
@@ -23,15 +23,39 @@ public class ViewController {
     public String register() {
         return "register";
     }
-    
+
     // Maneja el index si tienes una ruta específica para él
     @GetMapping("/index")
     public String index() {
         return "index";
     }
-    /**  @GetMapping("dashboard")
+
+    @GetMapping("/reserva")
+    public String reserva() {
+        return "reserva";
+    }
+
+    @GetMapping("/legal/privacidad")
+    public String privacidad() {
+        return "legal/privacidad";
+    }
+
+    @GetMapping("/legal/terminosYCondiciones")
+    public String terminosYCondiciones() {
+        return "legal/terminosYCondiciones";
+    }
+
+    @GetMapping("/menu")
+    public String menu() {
+        return "menu";
+    }
+
+    @GetMapping("/dashboard")
     public String dashboard() {
         return "dashboard";
-    }**/
-
+    }
+        @GetMapping("/mis-reservas")
+    public String misReservas() {
+        return "mis-reservas";
+    } 
 }

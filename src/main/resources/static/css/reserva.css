@@ -1,0 +1,205 @@
+/* ================================================================
+   ESTILOS DE RESERVA - THE CULINARY MANUSCRIPT
+   ================================================================ */
+
+.reserva-hero-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px);
+    padding: 20px;
+    width: 100%;
+}
+
+.reserva-card-full {
+    display: flex;
+    width: 100%;
+    max-width: 1150px; /* Aumentado un poco para las 3 columnas */
+    background-color: #121212;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+}
+
+.reserva-visual {
+    flex: 0.8; /* Ajustado para dar más espacio al formulario */
+    position: relative;
+    background: url('../imagenes/reserva.webp') no-repeat center center/cover;
+    min-height: 600px;
+}
+
+.reserva-visual-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 40px;
+    background: linear-gradient(transparent, #121212 95%);
+    box-sizing: border-box;
+}
+
+.serif-gold {
+    font-family: 'Noto Serif', serif;
+    color: #d4af37;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+}
+
+.reserva-visual-texto {
+    color: #888;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.reserva-form-section {
+    flex: 1.4;
+    padding: 50px 40px;
+    background-color: #121212;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.reserva-badge {
+    color: #d4af37;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.reserva-titulo-form {
+    font-family: 'Noto Serif', serif;
+    font-size: 3.2rem;
+    color: #fff;
+    margin-bottom: 30px;
+}
+
+.reserva-grid-inputs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.input-grupo-reserva label {
+    font-size: 10px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.input-grupo-reserva input, 
+.input-grupo-reserva select {
+    width: 100%;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    padding: 12px;
+    color: white;
+    border-radius: 6px;
+    outline: none;
+    font-family: inherit;
+}
+
+/* --- CALENDARIO NEGRO --- */
+input[type="date"] {
+    color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(0.8) sepia(100%) saturate(10000%) hue-rotate(10deg);
+    cursor: pointer;
+}
+
+/* --- SELECTOR DE EXPERIENCIAS (3 COLUMNAS) --- */
+.reserva-label-seccion {
+    display: block;
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.reserva-experiencia-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.exp-card input { 
+    display: none; 
+}
+
+.exp-ui {
+    background-color: #181818;
+    border: 1px solid #2a2a2a;
+    padding: 15px 10px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column; /* Icono arriba, texto abajo para ahorrar espacio */
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.exp-card input:checked + .exp-ui {
+    border: 1px solid #d4af37 !important;
+    background-color: rgba(212, 175, 55, 0.05);
+}
+
+.exp-ui .material-symbols-outlined {
+    color: #d4af37;
+    font-size: 28px;
+}
+
+.exp-nombre {
+    display: block;
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.exp-detalle {
+    font-size: 10px;
+    color: #555;
+}
+
+/* --- BOTÓN Y NOTA --- */
+.reserva-btn-confirmar {
+    width: 100%;
+    background-color: #d4af37;
+    color: #000;
+    border: none;
+    padding: 18px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    border-radius: 10px;
+    margin-top: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+}
+
+.reserva-btn-confirmar:hover {
+    background-color: #f0c64d;
+    transform: translateY(-2px);
+}
+
+.reserva-nota {
+    text-align: center;
+    color: #444;
+    font-size: 10px;
+    margin-top: 20px;
+    line-height: 1.4;
+}
+
+/* Responsivo */
+@media (max-width: 1000px) {
+    .reserva-card-full { flex-direction: column; }
+    .reserva-visual { min-height: 300px; flex: none; width: 100%; }
+    .reserva-experiencia-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+    <header th:fragment="navbarLogueado" class="header efecto-blur">
+        
+        <nav class="nav-contenedor">
+            <h2>The Culinary Manuscript</h2>
+            
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a th:href="@{/index}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/menu}">Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/contacto}">Contacto</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="perfil-contenedor">
+            <a th:href="@{/dashboard}" class="perfil-link" title="Mi Perfil">
+                <span class="material-symbols-outlined">account_circle</span>
+            </a>
+        </div>
+
+    </header>
+
+</body>
+</html>

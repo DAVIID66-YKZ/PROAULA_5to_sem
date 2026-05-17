@@ -21,47 +21,44 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public AuthResponse login(LoginRequest request) {
+public AuthResponse login(LoginRequest request) {
+    authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(request.getCorreo(), request.getContrasena())
+    );
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getCorreo(),
-                        request.getContrasena()
-                )
-        );
+    UsuarioEntity user = userRepository.findByCorreo(request.getCorreo())
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // 🔥 SIEMPRE cargar desde BD (IMPORTANTE)
-        UsuarioEntity user = userRepository.findByCorreo(request.getCorreo())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    return AuthResponse.builder()
+            .token(jwtService.getToken(user))
+            .usuarioId(user.getId())
+            .nombre(user.getNombre())
+            .rol(user.getRol().name()) // 🔥 Enviamos el nombre del Rol (CLIENTE, ADMIN, etc.)
+            .build();
+}
 
-        return AuthResponse.builder()
-                .token(jwtService.getToken(user))
-                .build();
+public AuthResponse register(RegisterRequest request) {
+    if (userRepository.findByCorreo(request.getCorreo()).isPresent()) {
+        throw new RuntimeException("El correo ya está registrado");
     }
-//esto //
-    @SuppressWarnings("null")
-    public AuthResponse register(RegisterRequest request) {
 
-        if (userRepository.findByCorreo(request.getCorreo()).isPresent()) {
-            throw new RuntimeException("El correo ya está registrado");
-        }
+    UsuarioEntity user = UsuarioEntity.builder()
+            .nombre(request.getNombre())
+            .apellido(request.getApellido())
+            .correo(request.getCorreo())
+            .contrasena(passwordEncoder.encode(request.getContrasena()))
+            .direccion(request.getDireccion())
+            .telefono(request.getTelefono())
+            .rol(Rol.CLIENTE)
+            .build();
 
-        UsuarioEntity user = UsuarioEntity.builder()
-                .nombre(request.getNombre())
-                .apellido(request.getApellido())
-                .correo(request.getCorreo())
-                .contrasena(passwordEncoder.encode(request.getContrasena()))
-                .direccion(request.getDireccion())
-                .telefono(request.getTelefono())
-                .rol(Rol.CLIENTE)
-                .build();
+    UsuarioEntity savedUser = userRepository.save(user);
 
-        // 🔥 guardar usuario
-        UsuarioEntity savedUser = userRepository.save(user);
-
-        // 🔥 generar token con usuario REAL guardado
-        return AuthResponse.builder()
-                .token(jwtService.getToken(savedUser))
-                .build();
-    }
+    return AuthResponse.builder()
+            .token(jwtService.getToken(savedUser))
+            .usuarioId(savedUser.getId())
+            .nombre(savedUser.getNombre()) // 🔥 Agregado
+            .rol(savedUser.getRol().name()) // 🔥 Agregado
+            .build();
+}
 }

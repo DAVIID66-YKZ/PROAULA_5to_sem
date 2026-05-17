@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -22,8 +22,11 @@
         <div class="hero-contenido">
             <h1>The Culinary <br> Manuscript</h1>
             <p class="hero-texto">Disfruta de la Mejor Comida en un Ambiente Acogedor.</p>
-            <a href="#" class="reserva-link">Reserva Ahora</a>
-            <a href="#" class="menu-link">Ver el Menú</a>
+
+            <a th:href="@{/reserva}" class="reserva-link">Reserva Ahora</a>
+            <a th:href="@{/menu}" class="menu-link">Ver el Menú</a>
+
+
         </div>
     </section>
 
@@ -130,19 +133,7 @@
         </div>
     </section>
 
-    <footer class="footer">
-        <div class="footer-contenedor">
-            <h2>The Culinary Manuscript</h2>
-            <ul>
-                <li><a href="#">Contacto</a></li>
-                <li><a href="#">Politica de Privacidad</a></li>
-                <li><a href="#">Términos y Condiciones</a></li>
-                <li><a href="#">Ubicacion</a></li>
-            </ul>
-            <p>© 2024 The Culinary Manuscript.</p>
-        </div>
-
-    </footer>
+    <footer th:replace="~{fragmentos/footer :: footer}"></footer>
 </body>
 
 </html>
