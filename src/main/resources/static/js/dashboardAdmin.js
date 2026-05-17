@@ -1,6 +1,10 @@
-<<<<<<< HEAD
-// ===== DATOS DE PRUEBA =====
-const datosReservas = [
+// ===== CONFIGURACIÓN DE API =====
+// Cambia estas URLs según tu entorno
+const API_BASE = 'http://localhost:8080/api/admin/dashboard';
+const TOKEN = localStorage.getItem('jwtToken'); // El token JWT debe estar guardado en localStorage
+
+// ===== DATOS DE PRUEBA (Se usa si no hay conexión a backend) =====
+const datosReservasLocal = [
     {
         id: 1,
         nombreHuesped: "Julianne Weaver",
@@ -53,7 +57,7 @@ const datosReservas = [
     },
 ];
 
-const datosMesas = [
+const datosMesasLocal = [
     {
         id: 1,
         numeroMesa: "T-14",
@@ -96,18 +100,24 @@ const datosMesas = [
     },
 ];
 
-// Variables globales
+// ===== VARIABLES GLOBALES =====
+let datosReservas = [...datosReservasLocal];
+let datosMesas = [...datosMesasLocal];
 let paginaActualReservas = 1;
 let paginaActualMesas = 1;
 const ITEMS_POR_PAGINA = 3;
 let todasLasMesas = [...datosMesas];
 let mesasParaEditar = null;
+let conectadoAlBackend = false;
 
 // ===== INICIALIZACIÓN =====
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard iniciado');
     
-    // Cargar datos iniciales
+    // Intentar conectar con backend
+    cargarDatosDelBackend();
+    
+    // Cargar datos iniciales (locales o del backend)
     actualizarEstadisticas();
     cargarReservasEnTabla();
     cargarMesasEnTabla();
@@ -130,8 +140,89 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard completamente cargado');
 });
 
+// ===== CONECTAR CON BACKEND =====
+async function cargarDatosDelBackend() {
+    try {
+        // Verificar si el token existe
+        if (!TOKEN) {
+            console.log('⚠️ No hay token JWT. Usando datos locales.');
+            conectadoAlBackend = false;
+            return;
+        }
+
+        // Intentar cargar mesas desde backend
+        const responsesMesas = await fetch(`${API_BASE}/mesas`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${TOKEN}`
+            }
+        });
+
+        if (responsesMesas.ok) {
+            const mesasBackend = await responsesMesas.json();
+            datosMesas = mesasBackend || datosMesasLocal;
+            todasLasMesas = [...datosMesas];
+            conectadoAlBackend = true;
+            console.log('✅ Conectado al backend - Mesas cargadas');
+        } else if (responsesMesas.status === 401) {
+            console.log('⚠️ Token expirado o no válido. Usando datos locales.');
+            conectadoAlBackend = false;
+        } else {
+            console.log('⚠️ Backend no disponible. Usando datos locales.');
+            conectadoAlBackend = false;
+        }
+
+        // Intentar cargar reservas desde backend
+        const responsesReservas = await fetch(`${API_BASE}/reservas-recientes?pagina=0&tamanio=10`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${TOKEN}`
+            }
+        });
+
+        if (responsesReservas.ok) {
+            const reservasBackend = await responsesReservas.json();
+            datosReservas = reservasBackend || datosReservasLocal;
+            console.log('✅ Reservas cargadas del backend');
+        }
+
+    } catch (error) {
+        console.log('⚠️ Error conectando con backend:', error);
+        console.log('📌 Usando datos locales de prueba');
+        conectadoAlBackend = false;
+    }
+}
+
 // ===== ACTUALIZAR ESTADÍSTICAS =====
-function actualizarEstadisticas() {
+async function actualizarEstadisticas() {
+    try {
+        if (conectadoAlBackend && TOKEN) {
+            const response = await fetch(`${API_BASE}/estadisticas`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${TOKEN}`
+                }
+            });
+
+            if (response.ok) {
+                const stats = await response.json();
+                document.getElementById('ocupancia').textContent = stats.ocupanciaTotal + '%';
+                document.getElementById('totalHuespedes').textContent = stats.totalHuespedes;
+                document.getElementById('listaEspera').textContent = String(stats.listaEsperaCount).padStart(2, '0');
+                document.getElementById('mesasActivas').textContent = stats.mesasActivas;
+                document.getElementById('mesasTotales').textContent = stats.mesasTotales;
+                console.log('✅ Estadísticas actualizadas del backend');
+                return;
+            }
+        }
+    } catch (error) {
+        console.log('⚠️ Error cargando estadísticas del backend');
+    }
+
+    // Si no hay backend, usar cálculos locales
     const mesasActivas = datosMesas.filter(m => m.activa).length;
     const totalMesas = datosMesas.length;
     const reservasConfirmadas = datosReservas.filter(r => r.estado === "CONFIRMADA").length;
@@ -191,24 +282,20 @@ function cargarReservasEnTabla() {
                     ${reserva.estado}
                 </span>
             </td>
-        <td>
-    <div class="action-buttons">
-
-        <button class="action-btn" title="Editar" onclick="editarReserva(${reserva.id})">
-            <img src="/iconos/pencil.png" alt="Editar" class="action-icon">
-        </button>
-
-        <button class="action-btn" title="Eliminar" onclick="eliminarReserva(${reserva.id})">
-            <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
-        </button>
-
-    </div>
-</td>
-`;
+            <td>
+                <div class="action-buttons">
+                    <button class="action-btn" title="Editar" onclick="editarReserva(${reserva.id})">
+                        <img src="/iconos/pencil.png" alt="Editar" class="action-icon">
+                    </button>
+                    <button class="action-btn" title="Eliminar" onclick="eliminarReserva(${reserva.id})">
+                        <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
+                    </button>
+                </div>
+            </td>
+        `;
         tbody.appendChild(row);
     });
     
-    // Actualizar información de paginación
     const totalPaginas = Math.ceil(datosReservas.length / ITEMS_POR_PAGINA);
     document.getElementById('paginaActual').textContent = paginaActualReservas;
     document.getElementById('totalPaginas').textContent = totalPaginas;
@@ -245,17 +332,15 @@ function cargarMesasEnTabla() {
                     ${mesa.nombreUbicacion} • ${mesa.capacidad} Guests
                 </div>
             </div>
-          <div class="mesa-status">
-    ${estadoBadge}
-
-    <button class="mesa-edit-btn" onclick="editarMesa(${mesa.id})" title="Editar">
-        <img src="/iconos/pencil.png" alt="Editar" class="action-icon">
-    </button>
-
-    <button class="mesa-delete-btn" onclick="eliminarMesa(${mesa.id})" title="Eliminar">
-        <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
-    </button>
-</div>
+            <div class="mesa-status">
+                ${estadoBadge}
+                <button class="mesa-edit-btn" onclick="editarMesa(${mesa.id})" title="Editar">
+                    <img src="/iconos/pencil.png" alt="Editar" class="action-icon">
+                </button>
+                <button class="mesa-delete-btn" onclick="eliminarMesa(${mesa.id})" title="Eliminar">
+                    <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
+                </button>
+            </div>
         `;
         container.appendChild(mesaDiv);
     });
@@ -278,7 +363,6 @@ function configurarNavegacion() {
             sections.forEach(sec => sec.classList.remove('active'));
             document.getElementById(seccion).classList.add('active');
             
-            // Recargar datos al cambiar de sección
             if (seccion === 'reservas') {
                 cargarReservasGlobales();
             }
@@ -290,7 +374,7 @@ function configurarNavegacion() {
 function configurarFormularioMesas() {
     const formMesa = document.getElementById('formMesa');
     
-    formMesa.addEventListener('submit', function(e) {
+    formMesa.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const numeroMesa = document.getElementById('numeroMesa').value;
@@ -298,45 +382,95 @@ function configurarFormularioMesas() {
         const nombreUbicacion = document.getElementById('ubicacion').value;
         const activa = document.getElementById('activa').checked;
         
+        const datosMesa = {
+            numero: parseInt(numeroMesa),
+            capacidad: capacidad,
+            disponible: activa
+        };
+
         if (mesasParaEditar) {
-            // Actualizar mesa existente
-            const index = todasLasMesas.findIndex(m => m.id === mesasParaEditar);
-            if (index !== -1) {
-                todasLasMesas[index] = {
-                    ...todasLasMesas[index],
+            // Actualizar mesa
+            if (conectadoAlBackend && TOKEN) {
+                try {
+                    const response = await fetch(`${API_BASE}/mesas/${mesasParaEditar}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${TOKEN}`
+                        },
+                        body: JSON.stringify(datosMesa)
+                    });
+
+                    if (response.ok) {
+                        alert('Mesa actualizada en el servidor');
+                    } else {
+                        alert('Error al actualizar mesa en el servidor');
+                    }
+                } catch (error) {
+                    console.log('Error actualizando mesa:', error);
+                }
+            } else {
+                // Actualizar localmente
+                const index = todasLasMesas.findIndex(m => m.id === mesasParaEditar);
+                if (index !== -1) {
+                    todasLasMesas[index] = {
+                        ...todasLasMesas[index],
+                        numeroMesa,
+                        capacidad,
+                        nombreUbicacion,
+                        activa
+                    };
+                }
+            }
+            mesasParaEditar = null;
+            document.querySelector('.btn-save').textContent = 'GUARDAR MESA';
+        } else {
+            // Crear nueva mesa
+            if (conectadoAlBackend && TOKEN) {
+                try {
+                    const response = await fetch(`${API_BASE}/mesas`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${TOKEN}`
+                        },
+                        body: JSON.stringify(datosMesa)
+                    });
+
+                    if (response.ok) {
+                        const mesaCreada = await response.json();
+                        todasLasMesas.push(mesaCreada);
+                        alert('Mesa creada en el servidor');
+                    } else {
+                        alert('Error al crear mesa en el servidor');
+                    }
+                } catch (error) {
+                    console.log('Error creando mesa:', error);
+                }
+            } else {
+                // Crear localmente
+                const nuevaMesa = {
+                    id: Math.max(...todasLasMesas.map(m => m.id), 0) + 1,
                     numeroMesa,
                     capacidad,
                     nombreUbicacion,
-                    activa
+                    activa,
+                    estado: activa ? 'DISPONIBLE' : 'MANTENIMIENTO'
                 };
+                todasLasMesas.push(nuevaMesa);
             }
-            mesasParaEditar = null;
-            document.querySelector('.btn-save').textContent = 'SAVE TABLE';
-        } else {
-            // Crear nueva mesa
-            const nuevaMesa = {
-                id: Math.max(...todasLasMesas.map(m => m.id), 0) + 1,
-                numeroMesa,
-                capacidad,
-                nombreUbicacion,
-                activa,
-                estado: activa ? 'DISPONIBLE' : 'MANTENIMIENTO'
-            };
-            todasLasMesas.push(nuevaMesa);
         }
         
         formMesa.reset();
         cargarMesasEnTabla();
         actualizarEstadisticas();
-        
-        alert('Mesa guardada correctamente');
     });
 }
 
 function limpiarFormulario() {
     document.getElementById('formMesa').reset();
     mesasParaEditar = null;
-    document.querySelector('.btn-save').textContent = 'SAVE TABLE';
+    document.querySelector('.btn-save').textContent = 'GUARDAR MESA';
 }
 
 function editarMesa(mesaId) {
@@ -349,13 +483,33 @@ function editarMesa(mesaId) {
     document.getElementById('activa').checked = mesa.activa;
     
     mesasParaEditar = mesaId;
-    document.querySelector('.btn-save').textContent = 'UPDATE TABLE';
+    document.querySelector('.btn-save').textContent = 'ACTUALIZAR MESA';
     
     document.querySelector('.mesa-form-panel').scrollIntoView({ behavior: 'smooth' });
 }
 
-function eliminarMesa(mesaId) {
-    if (confirm('¿Estás seguro de que deseas eliminar esta mesa?')) {
+async function eliminarMesa(mesaId) {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta mesa?')) return;
+
+    if (conectadoAlBackend && TOKEN) {
+        try {
+            const response = await fetch(`${API_BASE}/mesas/${mesaId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${TOKEN}`
+                }
+            });
+
+            if (response.ok) {
+                todasLasMesas = todasLasMesas.filter(m => m.id !== mesaId);
+                cargarMesasEnTabla();
+                actualizarEstadisticas();
+                alert('Mesa eliminada correctamente');
+            }
+        } catch (error) {
+            console.log('Error eliminando mesa:', error);
+        }
+    } else {
         todasLasMesas = todasLasMesas.filter(m => m.id !== mesaId);
         cargarMesasEnTabla();
         actualizarEstadisticas();
@@ -423,7 +577,7 @@ function eliminarReserva(reservaId) {
     }
 }
 
-// ===== CARGAR TODAS LAS RESERVAS (SECCIÓN RESERVAS) =====
+// ===== CARGAR TODAS LAS RESERVAS =====
 function cargarReservasGlobales() {
     const tbody = document.getElementById('reservasAllTableBody');
     tbody.innerHTML = '';
@@ -453,17 +607,14 @@ function cargarReservasGlobales() {
             </td>
             <td>${reserva.tipoEvento}</td>
             <td>
-               <div class="action-buttons">
-
-    <button class="action-btn" title="Editar" onclick="editarReserva(${reserva.id})">
-        <img src="/iconos/pencil.png" alt="Editar" class="action-icon">
-    </button>
-
-    <button class="action-btn" title="Eliminar" onclick="eliminarReserva(${reserva.id})">
-        <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
-    </button>
-
-</div>
+                <div class="action-buttons">
+                    <button class="action-btn" title="Editar" onclick="editarReserva(${reserva.id})">
+                        <img src="/iconos/pencil.png" alt="Editar" class="action-icon">
+                    </button>
+                    <button class="action-btn" title="Eliminar" onclick="eliminarReserva(${reserva.id})">
+                        <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
+                    </button>
+                </div>
             </td>
         `;
         tbody.appendChild(row);
@@ -487,44 +638,8 @@ function filtrarReservasGlobales() {
 // ===== LOGOUT =====
 function logout() {
     if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+        localStorage.removeItem('jwtToken');
         alert('Sesión cerrada. Redireccionar a login...');
-        // window.location.href = '/login';
+        window.location.href = '/login';
     }
-=======
-
-(function() {
-    const token = localStorage.getItem("token");
-    const rol = localStorage.getItem("rol");
-
-    // Imprime en consola para que tú mismo veas qué está llegando
-    console.log("Validando sesión - Rol encontrado:", rol);
-
-    // Validamos que exista el token y que el rol sea exactamente CLIENTE
-    if (!token || String(rol).trim().toUpperCase() !== "CLIENTE") {
-        console.warn("Acceso denegado. Redirigiendo al login...");
-        window.location.href = "/login";
-    }
-})();
-document.addEventListener("DOMContentLoaded", () => {
-    // 1. Validar Sesión
-    const token = localStorage.getItem("token");
-    const nombre = localStorage.getItem("nombreUsuario"); // Asegúrate de guardar esto en login.js
-
-    if (!token) {
-        window.location.href = "/login";
-        return;
-    }
-
-    // 2. Mostrar nombre de usuario
-    if (nombre) {
-        document.getElementById("userName").textContent = nombre;
-    }
-
-    // 3. (Opcional) Cargar las reservas reales del usuario desde el servidor
-    // cargarReservasUsuario(token);
-});
-
-async function cargarReservasUsuario(token) {
-
->>>>>>> origin/main
 }

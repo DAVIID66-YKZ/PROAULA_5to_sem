@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class DashboardViewController {
     
     // Mapeo para acceder al dashboard directamente
-    @GetMapping("/dashboard")
+    @GetMapping("/dashboardAdmin")
     public String dashboard() {
-        return "dashboard";  // Esto busca: src/main/resources/templates/dashboard.html
+        return "dashboardAdmin";  // Esto busca: src/main/resources/templates/dashboardAdmin.html
     }
     
     // Para que funcione desde la raíz
-    @GetMapping("/admin/dashboard")
+    @GetMapping("/admin/dashboardAdmin")
     public String adminDashboard() {
-        return "dashboard";
+        return "dashboardAdmin";
     }
 }

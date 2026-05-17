@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/dashboard")
+@RequestMapping("/api/admin/dashboardAdmin")
 @PreAuthorize("hasRole('ADMIN')")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class DashboardController {
