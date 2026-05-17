@@ -42,4 +42,20 @@ public class UsuarioServiceImpl implements UsuarioService {
         return repo.findAll();
     }
 
+    
+    @Override
+    public UsuarioEntity actualizarPerfil(String id, UsuarioEntity datosNuevos) {
+        // Buscamos el documento original en la colección
+        UsuarioEntity usuarioExistente = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("El registro de usuario no existe en el sistema."));
+
+        // Sobrescribimos solo los metadatos permitidos del formulario
+        usuarioExistente.setNombre(datosNuevos.getNombre());
+        usuarioExistente.setApellido(datosNuevos.getApellido());
+        usuarioExistente.setTelefono(datosNuevos.getTelefono());
+        usuarioExistente.setDireccion(datosNuevos.getDireccion());
+
+        // Guardamos los cambios manteniendo la misma ID, rol y credenciales
+        return repo.save(usuarioExistente);
+    }
 }

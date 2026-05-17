@@ -1,0 +1,104 @@
+/* ================================================================
+   ESTILOS DE MI PERFIL - THE CULINARY MANUSCRIPT
+   ================================================================ */
+
+.form-perfil-wrapper {
+    padding: 40px;
+    width: 100%;
+    max-width: 1150px;
+    margin: 0 auto;
+}
+
+.perfil-form {
+    width: 100%;
+}
+
+.perfil-grid-inputs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.input-grupo-perfil {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-grupo-perfil label {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.input-grupo-perfil input {
+    width: 100%;
+    background-color: #1a1a1a; /* Mismo color que los inputs de reserva */
+    border: 1px solid #2a2a2a;
+    padding: 14px;
+    color: #ffffff;
+    border-radius: 8px;
+    outline: none;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-grupo-perfil input:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.15);
+}
+
+.full-width-input {
+    grid-column: span 2;
+}
+
+/* Sección de botón */
+.perfil-actions {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #1a1a1a;
+    padding-top: 25px;
+}
+
+.btn-update-profile {
+    background-color: #d4af37;
+    color: #000000;
+    border: none;
+    padding: 14px 35px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-update-profile:hover {
+    background-color: #f0c64d;
+    transform: translateY(-1px);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .perfil-grid-inputs {
+        grid-template-columns: 1fr;
+    }
+    .full-width-input {
+        grid-column: span 1;
+    }
+    .perfil-actions {
+        justify-content: center;
+    }
+    .btn-update-profile {
+        width: 100%;
+        justify-content: center;
+    }
+}
