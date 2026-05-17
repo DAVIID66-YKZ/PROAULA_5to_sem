@@ -5,7 +5,7 @@
     <div class="sidebar-header">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3 class="gold-text">Panel Cliente</h3>
-            <button id="toggleSidebar" style="background:none; border:none; color:#d4af37; cursor:pointer;">
+            <button id="toggleSidebar" style="background:none; border:none; color:#d4af37; cursor:pointer; transition: transform 0.3s;">
                 <span class="material-symbols-outlined">menu_open</span>
             </button>
         </div>
@@ -31,6 +31,11 @@
         <a th:href="@{/reserva}" data-page="reservations">
             <span class="material-symbols-outlined">add_circle</span> 
             <span class="menu-text">Reserva Ahora</span>
+        </a>
+
+        <a th:href="@{/perfil}" data-page="profile">
+            <span class="material-symbols-outlined">account_circle</span> 
+            <span class="menu-text">Mi Perfil</span>
         </a>
 
         <a href="/analytics" data-page="analytics">

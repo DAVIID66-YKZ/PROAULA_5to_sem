@@ -41,4 +41,12 @@ public class ViewController {
     public String misReservas() {
         return "mis-reservas";
     } 
+    @GetMapping("/calendario")
+public String calendario() {
+    return "calendario"; 
+}
+@GetMapping("/perfil")
+public String perfil() {
+    return "perfil"; 
+}
 }

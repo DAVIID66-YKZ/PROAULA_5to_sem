@@ -1,7 +1,6 @@
 package com.restaurante.reservasapp.services;
 
 import java.util.List;
-
 import com.restaurante.reservasapp.Entity.UsuarioEntity;
 
 public interface UsuarioService {
@@ -14,4 +13,6 @@ public interface UsuarioService {
 
     public List<UsuarioEntity> listarUsuarios();
 
+    
+    public UsuarioEntity actualizarPerfil(String id, UsuarioEntity datosNuevos);
 }

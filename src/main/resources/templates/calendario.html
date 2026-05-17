@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Calendario - The Culinary Manuscript</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard-final.css}">
+    <link rel="stylesheet" th:href="@{/css/mis-reservas.css}"> <link rel="stylesheet" th:href="@{/css/calendario.css}">
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/navCliente.css}">
+</head>
+<body class="dashboard-layout">
+
+    <div th:replace="~{fragmentos/sidebar :: sidebar}"></div>
+
+    <div class="dashboard-main">
+        <header th:replace="~{fragmentos/navCliente :: navbarLogueado}"></header>
+
+        <main class="mis-reservas-container">
+            <header class="section-header-inline">
+                <div>
+                    <span class="reserva-badge">Agenda de Experiencias</span>
+                    <h1 class="serif-title">Mi Calendario</h1>
+                </div>
+            </header>
+
+            <div class="tabla-reservas-wrapper" style="padding: 30px;">
+                <div id="calendar"></div>
+            </div>
+        </main>
+    </div>
+
+    <script th:src="@{/js/sidebar.js}"></script>
+    <script th:src="@{/js/calendario.js}"></script>
+</body>
+</html>
