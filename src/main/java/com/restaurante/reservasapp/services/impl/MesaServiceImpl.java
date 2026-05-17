@@ -3,6 +3,7 @@ package com.restaurante.reservasapp.services.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import com.restaurante.reservasapp.Entity.MesaEntity;
@@ -16,19 +17,23 @@ public class MesaServiceImpl implements MesaService {
     private MesaRepository repo;
 
     @Override
+    @SuppressWarnings("null")
     public MesaEntity guardarMesa(MesaEntity mesa) {
         return repo.save(mesa);
 
     }
 
     @Override
-    public MesaEntity obtenerMesa(String id) {
-        return repo.findById(id).orElse(null);
+    @Nullable
+    public MesaEntity obtenerMesa(@Nullable String id) {
+        return repo.findById(id != null ? id : "").orElse(null);
     }
 
     @Override
-    public void eliminarMesa(String id) {
-        repo.deleteById(id);
+    public void eliminarMesa(@Nullable String id) {
+        if (id != null) {
+            repo.deleteById(id);
+        }
     }
 
     @Override

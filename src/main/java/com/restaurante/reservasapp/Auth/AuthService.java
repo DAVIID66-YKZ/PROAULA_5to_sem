@@ -38,7 +38,8 @@ public class AuthService {
                 .token(jwtService.getToken(user))
                 .build();
     }
-
+//esto //
+    @SuppressWarnings("null")
     public AuthResponse register(RegisterRequest request) {
 
         if (userRepository.findByCorreo(request.getCorreo()).isPresent()) {

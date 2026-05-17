@@ -29,8 +29,9 @@ public class ViewController {
     public String index() {
         return "index";
     }
-       @GetMapping("dashboard")
+    /***   @GetMapping("dashboard")
     public String dashboard() {
         return "dashboard";
-    }
+    }**/
+
 }
