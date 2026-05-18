@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReservaParaDashboardResponse {
+public class ReservaParaDashboardAdminResponse {
     private String id;
     private String nombreHuesped;
     private String iniciales;

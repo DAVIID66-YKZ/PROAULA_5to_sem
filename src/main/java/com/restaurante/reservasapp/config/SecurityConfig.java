@@ -30,8 +30,8 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
             // 1. Permitir que el navegador descargue los HTML y recursos
-            .requestMatchers("/", "/index", "/login", "/register", "/dashboard", "/reserva", "/mis-reservas").permitAll()
-            .requestMatchers("/css/**", "/js/**", "/imagenes/**").permitAll()
+            .requestMatchers("/", "/index", "/login", "/register", "/dashboard","/dashboardAdmin","/menu", "/reserva", "/mis-reservas").permitAll()
+            .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**").permitAll()
             .requestMatchers("/auth/**").permitAll()
 
 

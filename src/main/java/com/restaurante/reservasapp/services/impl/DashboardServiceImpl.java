@@ -1,12 +1,12 @@
 package com.restaurante.reservasapp.services.impl;
 
-import com.restaurante.reservasapp.Auth.DashboardResponse;
-import com.restaurante.reservasapp.Auth.ReservaParaDashboardResponse;
+import com.restaurante.reservasapp.Auth.DashboardAdminResponse;
+import com.restaurante.reservasapp.Auth.ReservaParaDashboardAdminResponse;
 import com.restaurante.reservasapp.Entity.MesaEntity;
 import com.restaurante.reservasapp.Entity.ReservaEntity;
 import com.restaurante.reservasapp.repository.MesaRepository;
 import com.restaurante.reservasapp.repository.ReservaRepository;
-import com.restaurante.reservasapp.services.DashboardService;
+import com.restaurante.reservasapp.services.DashboardAminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class DashboardServiceImpl implements DashboardService {
+public class DashboardServiceImpl implements DashboardAminService {
 
     @Autowired
     private ReservaRepository reservaRepository;
@@ -23,7 +23,7 @@ public class DashboardServiceImpl implements DashboardService {
     private MesaRepository mesaRepository;
 
     @Override
-    public DashboardResponse obtenerEstadisticasGenerales() {
+    public DashboardAdminResponse obtenerEstadisticasGenerales() {
         List<ReservaEntity> todasLasReservas = reservaRepository.findAll();
         List<MesaEntity> todasLasMesas = mesaRepository.findAll();
 
@@ -45,7 +45,7 @@ public class DashboardServiceImpl implements DashboardService {
             .mapToInt(ReservaEntity::getNumeroPersonas)
             .sum();
 
-        return DashboardResponse.builder()
+        return DashboardAdminResponse.builder()
             .ocupanciaTotal(ocupancia)
             .totalHuespedes(totalHuespedes)
             .listaEsperaCount((int) reservasPendientes)
@@ -58,7 +58,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public List<ReservaParaDashboardResponse> obtenerReservasRecientes(int pagina, int tamanoPagina) {
+    public List<ReservaParaDashboardAdminResponse> obtenerReservasRecientes(int pagina, int tamanoPagina) {
         return reservaRepository.findAll().stream()
             .sorted((r1, r2) -> r2.getId().compareTo(r1.getId()))
             .skip((long) pagina * tamanoPagina)
@@ -73,7 +73,7 @@ public class DashboardServiceImpl implements DashboardService {
         return reservaRepository.findAll().size();
     }
 
-    private ReservaParaDashboardResponse mapearReservaADashboard(ReservaEntity reserva) {
+    private ReservaParaDashboardAdminResponse mapearReservaADashboard(ReservaEntity reserva) {
         // Obtener usuario para nombre
         String nombreHuesped = reserva.getUsuarioId() != null ? "Cliente " + reserva.getUsuarioId() : "Sin nombre";
 
@@ -88,7 +88,7 @@ public class DashboardServiceImpl implements DashboardService {
                           " " +
                           (reserva.getHora() != null ? reserva.getHora() : "00:00");
 
-        return ReservaParaDashboardResponse.builder()
+        return ReservaParaDashboardAdminResponse.builder()
             .id(reserva.getId())
             .nombreHuesped(nombreHuesped)
             .iniciales(iniciales)

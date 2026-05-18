@@ -1,523 +1,234 @@
 // ===== CONFIGURACIÓN DE API =====
-// Cambia estas URLs según tu entorno
-const API_BASE = 'http://localhost:8080/api/admin/dashboard';
-const TOKEN = localStorage.getItem('jwtToken'); // El token JWT debe estar guardado en localStorage
+const API_BASE = 'http://localhost:8080/api/admin/dashboardAdmin';
+const TOKEN = localStorage.getItem('token') || localStorage.getItem('jwtToken');
 
-// ===== DATOS DE PRUEBA (Se usa si no hay conexión a backend) =====
+// ===== DATOS DE PRUEBA (Fallback si falla el backend) =====
 const datosReservasLocal = [
-    {
-        id: 1,
-        nombreHuesped: "Julianne Weaver",
-        iniciales: "JW",
-        fechaHora: "2024-10-24 19:30",
-        cantidadPersonas: 4,
-        numeroMesa: "T-14",
-        estado: "CONFIRMADA",
-        tipoEvento: "VIP, WINE PAIRING PREFERRED"
-    },
-    {
-        id: 2,
-        nombreHuesped: "Arthur Sterling",
-        iniciales: "AS",
-        fechaHora: "2024-10-24 20:30",
-        cantidadPersonas: 2,
-        numeroMesa: "T-08",
-        estado: "PENDIENTE",
-        tipoEvento: "MOSCOW SEATING"
-    },
-    {
-        id: 3,
-        nombreHuesped: "Marcus Chen",
-        iniciales: "MC",
-        fechaHora: "2024-10-24 18:00",
-        cantidadPersonas: 6,
-        numeroMesa: "L-02",
-        estado: "LLEGADA",
-        tipoEvento: "BIRTHDAY CELEBRATION"
-    },
-    {
-        id: 4,
-        nombreHuesped: "Sarah Johnson",
-        iniciales: "SJ",
-        fechaHora: "2024-10-25 19:00",
-        cantidadPersonas: 3,
-        numeroMesa: "T-12",
-        estado: "CONFIRMADA",
-        tipoEvento: "REGULAR"
-    },
-    {
-        id: 5,
-        nombreHuesped: "David Miller",
-        iniciales: "DM",
-        fechaHora: "2024-10-25 20:00",
-        cantidadPersonas: 5,
-        numeroMesa: "T-16",
-        estado: "PENDIENTE",
-        tipoEvento: "CORPORATE"
-    },
+    { id: 1, nombreHuesped: "Julianne Weaver", iniciales: "JW", fechaHora: "2024-10-24 19:30", cantidadPersonas: 4, numeroMesa: "T-14", estado: "CONFIRMADA", tipoEvento: "VIP" },
+    { id: 2, nombreHuesped: "Arthur Sterling", iniciales: "AS", fechaHora: "2024-10-24 20:30", cantidadPersonas: 2, numeroMesa: "T-08", estado: "PENDIENTE", tipoEvento: "MOSCOW" },
+    { id: 3, nombreHuesped: "Marcus Chen", iniciales: "MC", fechaHora: "2024-10-24 18:00", cantidadPersonas: 6, numeroMesa: "L-02", estado: "LLEGADA", tipoEvento: "BIRTHDAY" },
+    { id: 4, nombreHuesped: "Sofia Reyes", iniciales: "SR", fechaHora: "2024-10-25 20:00", cantidadPersonas: 3, numeroMesa: "T-05", estado: "CONFIRMADA", tipoEvento: "Regular" },
+    { id: 5, nombreHuesped: "Carlos Mendez", iniciales: "CM", fechaHora: "2024-10-25 21:00", cantidadPersonas: 5, numeroMesa: "L-01", estado: "PENDIENTE", tipoEvento: "BIRTHDAY" }
 ];
 
 const datosMesasLocal = [
-    {
-        id: 1,
-        numeroMesa: "T-14",
-        capacidad: 2,
-        nombreUbicacion: "Window Side A",
-        activa: true,
-        estado: "DISPONIBLE"
-    },
-    {
-        id: 2,
-        numeroMesa: "T-08",
-        capacidad: 6,
-        nombreUbicacion: "Imperial Booth",
-        activa: true,
-        estado: "DISPONIBLE"
-    },
-    {
-        id: 3,
-        numeroMesa: "L-02",
-        capacidad: 4,
-        nombreUbicacion: "Center Floor",
-        activa: true,
-        estado: "DISPONIBLE"
-    },
-    {
-        id: 4,
-        numeroMesa: "T-12",
-        capacidad: 4,
-        nombreUbicacion: "Terrace View",
-        activa: true,
-        estado: "DISPONIBLE"
-    },
-    {
-        id: 5,
-        numeroMesa: "T-16",
-        capacidad: 8,
-        nombreUbicacion: "Private Room",
-        activa: false,
-        estado: "MANTENIMIENTO"
-    },
+    { id: "1", numero: 14, numeroMesa: "T-14", capacidad: 2, nombreUbicacion: "Window Side A", activa: true, disponible: true },
+    { id: "2", numero: 8,  numeroMesa: "T-08", capacidad: 6, nombreUbicacion: "Imperial Booth", activa: true, disponible: true },
+    { id: "3", numero: 2,  numeroMesa: "L-02", capacidad: 4, nombreUbicacion: "Comedor Principal", activa: false, disponible: false }
 ];
 
 // ===== VARIABLES GLOBALES =====
-let datosReservas = [...datosReservasLocal];
-let datosMesas = [...datosMesasLocal];
-let paginaActualReservas = 1;
-let paginaActualMesas = 1;
+let datosReservas       = [];
+let datosReservasTodas  = [];
+let datosMesas          = [];
+let todasLasMesas       = [];
+
+let paginaActualReservas     = 1;
+let paginaActualMesas        = 1;
+let paginaActualReservasTodas = 1;
+
 const ITEMS_POR_PAGINA = 3;
-let todasLasMesas = [...datosMesas];
-let mesasParaEditar = null;
+let mesaIdParaEditar   = null;
 let conectadoAlBackend = false;
 
 // ===== INICIALIZACIÓN =====
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Dashboard iniciado');
-    
-    // Intentar conectar con backend
-    cargarDatosDelBackend();
-    
-    // Cargar datos iniciales (locales o del backend)
+document.addEventListener('DOMContentLoaded', async function () {
+    console.log('Dashboard Admin iniciado');
+
+    // Mostrar nombre real del admin en el perfil
+    cargarPerfilAdmin();
+
+    // Cargar datos del backend
+    await cargarDatosDelBackend();
+
+    // Renderizar UI
     actualizarEstadisticas();
     cargarReservasEnTabla();
     cargarMesasEnTabla();
-    
-    // Configurar navegación del sidebar
+    actualizarBadgesMesas();
+
+    // Configurar eventos
     configurarNavegacion();
-    
-    // Configurar formulario de mesas
     configurarFormularioMesas();
-    
-    // Configurar búsqueda de huéspedes
-    document.getElementById('buscarHuesped').addEventListener('input', filtrarReservas);
-    
-    // Configurar búsqueda de reservas globales
-    if (document.getElementById('buscarReserva')) {
-        document.getElementById('buscarReserva').addEventListener('input', filtrarReservasGlobales);
-        document.getElementById('filtroEstado').addEventListener('change', filtrarReservasGlobales);
-    }
-    
+    configurarBusquedas();
+
     console.log('Dashboard completamente cargado');
 });
 
+// ===== PERFIL ADMIN =====
+function cargarPerfilAdmin() {
+    const nombre = localStorage.getItem('nombreUsuario') || localStorage.getItem('nombre') || 'Admin';
+    const iniciales = nombre.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
+
+    // Actualizar TODOS los elementos de perfil en la página
+    document.querySelectorAll('.profile-name').forEach(el => {
+        el.textContent = nombre.toUpperCase();
+    });
+    document.querySelectorAll('.profile-avatar').forEach(el => {
+        el.textContent = iniciales;
+        el.style.color = '#1a1a1a';
+        el.style.fontWeight = '700';
+        el.style.fontSize = '14px';
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';
+        el.style.justifyContent = 'center';
+    });
+}
+
 // ===== CONECTAR CON BACKEND =====
 async function cargarDatosDelBackend() {
+    if (!TOKEN) {
+        console.warn('No hay Token JWT. Usando datos locales.');
+        usarDatosDePrueba();
+        return;
+    }
+
     try {
-        // Verificar si el token existe
-        if (!TOKEN) {
-            console.log('⚠️ No hay token JWT. Usando datos locales.');
-            conectadoAlBackend = false;
-            return;
-        }
-
-        // Intentar cargar mesas desde backend
-        const responsesMesas = await fetch(`${API_BASE}/mesas`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${TOKEN}`
-            }
+        // Cargar mesas
+        const resMesas = await fetch(`${API_BASE}/mesas`, {
+            headers: { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' }
         });
-
-        if (responsesMesas.ok) {
-            const mesasBackend = await responsesMesas.json();
-            datosMesas = mesasBackend || datosMesasLocal;
+        if (resMesas.ok) {
+            datosMesas    = await resMesas.json();
             todasLasMesas = [...datosMesas];
             conectadoAlBackend = true;
-            console.log('✅ Conectado al backend - Mesas cargadas');
-        } else if (responsesMesas.status === 401) {
-            console.log('⚠️ Token expirado o no válido. Usando datos locales.');
-            conectadoAlBackend = false;
+            console.log('✅ Mesas cargadas:', datosMesas.length);
         } else {
-            console.log('⚠️ Backend no disponible. Usando datos locales.');
-            conectadoAlBackend = false;
+            throw new Error('Error al cargar mesas: ' + resMesas.status);
         }
 
-        // Intentar cargar reservas desde backend
-        const responsesReservas = await fetch(`${API_BASE}/reservas-recientes?pagina=0&tamanio=10`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${TOKEN}`
-            }
+        // Cargar reservas recientes
+        const resReservas = await fetch(`${API_BASE}/reservas-recientes?pagina=0&tamanio=50`, {
+            headers: { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' }
         });
-
-        if (responsesReservas.ok) {
-            const reservasBackend = await responsesReservas.json();
-            datosReservas = reservasBackend || datosReservasLocal;
-            console.log('✅ Reservas cargadas del backend');
+        if (resReservas.ok) {
+            datosReservas      = await resReservas.json();
+            datosReservasTodas = [...datosReservas];
+            console.log('✅ Reservas cargadas:', datosReservas.length);
         }
 
-    } catch (error) {
-        console.log('⚠️ Error conectando con backend:', error);
-        console.log('📌 Usando datos locales de prueba');
-        conectadoAlBackend = false;
+    } catch (err) {
+        console.warn('Backend no disponible, usando datos locales.', err);
+        usarDatosDePrueba();
     }
 }
 
-// ===== ACTUALIZAR ESTADÍSTICAS =====
+function usarDatosDePrueba() {
+    datosReservas       = [...datosReservasLocal];
+    datosReservasTodas  = [...datosReservasLocal];
+    datosMesas          = [...datosMesasLocal];
+    todasLasMesas       = [...datosMesasLocal];
+    conectadoAlBackend  = false;
+}
+
+// ===== ESTADÍSTICAS =====
 async function actualizarEstadisticas() {
     try {
         if (conectadoAlBackend && TOKEN) {
-            const response = await fetch(`${API_BASE}/estadisticas`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${TOKEN}`
-                }
+            const res = await fetch(`${API_BASE}/estadisticas`, {
+                headers: { 'Authorization': `Bearer ${TOKEN}` }
             });
-
-            if (response.ok) {
-                const stats = await response.json();
-                document.getElementById('ocupancia').textContent = stats.ocupanciaTotal + '%';
-                document.getElementById('totalHuespedes').textContent = stats.totalHuespedes;
-                document.getElementById('listaEspera').textContent = String(stats.listaEsperaCount).padStart(2, '0');
-                document.getElementById('mesasActivas').textContent = stats.mesasActivas;
-                document.getElementById('mesasTotales').textContent = stats.mesasTotales;
-                console.log('✅ Estadísticas actualizadas del backend');
+            if (res.ok) {
+                const stats = await res.json();
+                setEl('ocupancia',      stats.ocupanciaTotal + '%');
+                setEl('totalHuespedes', stats.totalHuespedes);
+                setEl('listaEspera',    String(stats.listaEsperaCount).padStart(2, '0'));
+                setEl('mesasActivas',   stats.mesasActivas);
+                setEl('mesasTotales',   stats.mesasTotales);
                 return;
             }
         }
-    } catch (error) {
-        console.log('⚠️ Error cargando estadísticas del backend');
-    }
+    } catch (e) { /* fallback */ }
 
-    // Si no hay backend, usar cálculos locales
-    const mesasActivas = datosMesas.filter(m => m.activa).length;
-    const totalMesas = datosMesas.length;
-    const reservasConfirmadas = datosReservas.filter(r => r.estado === "CONFIRMADA").length;
-    const reservasPendientes = datosReservas.filter(r => r.estado === "PENDIENTE").length;
-    
-    const ocupancia = Math.round((reservasConfirmadas / totalMesas) * 100);
-    const totalHuespedes = datosReservas
-        .filter(r => r.estado === "CONFIRMADA")
-        .reduce((sum, r) => sum + r.cantidadPersonas, 0);
-    
-    document.getElementById('ocupancia').textContent = ocupancia + '%';
-    document.getElementById('totalHuespedes').textContent = totalHuespedes;
-    document.getElementById('listaEspera').textContent = String(reservasPendientes).padStart(2, '0');
-    document.getElementById('mesasActivas').textContent = mesasActivas;
-    document.getElementById('mesasTotales').textContent = totalMesas;
+    // Cálculo local
+    const mesasDisponibles = datosMesas.filter(m => m.disponible !== undefined ? m.disponible : m.activa).length;
+    const total            = datosMesas.length;
+    const ocupadas         = total - mesasDisponibles;
+    const ocupancia        = total > 0 ? Math.round((ocupadas / total) * 100) : 0;
+    const totalHuespedes   = datosReservas.reduce((s, r) => s + (r.cantidadPersonas || r.numeroPersonas || 0), 0);
+    const pendientes       = datosReservas.filter(r => r.estado === 'PENDIENTE').length;
+
+    setEl('ocupancia',      ocupancia + '%');
+    setEl('totalHuespedes', totalHuespedes);
+    setEl('listaEspera',    String(pendientes).padStart(2, '0'));
+    setEl('mesasActivas',   mesasDisponibles);
+    setEl('mesasTotales',   total);
 }
 
-// ===== CARGAR RESERVAS EN TABLA =====
+function setEl(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+}
+
+// ===================================================================
+// SECCIÓN: RESERVAS RECIENTES (Panel principal)
+// ===================================================================
+
 function cargarReservasEnTabla() {
     const tbody = document.getElementById('reservasTableBody');
+    if (!tbody) return;
+
     tbody.innerHTML = '';
-    
+
     const inicio = (paginaActualReservas - 1) * ITEMS_POR_PAGINA;
-    const fin = inicio + ITEMS_POR_PAGINA;
-    const reservasVisibles = datosReservas.slice(inicio, fin);
-    
-    if (datosReservas.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">No hay reservas</td></tr>';
-        return;
+    const fin    = inicio + ITEMS_POR_PAGINA;
+    const visibles = datosReservas.slice(inicio, fin);
+    const total    = datosReservas.length;
+
+    if (total === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;padding:40px;">No hay reservas registradas.</td></tr>';
+    } else {
+        visibles.forEach(r => tbody.appendChild(crearFilaReserva(r)));
     }
-    
-    reservasVisibles.forEach(reserva => {
-        let statusClass = 'status-pending';
-        if (reserva.estado === 'CONFIRMADA') statusClass = 'status-confirmed';
-        else if (reserva.estado === 'LLEGADA') statusClass = 'status-arrived';
-        
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>
-                <div class="guest-cell">
-                    <div class="guest-avatar">${reserva.iniciales}</div>
-                    <div class="guest-info">
-                        <h4>${reserva.nombreHuesped}</h4>
-                        <p>${reserva.tipoEvento}</p>
-                    </div>
-                </div>
-            </td>
-            <td>${reserva.fechaHora}</td>
-            <td>
-                <div style="display: flex; align-items: center; gap: 5px;">
-                     ${reserva.cantidadPersonas}
-                </div>
-            </td>
-            <td><strong>${reserva.numeroMesa}</strong></td>
-            <td>
-                <span class="status-badge ${statusClass}">
-                    ${reserva.estado}
-                </span>
-            </td>
-            <td>
-                <div class="action-buttons">
-                    <button class="action-btn" title="Editar" onclick="editarReserva(${reserva.id})">
-                        <img src="/iconos/pencil.png" alt="Editar" class="action-icon">
-                    </button>
-                    <button class="action-btn" title="Eliminar" onclick="eliminarReserva(${reserva.id})">
-                        <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
-                    </button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-    
-    const totalPaginas = Math.ceil(datosReservas.length / ITEMS_POR_PAGINA);
-    document.getElementById('paginaActual').textContent = paginaActualReservas;
-    document.getElementById('totalPaginas').textContent = totalPaginas;
+
+    // Paginación
+    const totalPags = Math.max(1, Math.ceil(total / ITEMS_POR_PAGINA));
+    setEl('paginaActual', paginaActualReservas);
+    setEl('totalPaginas', totalPags);
 }
 
-// ===== CARGAR MESAS EN TABLA =====
-function cargarMesasEnTabla() {
-    const container = document.getElementById('mesasListContainer');
-    container.innerHTML = '';
-    
-    const inicio = (paginaActualMesas - 1) * ITEMS_POR_PAGINA;
-    const fin = inicio + ITEMS_POR_PAGINA;
-    const mesasVisibles = todasLasMesas.slice(inicio, fin);
-    
-    if (todasLasMesas.length === 0) {
-        container.innerHTML = '<p style="color: #999; text-align: center;">No hay mesas configuradas</p>';
-        return;
-    }
-    
-    mesasVisibles.forEach(mesa => {
-        let estadoBadge = '';
-        if (mesa.activa) {
-            estadoBadge = '<span class="badge active-badge">ACTIVE</span>';
-        } else {
-            estadoBadge = '<span class="badge" style="background-color: rgba(244, 67, 54, 0.2); color: #f44336;">INACTIVE</span>';
-        }
-        
-        const mesaDiv = document.createElement('div');
-        mesaDiv.className = 'mesa-item';
-        mesaDiv.innerHTML = `
-            <div class="mesa-info">
-                <div class="mesa-number">${mesa.numeroMesa}</div>
-                <div class="mesa-details">
-                    ${mesa.nombreUbicacion} • ${mesa.capacidad} Guests
+function crearFilaReserva(r) {
+    const statusMap = {
+        'CONFIRMADA': 'status-confirmed',
+        'PENDIENTE':  'status-pending',
+        'LLEGADA':    'status-arrived',
+        'CANCELADA':  'status-cancelada'
+    };
+    const cls      = statusMap[r.estado] || 'status-pending';
+    const iniciales = r.iniciales || (r.nombreHuesped || 'U').substring(0, 2).toUpperCase();
+    const personas  = r.cantidadPersonas || r.numeroPersonas || 0;
+    const mesa      = r.numeroMesa || r.mesaId || 'S/A';
+    const fechaHora = r.fechaHora || ((r.fecha || '') + ' ' + (r.hora || ''));
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td>
+            <div class="guest-cell">
+                <div class="guest-avatar">${iniciales}</div>
+                <div class="guest-info">
+                    <h4>${r.nombreHuesped || 'Cliente'}</h4>
+                    <p>${r.tipoEvento || 'Regular'}</p>
                 </div>
             </div>
-            <div class="mesa-status">
-                ${estadoBadge}
-                <button class="mesa-edit-btn" onclick="editarMesa(${mesa.id})" title="Editar">
+        </td>
+        <td>${fechaHora}</td>
+        <td>${personas}</td>
+        <td><strong>${mesa}</strong></td>
+        <td><span class="status-badge ${cls}">${r.estado || 'CONFIRMADA'}</span></td>
+        <td>
+            <div class="action-buttons">
+                <button class="action-btn" title="Editar" onclick="editarReserva('${r.id}')">
                     <img src="/iconos/pencil.png" alt="Editar" class="action-icon">
                 </button>
-                <button class="mesa-delete-btn" onclick="eliminarMesa(${mesa.id})" title="Eliminar">
+                <button class="action-btn" title="Eliminar" onclick="eliminarReservaAdmin('${r.id}')">
                     <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
                 </button>
             </div>
-        `;
-        container.appendChild(mesaDiv);
-    });
+        </td>`;
+    return tr;
 }
 
-// ===== NAVEGACIÓN SIDEBAR =====
-function configurarNavegacion() {
-    const navItems = document.querySelectorAll('.nav-item');
-    
-    navItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            navItems.forEach(nav => nav.classList.remove('active'));
-            this.classList.add('active');
-            
-            const seccion = this.getAttribute('data-section');
-            
-            const sections = document.querySelectorAll('.content-section');
-            sections.forEach(sec => sec.classList.remove('active'));
-            document.getElementById(seccion).classList.add('active');
-            
-            if (seccion === 'reservas') {
-                cargarReservasGlobales();
-            }
-        });
-    });
-}
-
-// ===== FORMULARIO DE MESAS =====
-function configurarFormularioMesas() {
-    const formMesa = document.getElementById('formMesa');
-    
-    formMesa.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const numeroMesa = document.getElementById('numeroMesa').value;
-        const capacidad = parseInt(document.getElementById('capacidad').value);
-        const nombreUbicacion = document.getElementById('ubicacion').value;
-        const activa = document.getElementById('activa').checked;
-        
-        const datosMesa = {
-            numero: parseInt(numeroMesa),
-            capacidad: capacidad,
-            disponible: activa
-        };
-
-        if (mesasParaEditar) {
-            // Actualizar mesa
-            if (conectadoAlBackend && TOKEN) {
-                try {
-                    const response = await fetch(`${API_BASE}/mesas/${mesasParaEditar}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${TOKEN}`
-                        },
-                        body: JSON.stringify(datosMesa)
-                    });
-
-                    if (response.ok) {
-                        alert('Mesa actualizada en el servidor');
-                    } else {
-                        alert('Error al actualizar mesa en el servidor');
-                    }
-                } catch (error) {
-                    console.log('Error actualizando mesa:', error);
-                }
-            } else {
-                // Actualizar localmente
-                const index = todasLasMesas.findIndex(m => m.id === mesasParaEditar);
-                if (index !== -1) {
-                    todasLasMesas[index] = {
-                        ...todasLasMesas[index],
-                        numeroMesa,
-                        capacidad,
-                        nombreUbicacion,
-                        activa
-                    };
-                }
-            }
-            mesasParaEditar = null;
-            document.querySelector('.btn-save').textContent = 'GUARDAR MESA';
-        } else {
-            // Crear nueva mesa
-            if (conectadoAlBackend && TOKEN) {
-                try {
-                    const response = await fetch(`${API_BASE}/mesas`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${TOKEN}`
-                        },
-                        body: JSON.stringify(datosMesa)
-                    });
-
-                    if (response.ok) {
-                        const mesaCreada = await response.json();
-                        todasLasMesas.push(mesaCreada);
-                        alert('Mesa creada en el servidor');
-                    } else {
-                        alert('Error al crear mesa en el servidor');
-                    }
-                } catch (error) {
-                    console.log('Error creando mesa:', error);
-                }
-            } else {
-                // Crear localmente
-                const nuevaMesa = {
-                    id: Math.max(...todasLasMesas.map(m => m.id), 0) + 1,
-                    numeroMesa,
-                    capacidad,
-                    nombreUbicacion,
-                    activa,
-                    estado: activa ? 'DISPONIBLE' : 'MANTENIMIENTO'
-                };
-                todasLasMesas.push(nuevaMesa);
-            }
-        }
-        
-        formMesa.reset();
-        cargarMesasEnTabla();
-        actualizarEstadisticas();
-    });
-}
-
-function limpiarFormulario() {
-    document.getElementById('formMesa').reset();
-    mesasParaEditar = null;
-    document.querySelector('.btn-save').textContent = 'GUARDAR MESA';
-}
-
-function editarMesa(mesaId) {
-    const mesa = todasLasMesas.find(m => m.id === mesaId);
-    if (!mesa) return;
-    
-    document.getElementById('numeroMesa').value = mesa.numeroMesa;
-    document.getElementById('capacidad').value = mesa.capacidad;
-    document.getElementById('ubicacion').value = mesa.nombreUbicacion;
-    document.getElementById('activa').checked = mesa.activa;
-    
-    mesasParaEditar = mesaId;
-    document.querySelector('.btn-save').textContent = 'ACTUALIZAR MESA';
-    
-    document.querySelector('.mesa-form-panel').scrollIntoView({ behavior: 'smooth' });
-}
-
-async function eliminarMesa(mesaId) {
-    if (!confirm('¿Estás seguro de que deseas eliminar esta mesa?')) return;
-
-    if (conectadoAlBackend && TOKEN) {
-        try {
-            const response = await fetch(`${API_BASE}/mesas/${mesaId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${TOKEN}`
-                }
-            });
-
-            if (response.ok) {
-                todasLasMesas = todasLasMesas.filter(m => m.id !== mesaId);
-                cargarMesasEnTabla();
-                actualizarEstadisticas();
-                alert('Mesa eliminada correctamente');
-            }
-        } catch (error) {
-            console.log('Error eliminando mesa:', error);
-        }
-    } else {
-        todasLasMesas = todasLasMesas.filter(m => m.id !== mesaId);
-        cargarMesasEnTabla();
-        actualizarEstadisticas();
-        alert('Mesa eliminada correctamente');
-    }
-}
-
-// ===== PAGINACIÓN RESERVAS =====
+// ===== PAGINACIÓN RESERVAS (Panel principal) =====
 function paginaAnterior() {
     if (paginaActualReservas > 1) {
         paginaActualReservas--;
@@ -526,11 +237,62 @@ function paginaAnterior() {
 }
 
 function paginaSiguiente() {
-    const totalPaginas = Math.ceil(datosReservas.length / ITEMS_POR_PAGINA);
-    if (paginaActualReservas < totalPaginas) {
+    const totalPags = Math.ceil(datosReservas.length / ITEMS_POR_PAGINA);
+    if (paginaActualReservas < totalPags) {
         paginaActualReservas++;
         cargarReservasEnTabla();
     }
+}
+
+// ===================================================================
+// SECCIÓN: MESAS
+// ===================================================================
+
+function cargarMesasEnTabla() {
+    const container = document.getElementById('mesasListContainer');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    const inicio   = (paginaActualMesas - 1) * ITEMS_POR_PAGINA;
+    const fin      = inicio + ITEMS_POR_PAGINA;
+    const visibles = todasLasMesas.slice(inicio, fin);
+
+    if (todasLasMesas.length === 0) {
+        container.innerHTML = '<p style="color:#999;text-align:center;padding:20px;">No hay mesas configuradas.</p>';
+        return;
+    }
+
+    visibles.forEach(m => {
+        const activa  = m.disponible !== undefined ? m.disponible : (m.activa !== undefined ? m.activa : true);
+        const badgeHtml = activa
+            ? '<span class="badge active-badge">DISPONIBLE</span>'
+            : '<span class="badge" style="background:rgba(244,67,54,.2);color:#f44336;">OCUPADA</span>';
+
+        const div = document.createElement('div');
+        div.className = 'mesa-item';
+        div.innerHTML = `
+            <div class="mesa-info">
+                <div class="mesa-number">Mesa ${m.numero || m.numeroMesa || m.id}</div>
+                <div class="mesa-details">${m.sector || m.nombreUbicacion || 'Comedor Principal'} · ${m.capacidad} personas</div>
+            </div>
+            <div class="mesa-status">
+                ${badgeHtml}
+                <button class="mesa-edit-btn" title="Editar" onclick="editarMesa('${m.id}')">
+                    <img src="/iconos/pencil.png" alt="Editar" class="action-icon">
+                </button>
+                <button class="mesa-delete-btn" title="Eliminar" onclick="eliminarMesa('${m.id}')">
+                    <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
+                </button>
+            </div>`;
+        container.appendChild(div);
+    });
+}
+
+function actualizarBadgesMesas() {
+    const activas = todasLasMesas.filter(m => m.disponible !== undefined ? m.disponible : (m.activa !== undefined ? m.activa : true)).length;
+    setEl('mesasActivas',  activas);
+    setEl('mesasTotales',  todasLasMesas.length);
 }
 
 // ===== PAGINACIÓN MESAS =====
@@ -542,104 +304,413 @@ function mesaAnterior() {
 }
 
 function mesaSiguiente() {
-    const totalPaginas = Math.ceil(todasLasMesas.length / ITEMS_POR_PAGINA);
-    if (paginaActualMesas < totalPaginas) {
+    const totalPags = Math.ceil(todasLasMesas.length / ITEMS_POR_PAGINA);
+    if (paginaActualMesas < totalPags) {
         paginaActualMesas++;
         cargarMesasEnTabla();
     }
 }
 
-// ===== FILTRAR RESERVAS =====
-function filtrarReservas(e) {
-    const termino = e.target.value.toLowerCase();
-    const filas = document.querySelectorAll('#reservasTableBody tr');
-    
-    filas.forEach(fila => {
-        const nombreHuesped = fila.textContent.toLowerCase();
-        fila.style.display = nombreHuesped.includes(termino) ? '' : 'none';
+// ===== FORMULARIO MESAS =====
+function configurarFormularioMesas() {
+    const form = document.getElementById('formMesa');
+    if (!form) return;
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const numero    = parseInt(document.getElementById('numeroMesa').value) || 0;
+        const capacidad = parseInt(document.getElementById('capacidad').value)  || 0;
+        const ubicacion = document.getElementById('ubicacion').value.trim();
+        const activa    = document.getElementById('activa').checked;
+
+        if (!numero || !capacidad) {
+            alert('Por favor completa número y capacidad de la mesa.');
+            return;
+        }
+
+        const payload = {
+            numero:     numero,
+            capacidad:  capacidad,
+            sector:     ubicacion,
+            disponible: activa
+        };
+
+        if (conectadoAlBackend && TOKEN) {
+            try {
+                const url    = mesaIdParaEditar ? `${API_BASE}/mesas/${mesaIdParaEditar}` : `${API_BASE}/mesas`;
+                const method = mesaIdParaEditar ? 'PUT' : 'POST';
+
+                const res = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${TOKEN}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    alert(mesaIdParaEditar ? '✅ Mesa actualizada correctamente.' : '✅ Mesa creada correctamente.');
+                } else {
+                    const msg = await res.text();
+                    alert('Error del servidor: ' + msg);
+                    return;
+                }
+            } catch (err) {
+                alert('Error de conexión al guardar la mesa.');
+                return;
+            }
+        } else {
+            // Modo local
+            if (mesaIdParaEditar) {
+                const idx = todasLasMesas.findIndex(m => m.id === mesaIdParaEditar);
+                if (idx !== -1) {
+                    todasLasMesas[idx] = { ...todasLasMesas[idx], numero, capacidad, sector: ubicacion, disponible: activa, activa };
+                }
+            } else {
+                const newId = String(Date.now());
+                todasLasMesas.push({ id: newId, numero, capacidad, sector: ubicacion, disponible: activa, activa });
+            }
+        }
+
+        // Recargar datos desde backend y refrescar UI
+        await cargarDatosDelBackend();
+        limpiarFormulario();
+        cargarMesasEnTabla();
+        actualizarBadgesMesas();
+        actualizarEstadisticas();
     });
 }
 
-// ===== FUNCIONES DE ACCIÓN =====
-function editarReserva(reservaId) {
-    alert('Función editar reserva - ID: ' + reservaId);
+function editarMesa(mesaId) {
+    const mesa = todasLasMesas.find(m => String(m.id) === String(mesaId));
+    if (!mesa) { alert('Mesa no encontrada.'); return; }
+
+    document.getElementById('numeroMesa').value = mesa.numero || '';
+    document.getElementById('capacidad').value  = mesa.capacidad || '';
+    document.getElementById('ubicacion').value  = mesa.sector || mesa.nombreUbicacion || '';
+    document.getElementById('activa').checked   = mesa.disponible !== undefined ? mesa.disponible : (mesa.activa !== undefined ? mesa.activa : true);
+
+    mesaIdParaEditar = mesaId;
+    const btn = document.querySelector('.btn-save');
+    if (btn) btn.textContent = 'ACTUALIZAR MESA';
+
+    // Scroll al formulario
+    document.getElementById('formMesa').scrollIntoView({ behavior: 'smooth' });
 }
 
-function eliminarReserva(reservaId) {
-    if (confirm('¿Estás seguro de que deseas eliminar esta reserva?')) {
-        const index = datosReservas.findIndex(r => r.id === reservaId);
-        if (index !== -1) {
-            datosReservas.splice(index, 1);
-            cargarReservasEnTabla();
-            actualizarEstadisticas();
-            alert('Reserva eliminada correctamente');
+async function eliminarMesa(mesaId) {
+    if (!confirm('¿Eliminar esta mesa de la base de datos?')) return;
+
+    if (conectadoAlBackend && TOKEN) {
+        try {
+            const res = await fetch(`${API_BASE}/mesas/${mesaId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${TOKEN}` }
+            });
+            if (res.ok) {
+                alert('Mesa eliminada correctamente.');
+            } else {
+                alert('No se pudo eliminar la mesa.');
+                return;
+            }
+        } catch (err) {
+            alert('Error de conexión.');
+            return;
         }
+    } else {
+        todasLasMesas = todasLasMesas.filter(m => String(m.id) !== String(mesaId));
+        datosMesas    = datosMesas.filter(m => String(m.id) !== String(mesaId));
     }
+
+    await cargarDatosDelBackend();
+
+    // Ajustar página si quedó vacía
+    const totalPags = Math.ceil(todasLasMesas.length / ITEMS_POR_PAGINA);
+    if (paginaActualMesas > totalPags) paginaActualMesas = Math.max(1, totalPags);
+
+    cargarMesasEnTabla();
+    actualizarBadgesMesas();
+    actualizarEstadisticas();
 }
 
-// ===== CARGAR TODAS LAS RESERVAS =====
-function cargarReservasGlobales() {
+function limpiarFormulario() {
+    const form = document.getElementById('formMesa');
+    if (form) form.reset();
+    mesaIdParaEditar = null;
+    const btn = document.querySelector('.btn-save');
+    if (btn) btn.textContent = 'GUARDAR MESA';
+}
+
+// ===================================================================
+// SECCIÓN: TODAS LAS RESERVAS
+// ===================================================================
+
+async function cargarReservasGlobales() {
+    datosReservasTodas = [...datosReservas];
+    renderizarTablaReservasTodas();
+}
+
+function renderizarTablaReservasTodas(lista) {
     const tbody = document.getElementById('reservasAllTableBody');
+    if (!tbody) return;
+
+    const datos   = lista || datosReservasTodas;
+    const inicio  = (paginaActualReservasTodas - 1) * ITEMS_POR_PAGINA;
+    const visibles = datos.slice(inicio, inicio + ITEMS_POR_PAGINA);
+
     tbody.innerHTML = '';
-    
-    datosReservas.forEach(reserva => {
-        let statusClass = 'status-pending';
-        if (reserva.estado === 'CONFIRMADA') statusClass = 'status-confirmed';
-        else if (reserva.estado === 'LLEGADA') statusClass = 'status-arrived';
-        
-        const row = document.createElement('tr');
-        row.innerHTML = `
+
+    if (datos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;padding:40px;">No se encontraron reservas.</td></tr>';
+        return;
+    }
+
+    visibles.forEach(r => {
+        const statusMap = { 'CONFIRMADA': 'status-confirmed', 'PENDIENTE': 'status-pending', 'LLEGADA': 'status-arrived', 'CANCELADA': 'status-cancelada' };
+        const cls       = statusMap[r.estado] || 'status-pending';
+        const iniciales = r.iniciales || (r.nombreHuesped || 'U').substring(0, 2).toUpperCase();
+        const personas  = r.cantidadPersonas || r.numeroPersonas || 0;
+        const mesa      = r.numeroMesa || r.mesaId || 'S/A';
+        const fechaHora = r.fechaHora || ((r.fecha || '') + ' ' + (r.hora || ''));
+
+        tbody.innerHTML += `
+        <tr>
             <td>
                 <div class="guest-cell">
-                    <div class="guest-avatar">${reserva.iniciales}</div>
+                    <div class="guest-avatar">${iniciales}</div>
                     <div class="guest-info">
-                        <h4>${reserva.nombreHuesped}</h4>
+                        <h4>${r.nombreHuesped || 'Cliente'}</h4>
                     </div>
                 </div>
             </td>
-            <td>${reserva.fechaHora}</td>
-            <td>${reserva.cantidadPersonas}</td>
-            <td><strong>${reserva.numeroMesa}</strong></td>
-            <td>
-                <span class="status-badge ${statusClass}">
-                    ${reserva.estado}
-                </span>
-            </td>
-            <td>${reserva.tipoEvento}</td>
+            <td>${fechaHora}</td>
+            <td>${personas}</td>
+            <td><strong>${mesa}</strong></td>
+            <td><span class="status-badge ${cls}">${r.estado || 'CONFIRMADA'}</span></td>
+            <td>${r.tipoEvento || 'Regular'}</td>
             <td>
                 <div class="action-buttons">
-                    <button class="action-btn" title="Editar" onclick="editarReserva(${reserva.id})">
-                        <img src="/iconos/pencil.png" alt="Editar" class="action-icon">
-                    </button>
-                    <button class="action-btn" title="Eliminar" onclick="eliminarReserva(${reserva.id})">
+                    <button class="action-btn" title="Eliminar" onclick="eliminarReservaAdmin('${r.id}')">
                         <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
                     </button>
                 </div>
             </td>
-        `;
-        tbody.appendChild(row);
+        </tr>`;
     });
 }
 
 function filtrarReservasGlobales() {
-    const termino = document.getElementById('buscarReserva')?.value.toLowerCase() || '';
-    const estado = document.getElementById('filtroEstado')?.value || '';
-    const filas = document.querySelectorAll('#reservasAllTableBody tr');
-    
-    filas.forEach(fila => {
-        const texto = fila.textContent.toLowerCase();
-        const estadoMatch = !estado || fila.textContent.includes(estado);
-        const textoMatch = texto.includes(termino);
-        
-        fila.style.display = (estadoMatch && textoMatch) ? '' : 'none';
+    const termino = (document.getElementById('buscarReserva')?.value || '').toLowerCase();
+    const estado  = (document.getElementById('filtroEstado')?.value || '');
+
+    const filtradas = datosReservas.filter(r => {
+        const matchTexto  = !termino || (r.nombreHuesped || '').toLowerCase().includes(termino) || (r.fechaHora || '').includes(termino);
+        const matchEstado = !estado  || r.estado === estado;
+        return matchTexto && matchEstado;
+    });
+
+    datosReservasTodas = filtradas;
+    paginaActualReservasTodas = 1;
+    renderizarTablaReservasTodas(filtradas);
+}
+
+async function eliminarReservaAdmin(id) {
+    if (!confirm('¿Eliminar esta reserva?')) return;
+    // Por ahora solo la quitamos de la lista local
+    datosReservas       = datosReservas.filter(r => String(r.id) !== String(id));
+    datosReservasTodas  = datosReservasTodas.filter(r => String(r.id) !== String(id));
+    cargarReservasEnTabla();
+    renderizarTablaReservasTodas();
+    actualizarEstadisticas();
+}
+
+function editarReserva(id) {
+    alert('Función de edición de reserva ID: ' + id + ' (en desarrollo)');
+}
+
+// ===================================================================
+// SECCIÓN: USUARIOS
+// ===================================================================
+
+async function cargarUsuariosSistema() {
+    const tbody = document.getElementById('usuariosTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;padding:30px;">Cargando usuarios desde MongoDB...</td></tr>';
+
+    if (!TOKEN) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#f44336;padding:30px;">Sin autenticación. Inicia sesión.</td></tr>';
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/usuarios`, {
+            headers: { 'Authorization': `Bearer ${TOKEN}` }
+        });
+
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+
+        const usuarios = await res.json();
+        tbody.innerHTML = '';
+
+        if (usuarios.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;padding:30px;">No hay usuarios registrados.</td></tr>';
+            return;
+        }
+
+        usuarios.forEach(u => {
+            const rolColor = u.rol === 'ADMIN' ? 'background:rgba(255,193,7,.2);color:#ffc107;'
+                           : u.rol === 'MESERO' ? 'background:rgba(33,150,243,.2);color:#2196F3;'
+                           : 'background:rgba(76,175,80,.2);color:#4CAF50;';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${u.nombre || ''} ${u.apellido || ''}</strong></td>
+                <td>${u.correo || ''}</td>
+                <td><span class="badge" style="${rolColor}padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;">${u.rol || ''}</span></td>
+                <td>${u.telefono || 'N/A'}</td>
+                <td>${u.direccion || 'N/A'}</td>
+                <td>
+                    <button class="action-btn" title="Eliminar" onclick="eliminarUsuario('${u.id}')">
+                        <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
+                    </button>
+                </td>`;
+            tbody.appendChild(tr);
+        });
+
+        // Búsqueda en tiempo real
+        configurarBusquedaUsuarios(usuarios);
+
+    } catch (err) {
+        console.error('Error al cargar usuarios:', err);
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#f44336;padding:30px;">Error al conectar con el servidor.</td></tr>';
+    }
+}
+
+function configurarBusquedaUsuarios(usuarios) {
+    const inputBuscar = document.getElementById('buscarUsuario');
+    const filtroRol   = document.getElementById('filtroRol');
+
+    function filtrar() {
+        const termino = (inputBuscar?.value || '').toLowerCase();
+        const rol     = (filtroRol?.value || '');
+        const tbody   = document.getElementById('usuariosTableBody');
+        if (!tbody) return;
+
+        const filtrados = usuarios.filter(u => {
+            const nombre = `${u.nombre || ''} ${u.apellido || ''}`.toLowerCase();
+            const correo = (u.correo || '').toLowerCase();
+            return (!termino || nombre.includes(termino) || correo.includes(termino))
+                && (!rol || u.rol === rol);
+        });
+
+        tbody.innerHTML = '';
+        if (filtrados.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;padding:30px;">Sin resultados.</td></tr>';
+            return;
+        }
+        filtrados.forEach(u => {
+            const rolColor = u.rol === 'ADMIN' ? 'background:rgba(255,193,7,.2);color:#ffc107;'
+                           : u.rol === 'MESERO' ? 'background:rgba(33,150,243,.2);color:#2196F3;'
+                           : 'background:rgba(76,175,80,.2);color:#4CAF50;';
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${u.nombre || ''} ${u.apellido || ''}</strong></td>
+                    <td>${u.correo || ''}</td>
+                    <td><span class="badge" style="${rolColor}padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;">${u.rol || ''}</span></td>
+                    <td>${u.telefono || 'N/A'}</td>
+                    <td>${u.direccion || 'N/A'}</td>
+                    <td>
+                        <button class="action-btn" title="Eliminar" onclick="eliminarUsuario('${u.id}')">
+                            <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
+                        </button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    if (inputBuscar) inputBuscar.addEventListener('input', filtrar);
+    if (filtroRol)   filtroRol.addEventListener('change', filtrar);
+}
+
+async function eliminarUsuario(id) {
+    if (!confirm('¿Eliminar este usuario permanentemente?')) return;
+
+    if (conectadoAlBackend && TOKEN) {
+        try {
+            const res = await fetch(`${API_BASE}/usuarios/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${TOKEN}` }
+            });
+            if (res.ok) {
+                alert('Usuario eliminado correctamente.');
+                cargarUsuariosSistema();
+            } else {
+                alert('No se pudo eliminar el usuario.');
+            }
+        } catch (e) {
+            alert('Error de conexión.');
+        }
+    }
+}
+
+// ===================================================================
+// NAVEGACIÓN SIDEBAR
+// ===================================================================
+
+function configurarNavegacion() {
+    const navItems = document.querySelectorAll('.nav-item');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', function (e) {
+            e.preventDefault();
+            navItems.forEach(n => n.classList.remove('active'));
+            this.classList.add('active');
+
+            const seccion = this.getAttribute('data-section');
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(seccion);
+            if (target) target.classList.add('active');
+
+            // Acciones al cambiar pestaña
+            if (seccion === 'reservas') cargarReservasGlobales();
+            if (seccion === 'usuarios') cargarUsuariosSistema();
+            if (seccion === 'mesas')    { cargarMesasEnTabla(); actualizarBadgesMesas(); }
+        });
     });
 }
 
-// ===== LOGOUT =====
+// ===================================================================
+// BÚSQUEDAS GENERALES
+// ===================================================================
+
+function configurarBusquedas() {
+    // Búsqueda en tabla de reservas recientes
+    const buscarHuesped = document.getElementById('buscarHuesped');
+    if (buscarHuesped) {
+        buscarHuesped.addEventListener('input', function () {
+            const termino = this.value.toLowerCase();
+            document.querySelectorAll('#reservasTableBody tr').forEach(tr => {
+                tr.style.display = tr.textContent.toLowerCase().includes(termino) ? '' : 'none';
+            });
+        });
+    }
+
+    // Búsqueda en sección "Todas las Reservas"
+    const buscarReserva = document.getElementById('buscarReserva');
+    const filtroEstado  = document.getElementById('filtroEstado');
+    if (buscarReserva) buscarReserva.addEventListener('input', filtrarReservasGlobales);
+    if (filtroEstado)  filtroEstado.addEventListener('change', filtrarReservasGlobales);
+}
+
+// ===================================================================
+// UTILIDADES
+// ===================================================================
+
 function logout() {
-    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-        localStorage.removeItem('jwtToken');
-        alert('Sesión cerrada. Redireccionar a login...');
+    if (confirm('¿Cerrar sesión de administración?')) {
+        localStorage.clear();
         window.location.href = '/login';
     }
 }

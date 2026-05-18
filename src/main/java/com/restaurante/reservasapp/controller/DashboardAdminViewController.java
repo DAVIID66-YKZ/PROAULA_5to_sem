@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class DashboardViewController {
+public class DashboardAdminViewController {
     
     // Mapeo para acceder al dashboard directamente
     @GetMapping("/dashboardAdmin")

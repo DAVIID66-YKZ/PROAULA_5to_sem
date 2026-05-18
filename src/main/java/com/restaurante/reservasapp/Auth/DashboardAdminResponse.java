@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DashboardResponse {
+public class DashboardAdminResponse {
     private int ocupanciaTotal;              // Porcentaje de ocupancia (84%)
     private int totalHuespedes;              // Total de huéspedes actuales (142)
     private int listaEsperaCount;            // Personas en lista de espera (08)

@@ -61,4 +61,28 @@ public AuthResponse register(RegisterRequest request) {
             .rol(savedUser.getRol().name()) // 🔥 Agregado
             .build();
 }
+public AuthResponse registerAdmin(RegisterRequest request) {
+    if (userRepository.findByCorreo(request.getCorreo()).isPresent()) {
+        throw new RuntimeException("El correo ya está registrado");
+    }
+
+    UsuarioEntity user = UsuarioEntity.builder()
+            .nombre(request.getNombre())
+            .apellido(request.getApellido())
+            .correo(request.getCorreo())
+            .contrasena(passwordEncoder.encode(request.getContrasena()))
+            .direccion(request.getDireccion())
+            .telefono(request.getTelefono())
+            .rol(Rol.ADMIN) // 🔥 Aquí le asignamos el Rol de Administrador
+            .build();
+
+    UsuarioEntity savedUser = userRepository.save(user);
+
+    return AuthResponse.builder()
+            .token(jwtService.getToken(savedUser))
+            .usuarioId(savedUser.getId())
+            .nombre(savedUser.getNombre())
+            .rol(savedUser.getRol().name())
+            .build();
+}
 }

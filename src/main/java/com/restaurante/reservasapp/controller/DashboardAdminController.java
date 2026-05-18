@@ -1,10 +1,12 @@
 package com.restaurante.reservasapp.controller;
 
-import com.restaurante.reservasapp.Auth.DashboardResponse;
-import com.restaurante.reservasapp.Auth.ReservaParaDashboardResponse;
+import com.restaurante.reservasapp.Auth.DashboardAdminResponse;
+import com.restaurante.reservasapp.Auth.ReservaParaDashboardAdminResponse;
 import com.restaurante.reservasapp.Entity.MesaEntity;
-import com.restaurante.reservasapp.services.DashboardService;
+import com.restaurante.reservasapp.Entity.UsuarioEntity;
+import com.restaurante.reservasapp.services.DashboardAminService;
 import com.restaurante.reservasapp.services.MesaService;
+import com.restaurante.reservasapp.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,28 +19,31 @@ import java.util.List;
 @RequestMapping("/api/admin/dashboardAdmin")
 @PreAuthorize("hasRole('ADMIN')")
 @CrossOrigin(origins = "*", maxAge = 3600)
-public class DashboardController {
+public class DashboardAdminController {
 
     @Autowired
-    private DashboardService dashboardService;
+    private DashboardAminService dashboardService;
 
     @Autowired
     private MesaService mesaService;
+    
+    @Autowired
+    private UsuarioService usuarioService; // 🔥 AGREGAR ESTO
 
     // ===== ENDPOINTS DE ESTADÍSTICAS =====
 
     @GetMapping("/estadisticas")
-    public ResponseEntity<DashboardResponse> obtenerEstadisticas() {
-        DashboardResponse stats = dashboardService.obtenerEstadisticasGenerales();
+    public ResponseEntity<DashboardAdminResponse> obtenerEstadisticas() {
+        DashboardAdminResponse stats = dashboardService.obtenerEstadisticasGenerales();
         return ResponseEntity.ok(stats);
     }
 
     @GetMapping("/reservas-recientes")
-    public ResponseEntity<List<ReservaParaDashboardResponse>> obtenerReservasRecientes(
+    public ResponseEntity<List<ReservaParaDashboardAdminResponse>> obtenerReservasRecientes(
             @RequestParam(defaultValue = "0") int pagina,
             @RequestParam(defaultValue = "10") int tamanio) {
 
-        List<ReservaParaDashboardResponse> reservas =
+        List<ReservaParaDashboardAdminResponse> reservas =
             dashboardService.obtenerReservasRecientes(pagina, tamanio);
         return ResponseEntity.ok(reservas);
     }
@@ -102,5 +107,23 @@ public class DashboardController {
             .filter(MesaEntity::isDisponible)
             .toList();
         return ResponseEntity.ok(mesasDisponibles);
+    }
+
+    // ===== ENDPOINTS DE USUARIOS (NUEVO) =====
+
+    @GetMapping("/usuarios")
+    public ResponseEntity<List<UsuarioEntity>> obtenerTodosLosUsuarios() {
+        List<UsuarioEntity> usuarios = usuarioService.listarUsuarios();
+        return ResponseEntity.ok(usuarios);
+    }
+
+    @DeleteMapping("/usuarios/{id}")
+    public ResponseEntity<Void> eliminarUsuario(@PathVariable String id) {
+        UsuarioEntity usuario = usuarioService.obtenerUsuario(id);
+        if (usuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+        usuarioService.eliminarUsuario(id);
+        return ResponseEntity.noContent().build();
     }
 }
