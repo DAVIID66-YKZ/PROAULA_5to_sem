@@ -1,0 +1,91 @@
+/* ================================================================
+   ESTILOS DEL CALENDARIO - THE CULINARY MANUSCRIPT
+   ================================================================ */
+
+/* Personalización de los botones de FullCalendar */
+.fc .fc-button-primary {
+    background-color: #1a1a1a !important;
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+    color: #d4af37 !important;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    transition: 0.3s ease;
+}
+
+.fc .fc-button-primary:hover {
+    background-color: #d4af37 !important;
+    color: #000000 !important;
+}
+
+.fc .fc-button-primary:disabled {
+    background-color: #0f0f0f !important;
+    color: #444 !important;
+    border-color: #222 !important;
+}
+
+/* Título del mes (Serif Blanco) */
+.fc .fc-toolbar-title {
+    font-family: 'Noto Serif', serif;
+    color: #ffffff !important;
+    font-size: 1.6rem !important;
+}
+
+/* Estructura de celdas y bordes */
+.fc th {
+    background-color: #1a1a1a !important;
+    color: #d4af37 !important;
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 12px 0 !important;
+    border: 1px solid #2a2a2a !important;
+}
+
+.fc td {
+    border: 1px solid #1f1f1f !important;
+    background-color: #121212;
+}
+
+/* Día actual destacado */
+.fc .fc-day-today {
+    background-color: rgba(212, 175, 55, 0.03) !important;
+}
+
+/* Números de los días */
+.fc .fc-daygrid-day-number {
+    color: #888;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.85rem;
+    padding: 8px !important;
+}
+
+/* Eventos / Reservas agendadas */
+.fc-v-event, .fc-h-event {
+    background-color: rgba(212, 175, 55, 0.1) !important;
+    border: 1px solid #d4af37 !important;
+    border-radius: 6px !important;
+    padding: 4px 8px !important;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.fc-v-event:hover, .fc-h-event:hover {
+    transform: scale(1.02);
+    background-color: rgba(212, 175, 55, 0.18) !important;
+}
+
+.fc-event-title {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    font-family: 'Manrope', sans-serif;
+}
+
+.fc-event-time {
+    color: #d4af37 !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+}
