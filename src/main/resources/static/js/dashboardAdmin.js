@@ -92,7 +92,7 @@ async function cargarDatosDelBackend() {
             datosMesas    = await resMesas.json();
             todasLasMesas = [...datosMesas];
             conectadoAlBackend = true;
-            console.log('✅ Mesas cargadas:', datosMesas.length);
+            console.log('Mesas cargadas:', datosMesas.length);
         } else {
             throw new Error('Error al cargar mesas: ' + resMesas.status);
         }
@@ -104,7 +104,7 @@ async function cargarDatosDelBackend() {
         if (resReservas.ok) {
             datosReservas      = await resReservas.json();
             datosReservasTodas = [...datosReservas];
-            console.log('✅ Reservas cargadas:', datosReservas.length);
+            console.log(' Reservas cargadas:', datosReservas.length);
         }
 
     } catch (err) {
@@ -264,11 +264,18 @@ function cargarMesasEnTabla() {
     }
 
     visibles.forEach(m => {
-        const activa  = m.disponible !== undefined ? m.disponible : (m.activa !== undefined ? m.activa : true);
-        const badgeHtml = activa
-            ? '<span class="badge active-badge">DISPONIBLE</span>'
-            : '<span class="badge" style="background:rgba(244,67,54,.2);color:#f44336;">OCUPADA</span>';
+       // DESPUÉS — verificar contra reservas reales
+const hoy = new Date().toISOString().split('T')[0]; // fecha actual
+const tieneReservaHoy = datosReservas.some(r => {
+    // Buscar si alguna reserva apunta a esta mesa y es de hoy en adelante
+    return r.mesaId === m.id || 
+           (r.numeroMesa && r.numeroMesa.includes(m.id));
+});
 
+const estaDisponible = m.disponible && !tieneReservaHoy;
+const badgeHtml = estaDisponible
+    ? '<span class="badge active-badge">DISPONIBLE</span>'
+    : '<span class="badge" style="background:rgba(244,67,54,.2);color:#f44336;">OCUPADA</span>';
         const div = document.createElement('div');
         div.className = 'mesa-item';
         div.innerHTML = `
@@ -321,13 +328,42 @@ function configurarFormularioMesas() {
 
         const numero    = parseInt(document.getElementById('numeroMesa').value) || 0;
         const capacidad = parseInt(document.getElementById('capacidad').value)  || 0;
-        const ubicacion = document.getElementById('ubicacion').value.trim();
+       const sectorRadio = document.querySelector('input[name="sector"]:checked');
+       const ubicacion = sectorRadio ? sectorRadio.value : 'Mesa-Estandar';
         const activa    = document.getElementById('activa').checked;
 
         if (!numero || !capacidad) {
             alert('Por favor completa número y capacidad de la mesa.');
             return;
         }
+        // --- VALIDACIÓN: Capacidad máxima 12 ---
+    if (capacidad > 12) {
+        alert('⚠️ La capacidad máxima por mesa es de 12 personas.');
+        document.getElementById('capacidad').value = 12;
+        return;
+    }
+
+   // --- VALIDACIÓN: Número de mesa duplicado ---
+const numeroDuplicado = todasLasMesas.find(m =>
+    String(m.numero) === String(numero) && String(m.id) !== String(mesaIdParaEditar)
+);
+if (numeroDuplicado) {
+    alert(`⚠️ Ya existe una Mesa con el número ${numero}. Usa un número diferente.`);
+    return;
+}
+
+// --- VALIDACIÓN: Nombre de mesa duplicado ---
+const nombreInput = document.getElementById('numeroMesa').value.trim().toLowerCase();
+const nombreDuplicado = todasLasMesas.find(m =>
+    (m.numeroMesa || String(m.numero)).toLowerCase() === nombreInput &&
+    String(m.id) !== String(mesaIdParaEditar)
+);
+if (nombreDuplicado) {
+    alert(`⚠️ Ya existe una Mesa con el nombre "${document.getElementById('numeroMesa').value.trim()}". Usa un nombre diferente.`);
+    return;
+}
+
+
 
         const payload = {
             numero:     numero,
@@ -389,7 +425,9 @@ function editarMesa(mesaId) {
 
     document.getElementById('numeroMesa').value = mesa.numero || '';
     document.getElementById('capacidad').value  = mesa.capacidad || '';
-    document.getElementById('ubicacion').value  = mesa.sector || mesa.nombreUbicacion || '';
+    const sectorValor = mesa.sector || mesa.nombreUbicacion || 'Mesa-Estandar';
+const radioASeleccionar = document.querySelector(`input[name="sector"][value="${sectorValor}"]`);
+if (radioASeleccionar) radioASeleccionar.checked = true;
     document.getElementById('activa').checked   = mesa.disponible !== undefined ? mesa.disponible : (mesa.activa !== undefined ? mesa.activa : true);
 
     mesaIdParaEditar = mesaId;
@@ -517,19 +555,33 @@ function filtrarReservasGlobales() {
 }
 
 async function eliminarReservaAdmin(id) {
-    if (!confirm('¿Eliminar esta reserva?')) return;
-    // Por ahora solo la quitamos de la lista local
-    datosReservas       = datosReservas.filter(r => String(r.id) !== String(id));
-    datosReservasTodas  = datosReservasTodas.filter(r => String(r.id) !== String(id));
+    if (!confirm('¿Eliminar esta reserva permanentemente?')) return;
+
+    if (conectadoAlBackend && TOKEN) {
+        try {
+            const res = await fetch(`/reservas/eliminar/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${TOKEN}` }
+            });
+            if (res.ok) {
+                alert('✅ Reserva eliminada correctamente.');
+            } else {
+                alert('Error al eliminar la reserva: ' + await res.text());
+                return;
+            }
+        } catch (err) {
+            alert('Error de conexión al eliminar.');
+            return;
+        }
+    }
+
+    // Actualizar listas locales
+    datosReservas      = datosReservas.filter(r => String(r.id) !== String(id));
+    datosReservasTodas = datosReservasTodas.filter(r => String(r.id) !== String(id));
     cargarReservasEnTabla();
     renderizarTablaReservasTodas();
     actualizarEstadisticas();
 }
-
-function editarReserva(id) {
-    alert('Función de edición de reserva ID: ' + id + ' (en desarrollo)');
-}
-
 // ===================================================================
 // SECCIÓN: USUARIOS
 // ===================================================================
@@ -681,12 +733,12 @@ function configurarNavegacion() {
     });
 }
 
-// ===================================================================
+
 // BÚSQUEDAS GENERALES
-// ===================================================================
+
 
 function configurarBusquedas() {
-    // Búsqueda en tabla de reservas recientes
+   
     const buscarHuesped = document.getElementById('buscarHuesped');
     if (buscarHuesped) {
         buscarHuesped.addEventListener('input', function () {
@@ -697,16 +749,16 @@ function configurarBusquedas() {
         });
     }
 
-    // Búsqueda en sección "Todas las Reservas"
+  
     const buscarReserva = document.getElementById('buscarReserva');
     const filtroEstado  = document.getElementById('filtroEstado');
     if (buscarReserva) buscarReserva.addEventListener('input', filtrarReservasGlobales);
     if (filtroEstado)  filtroEstado.addEventListener('change', filtrarReservasGlobales);
 }
 
-// ===================================================================
+
 // UTILIDADES
-// ===================================================================
+
 
 function logout() {
     if (confirm('¿Cerrar sesión de administración?')) {

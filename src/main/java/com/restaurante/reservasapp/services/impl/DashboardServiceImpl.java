@@ -9,6 +9,7 @@ import com.restaurante.reservasapp.repository.ReservaRepository;
 import com.restaurante.reservasapp.services.DashboardAminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.restaurante.reservasapp.repository.UsuarioRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +23,8 @@ public class DashboardServiceImpl implements DashboardAminService {
     @Autowired
     private MesaRepository mesaRepository;
 
+@Autowired
+private UsuarioRepository usuarioRepository;
     @Override
     public DashboardAdminResponse obtenerEstadisticasGenerales() {
         List<ReservaEntity> todasLasReservas = reservaRepository.findAll();
@@ -72,31 +75,67 @@ public class DashboardServiceImpl implements DashboardAminService {
         // Adaptado a tu estructura sin campo estado
         return reservaRepository.findAll().size();
     }
-
-    private ReservaParaDashboardAdminResponse mapearReservaADashboard(ReservaEntity reserva) {
-        // Obtener usuario para nombre
-        String nombreHuesped = reserva.getUsuarioId() != null ? "Cliente " + reserva.getUsuarioId() : "Sin nombre";
-
-        // Generar iniciales
-        String[] partes = nombreHuesped.split(" ");
-        String iniciales = partes.length >= 2 ?
-            (partes[0].substring(0, 1) + partes[1].substring(0, 1)).toUpperCase() :
-            nombreHuesped.substring(0, Math.min(2, nombreHuesped.length())).toUpperCase();
-
-        // Combinar fecha y hora
-        String fechaHora = (reserva.getFecha() != null ? reserva.getFecha() : "2024-01-01") +
-                          " " +
-                          (reserva.getHora() != null ? reserva.getHora() : "00:00");
-
-        return ReservaParaDashboardAdminResponse.builder()
-            .id(reserva.getId())
-            .nombreHuesped(nombreHuesped)
-            .iniciales(iniciales)
-            .fechaHora(fechaHora)
-            .cantidadPersonas(reserva.getNumeroPersonas())
-            .numeroMesa(reserva.getMesaId() != null ? "Mesa-" + reserva.getMesaId() : "Sin asignar")
-            .estado("CONFIRMADA")
-            .tipoEvento("Regular")
-            .build();
+private ReservaParaDashboardAdminResponse mapearReservaADashboard(ReservaEntity reserva) {
+    
+    // ── Nombre del usuario ──
+    String nombreHuesped = "Cliente desconocido";
+    try {
+        if (reserva.getUsuarioId() != null) {
+            nombreHuesped = usuarioRepository.findById(reserva.getUsuarioId())
+                .map(u -> ((u.getNombre() != null ? u.getNombre() : "") +
+                           " " +
+                           (u.getApellido() != null ? u.getApellido() : "")).trim())
+                .orElse("Cliente");
+        }
+    } catch (Exception e) {
+        nombreHuesped = "Cliente";
     }
+
+    // ── Número de mesa ──
+    String numeroMesa = "Sin asignar";
+    try {
+        if (reserva.getMesaId() != null) {
+            numeroMesa = mesaRepository.findById(reserva.getMesaId())
+                .map(m -> "Mesa " + m.getNumero() +
+                          " (" + (m.getSector() != null ? m.getSector().replace("Mesa-", "") : "") + ")")
+                .orElse("Mesa no encontrada");
+        }
+    } catch (Exception e) {
+        numeroMesa = "Mesa no encontrada";
+    }
+
+    // ── Iniciales ──
+    String iniciales = "??";
+    try {
+        String[] partes = nombreHuesped.split(" ");
+        iniciales = partes.length >= 2
+            ? (partes[0].substring(0, 1) + partes[partes.length - 1].substring(0, 1)).toUpperCase()
+            : nombreHuesped.substring(0, Math.min(2, nombreHuesped.length())).toUpperCase();
+    } catch (Exception e) {
+        iniciales = "CL";
+    }
+
+    // ── Fecha y hora ──
+    String fechaHora = ((reserva.getFecha() != null ? reserva.getFecha() : "") +
+                        " " +
+                        (reserva.getHora() != null ? reserva.getHora() : "")).trim();
+
+    // ── Experiencia ──
+    String experiencia = reserva.getExperiencia() != null
+        ? reserva.getExperiencia().replace("Mesa-", "")
+        : "Regular";
+
+    return ReservaParaDashboardAdminResponse.builder()
+        .id(reserva.getId())
+        .nombreHuesped(nombreHuesped)
+        .iniciales(iniciales)
+        .fechaHora(fechaHora)
+        .cantidadPersonas(reserva.getNumeroPersonas())
+        .numeroMesa(numeroMesa)
+        .estado("CONFIRMADA")
+        .tipoEvento(experiencia)
+        .build();
+}
+
+ 
 }

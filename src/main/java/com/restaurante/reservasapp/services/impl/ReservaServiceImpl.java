@@ -22,32 +22,68 @@ public class ReservaServiceImpl implements ReservaService {
     @Autowired
     private MesaRepository mesaRepo;
 
-    @Override
+@Override
 @Transactional
 public ReservaEntity guardarReserva(ReservaEntity reserva) {
-    // 1. Usamos el campo mesaId (que viene del front con el nombre del sector) para buscar
-    String sectorBuscado = reserva.getMesaId(); 
 
-    List<MesaEntity> mesasDisponibles = mesaRepo.findAll().stream()
-            .filter(m -> m.getSector() != null && m.getSector().equals(sectorBuscado))
-            .filter(MesaEntity::isDisponible)
-            .collect(Collectors.toList());
+    String sectorBuscado = reserva.getMesaId(); // Ej: "Mesa-Estandar"
 
-    if (mesasDisponibles.isEmpty()) {
-        throw new RuntimeException("No hay mesas disponibles en " + sectorBuscado);
+    // ── REGLA 1: Un usuario solo puede tener UNA reserva por sector ──
+    List<ReservaEntity> reservasEnEsteSector = reservaRepo
+        .findByUsuarioIdAndExperiencia(reserva.getUsuarioId(), sectorBuscado);
+
+    if (!reservasEnEsteSector.isEmpty()) {
+        throw new RuntimeException(
+            "Ya tienes una reserva en el sector " + sectorBuscado + 
+            ". Solo se permite una reserva por sector.");
     }
 
-    MesaEntity mesaAsignada = mesasDisponibles.get(0);
-    mesaAsignada.setDisponible(false);
-    mesaRepo.save(mesaAsignada);
+    // ── REGLA 2: Un usuario máximo 3 reservas en total (una por sector) ──
+    List<ReservaEntity> todasLasReservasDelUsuario = reservaRepo
+        .findByUsuarioId(reserva.getUsuarioId());
 
-    // 2. Seteamos el ID técnico de la mesa asignada
-    reserva.setMesaId(mesaAsignada.getId()); 
-    
-    // 3. El campo 'experiencia' ya viene lleno desde el JSON del front, 
-    // así que se guardará automáticamente en MongoDB.
-    
+    if (todasLasReservasDelUsuario.size() >= 3) {
+        throw new RuntimeException(
+            "Has alcanzado el límite de 3 reservas. " +
+            "Cancela una reserva existente para hacer una nueva.");
+    }
+
+    // ── REGLA 3: Buscar mesa disponible en el sector para esa fecha/hora ──
+    List<MesaEntity> mesasDelSector = mesaRepo.findAll().stream()
+        .filter(m -> m.getSector() != null && m.getSector().equals(sectorBuscado))
+        .filter(MesaEntity::isDisponible)
+        .collect(Collectors.toList());
+
+    if (mesasDelSector.isEmpty()) {
+        throw new RuntimeException(
+            "No hay mesas configuradas en el sector: " + sectorBuscado);
+    }
+
+  // ── REGLA 4: De las mesas del sector, buscar una libre en esa fecha/hora ──
+    List<ReservaEntity> todasLasReservas = reservaRepo.findAll();
+
+    MesaEntity mesaAsignada = mesasDelSector.stream()
+        .filter(mesa -> {
+            boolean ocupada = todasLasReservas.stream().anyMatch(r ->
+                mesa.getId().equals(r.getMesaId()) &&
+                reserva.getFecha().equals(r.getFecha()) &&
+                reserva.getHora().equals(r.getHora())
+            );
+            return !ocupada;
+        })
+        .findFirst()
+        .orElseThrow(() -> new RuntimeException(
+            "No hay mesas disponibles en el sector " + sectorBuscado +
+            " para la fecha y hora seleccionada. Intenta otra hora."));
+    // ── ASIGNAR: Guardar el ID real de la mesa y la experiencia ──
+    reserva.setMesaId(mesaAsignada.getId());
+    reserva.setExperiencia(sectorBuscado); // Guarda "Mesa-Estandar" / "Mesa-Ventana" / "Mesa-Alcoba"
+
     return reservaRepo.save(reserva);
+
+    // NOTA: No tocamos mesa.setDisponible(false) — la disponibilidad
+    // se controla dinámicamente por fecha/hora, no permanentemente.
+    // Así la misma mesa puede usarse en diferentes noches.
 }
 @Override
     public List<ReservaEntity> listarPorUsuario(String usuarioId) {
@@ -59,18 +95,14 @@ public ReservaEntity guardarReserva(ReservaEntity reserva) {
         return reservaRepo.findById(id).orElse(null);
     }
 
-    @Override
-    @Transactional
-    public void eliminarReserva(String id) {
-        // Al eliminar una reserva, deberíamos liberar la mesa
-        reservaRepo.findById(id).ifPresent(reserva -> {
-            mesaRepo.findById(reserva.getMesaId()).ifPresent(mesa -> {
-                mesa.setDisponible(true);
-                mesaRepo.save(mesa);
-            });
-            reservaRepo.deleteById(id);
-        });
-    }
+   @Override
+@Transactional
+public void eliminarReserva(String id) {
+    reservaRepo.findById(id).ifPresent(reserva -> {
+        // Ya NO tocamos mesa.setDisponible — la disponibilidad es manual del admin
+        reservaRepo.deleteById(id);
+    });
+}
 
     @Override
     public List<ReservaEntity> listarReservas() {

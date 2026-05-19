@@ -45,6 +45,15 @@ public ResponseEntity<List<ReservaEntity>> listarPorUsuario(@PathVariable String
     List<ReservaEntity> reservas = reservaService.listarPorUsuario(usuarioId);
     return ResponseEntity.ok(reservas);
 }
+@DeleteMapping("/eliminar/{id}")
+public ResponseEntity<?> eliminarReserva(@PathVariable String id) {
+    try {
+        reservaService.eliminarReserva(id);
+        return ResponseEntity.noContent().build();
+    } catch (Exception e) {
+        return ResponseEntity.internalServerError().body("Error al eliminar: " + e.getMessage());
+    }
+}
 
     /**
      * Lista todas las reservas del sistema (Uso administrativo).

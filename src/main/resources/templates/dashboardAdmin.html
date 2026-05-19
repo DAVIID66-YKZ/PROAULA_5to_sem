@@ -7,6 +7,7 @@
     <title>Panel Admin -  The Culinary Manuscript</title>
    <link rel="stylesheet" href="/css/dashboardAdmin.css">
    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/reservaAdmin.css}">
    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <script src="/js/dashboardAdmin.js"></script>
@@ -133,7 +134,7 @@
                     
                     <div class="reservas-controls">
                         <input type="text" id="buscarHuesped" class="search-input" placeholder="BUSCAR UN HUÉSPED">
-                        <button class="filter-btn"><img src="/iconos/FILTRO.png" alt="Filtros" class="filter-icon"></button>
+                        <button class="filter-btn"> <span class="material-symbols-outlined">filter_list</span></button>
                     </div>
 
                     <div class="table-wrapper">
@@ -180,7 +181,7 @@
                     <!-- Panel Izquierdo: Crear/Editar Mesa -->
                     <div class="mesa-form-panel">
                        <h3 class="titulo-icono">
-                 <img src="/iconos/Mesa-svg.svg" alt="Mesa" class="icono-titulo">
+                  <span class="material-symbols-outlined">table_restaurant</span>
                           Gestionar Mesa</h3>
                         
                         <form id="formMesa" class="mesa-form">
@@ -192,15 +193,44 @@
                             <div class="form-group">
                                 <label>CAPACIDAD</label>
                                 <div class="capacity-input">
-                                    <input type="number" id="capacidad" placeholder="4" min="1" required>
+                                    <input type="number" id="capacidad" placeholder="4" min="1" max="12" required>
                                     <span class="capacity-icon"></span>
                                 </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label>UBICACIÓN</label>
-                                <input type="text" id="ubicacion" placeholder="ej. Lado de la Ventana A" required>
-                            </div>
+                           <div class="form-group">
+    <label>SECTOR / UBICACIÓN</label>
+    <div class="sector-grid">
+
+        <label class="sector-card">
+            <input type="radio" name="sector" value="Mesa-Estandar" checked>
+            <div class="sector-ui">
+                <span class="material-symbols-outlined">restaurant</span>
+                <span class="sector-nombre">Estándar</span>
+                <span class="sector-detalle">Main Hall</span>
+            </div>
+        </label>
+
+        <label class="sector-card">
+            <input type="radio" name="sector" value="Mesa-Ventana">
+            <div class="sector-ui">
+                <span class="material-symbols-outlined">window</span>
+                <span class="sector-nombre">Ventana</span>
+                <span class="sector-detalle">City Views</span>
+            </div>
+        </label>
+
+        <label class="sector-card">
+            <input type="radio" name="sector" value="Mesa-Alcoba">
+            <div class="sector-ui">
+                <span class="material-symbols-outlined">meeting_room</span>
+                <span class="sector-nombre">Alcoba</span>
+                <span class="sector-detalle">Privado</span>
+            </div>
+        </label>
+
+    </div>
+</div>
                             
                             <div class="form-group">
                                 <label>Estado de Disponibilidad</label>
@@ -232,7 +262,7 @@
                         </div>
 
                         <div class="mesas-list" id="mesasListContainer">
-                            <!-- Se cargan datos aquí -->
+                            
                         </div>
 
                         <div class="pagination-mesas">
@@ -254,7 +284,7 @@
                         <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
                         <span class="profile-name">pepi</span>
                         <div class="profile-avatar">
-                <img src="" alt="Admin" class="avatar-icono">
+                <span class="material-symbols-outlined">account_circle</span>
             </div>
                     </div>
                 </header>
@@ -285,14 +315,14 @@
                                 </tr>
                             </thead>
                             <tbody id="reservasAllTableBody">
-                                <!-- Se cargan datos aquí -->
+                                
                             </tbody>
                         </table>
                     </div>
                 </div>
             </section>
 
-            <!-- ===== SECCIÓN USUARIOS ===== 🔥 AGREGADA -->
+            <!-- = SECCIÓN USUARIOS =-->
             <section id="usuarios" class="content-section">
                 <header class="section-header">
                     <div>
@@ -302,7 +332,9 @@
                     <div class="admin-profile">
                         <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
                         <span class="profile-name">MAÎTRE D'</span>
-                        <div class="profile-avatar"></div>
+                        <div class="profile-avatar">
+                            <span class="material-symbols-outlined">account_circle</span>
+                        </div>
                     </div>
                 </header>
 

@@ -34,7 +34,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 
 
             // 2. BLOQUEAR LOS DATOS (La API): Aquí es donde el ROL es ley
-            .requestMatchers("/reservas/**","/calendario/**").hasRole("CLIENTE")
+          .requestMatchers("/reservas/**", "/calendario/**").hasAnyRole("CLIENTE", "ADMIN")
             .requestMatchers("/mesas/**").hasRole("ADMIN")
             
             .anyRequest().authenticated()
