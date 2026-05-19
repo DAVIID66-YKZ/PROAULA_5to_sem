@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú del Manuscrito - The Culinary Manuscript</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}"> <link rel="stylesheet" th:href="@{/css/mis-reservas.css}"> <link rel="stylesheet" th:href="@{/css/menu.css}"> <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/navCliente.css}">
+    
+    <style>
+        /* Ajuste fino para acomodar las tarjetas del menú original al layout privado */
+        .menu-page-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .menu-nav-inline {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            padding-bottom: 15px;
+        }
+        .menu-nav-inline a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+        .menu-nav-inline a:hover {
+            color: #d4af37;
+        }
+    </style>
+</head>
+<body class="manuscript-theme">
+
+    <div class="dashboard-wrapper">
+        
+        <div th:replace="~{fragmentos/sidebar :: sidebar}"></div>
+
+        <div class="main-content">
+            
+            <header th:replace="~{fragmentos/navCliente :: navbarLogueado}"></header>
+
+            <main class="dashboard-container">
+                
+                <div class="menu-page-container">
+                    
+                    <header class="section-header-inline" style="border-bottom: none; margin-bottom: 10px; padding-bottom: 0;">
+                        <div>
+                            <span class="reserva-badge">Gastronomía Premium</span>
+                            <h1 class="serif-title" style="font-size: 3.2rem; color: #fff;">The Manuscript Menu</h1>
+                        </div>
+                    </header>
+
+                    <div class="menu-nav-inline">
+                        <a href="#entradas">Entradas</a>
+                        <a href="#especiales">Especiales</a>
+                        <a href="#postres">Postres</a>
+                    </div>
+
+                    <div class="menu-title" id="entradas">
+                        <div class="menu-title-left">
+                            <h2 class="serif-sub-title" style="font-size: 1.8rem; color: #d4af37;">The Prologue</h2>
+                            <p style="color: #666; font-size: 0.9rem;">Delicados sabores para comenzar la experiencia.</p>
+                        </div>
+                        <span class="menu-number" style="color: rgba(212,175,55,0.3); font-weight:700;">Section 01</span>
+                    </div>
+
+                    <section class="menu-section">
+                        <div class="menu-card">
+                            <img th:src="@{/imagenes/carne.webp}" alt="Aged Wagyu">
+                            <div class="menu-info">
+                                <div class="menu-top">
+                                    <h2>Aged Wagyu Prime</h2>
+                                    <span class="gold-text">$78k</span>
+                                </div>
+                                <p>Corte premium madurado por 45 días, acompañado de ingredientes seleccionados y una preparación exclusiva.</p>
+                            </div>
+                        </div>
+
+                        <div class="menu-card">
+                            <img th:src="@{/imagenes/pastas.webp}" alt="Truffle Tagliatelle">
+                            <div class="menu-info">
+                                <div class="menu-top">
+                                    <h2>Truffle Tagliatelle</h2>
+                                    <span class="gold-text">$42k</span>
+                                </div>
+                                <p>Pasta artesanal preparada a mano con salsa cremosa y auténtica trufa negra italiana.</p>
+                            </div>
+                        </div>
+
+                        <div class="menu-card">
+                            <img th:src="@{/imagenes/sushi.webp}" alt="Imperial Omakase">
+                            <div class="menu-info">
+                                <div class="menu-top">
+                                    <h2>Imperial Omakase</h2>
+                                    <span class="gold-text">$55k</span>
+                                </div>
+                                <p>Selección premium del chef con ingredientes frescos y una presentación elegante.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="featured-section" id="especiales" style="margin: 50px 0;">
+                        <div class="featured-container">
+                            <div class="featured-image">
+                                <img th:src="@{/imagenes/carne.webp}" alt="Midnight Wagyu">
+                            </div>
+                            <div class="featured-info">
+                                <small style="color: #d4af37; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">Chef Selection</small>
+                                <h2 class="serif-title" style="margin: 10px 0;">Midnight Wagyu Experience</h2>
+                                <p style="color: #a0a0a0; line-height: 1.6; margin-bottom: 20px;">
+                                    Una de nuestras creaciones más exclusivas. Preparado cuidadosamente con técnicas gourmet y sabores intensos que convierten cada bocado en una experiencia única.
+                                </p>
+                                <div class="featured-price" style="color: #fff; font-size: 1.8rem; font-weight: 700;">
+                                    $145k
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="menu-title" id="postres">
+                        <div class="menu-title-left">
+                            <h2 class="serif-sub-title" style="font-size: 1.8rem; color: #d4af37;">The Epilogue</h2>
+                            <p style="color: #666; font-size: 0.9rem;">El cierre perfecto para una experiencia inolvidable.</p>
+                        </div>
+                        <span class="menu-number" style="color: rgba(212,175,55,0.3); font-weight:700;">Section 02</span>
+                    </div>
+
+                    <section class="menu-section">
+                        <div class="menu-card">
+                            <img th:src="@{/imagenes/postre.webp}" alt="Gold Ganache">
+                            <div class="menu-info">
+                                <div class="menu-top">
+                                    <h2>Midnight Gold Ganache</h2>
+                                    <span class="gold-text">$22k</span>
+                                </div>
+                                <p>Chocolate premium acompañado de detalles dorados y una textura suave irresistible.</p>
+                            </div>
+                        </div>
+
+                        <div class="menu-card">
+                            <img th:src="@{/imagenes/postre.webp}" alt="Velvet Cake">
+                            <div class="menu-info">
+                                <div class="menu-top">
+                                    <h2>Golden Velvet Cake</h2>
+                                    <span class="gold-text">$18k</span>
+                                </div>
+                                <p>Bizcocho suave con crema artesanal y un delicado acabado elegante inspirado en alta cocina.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const token = localStorage.getItem("token");
+            const rol = localStorage.getItem("rol");
+            if (!token || String(rol).trim().toUpperCase() !== "CLIENTE") {
+                window.location.href = "/login";
+            }
+        })();
+    </script>
+    <script th:src="@{/js/sidebar.js}"></script>
+</body>
+</html>

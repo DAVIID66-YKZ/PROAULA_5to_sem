@@ -11,4 +11,5 @@ public interface ReservaService {
     public List<ReservaEntity> listarReservas();
     // Nuevo método:
     public List<ReservaEntity> listarPorUsuario(String usuarioId);
+    public ReservaEntity guardarReservaDirecta(ReservaEntity reserva);
 }

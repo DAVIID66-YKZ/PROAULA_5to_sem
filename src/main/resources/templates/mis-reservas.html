@@ -56,6 +56,21 @@
         </main>
     </div>
 
+    <div id="modalComentario" class="modal-manuscript" style="display: none;">
+        <div class="modal-content">
+            <h2 class="serif-title" style="color: #d4af37; margin-bottom: 5px;">Escribir Capítulo</h2>
+            <p style="color: #888; font-size: 0.85rem; margin-bottom: 20px;">Cuéntanos tu experiencia culinaria en este evento.</p>
+            
+            <input type="hidden" id="modalReservaId">
+            <textarea id="txtComentario" placeholder="Escribe tu reseña aquí..." rows="5"></textarea>
+            
+            <div class="modal-buttons">
+                <button class="btn-modal-cancel" onclick="cerrarModal()">Cerrar</button>
+                <button class="btn-modal-save" onclick="guardarComentarioServidor()">Guardar en Manuscrito</button>
+            </div>
+        </div>
+    </div>
+
     <script th:src="@{/js/sidebar.js}"></script>
     <script th:src="@{/js/mis-reservas.js}"></script>
 </body>

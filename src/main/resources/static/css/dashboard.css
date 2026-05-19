@@ -13,7 +13,10 @@ body {
     overflow-x: hidden;
     font-weight: 400;
 }
-
+.gold-text {
+    color: #d4af37;
+    font-weight: 600;
+}
 .serif-italic {
     font-family: 'Noto Serif', serif;
     font-style: italic;

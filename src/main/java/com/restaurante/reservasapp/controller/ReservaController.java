@@ -74,4 +74,26 @@ public ResponseEntity<?> eliminarReserva(@PathVariable String id) {
                 .body("Error al eliminar la reserva: " + e.getMessage());
     }
 }
+@PatchMapping("/{id}/comentario")
+public ResponseEntity<?> agregarComentario(@PathVariable String id, @RequestBody String comentario) {
+    try {
+        String comentarioLimpio = comentario.replace("\"", "").trim();
+        
+        // 1. Buscamos el documento original
+        ReservaEntity reserva = reservaService.obtenerReserva(id);
+        if (reserva == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        // 2. Inyectamos el nuevo comentario
+        reserva.setComentario(comentarioLimpio);
+        
+        // 3. Persistencia limpia a través de la interfaz corregida
+        reservaService.guardarReservaDirecta(reserva); 
+        
+        return ResponseEntity.ok().body("Comentario indexado correctamente.");
+    } catch (Exception e) {
+        return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+    }
+}
 }

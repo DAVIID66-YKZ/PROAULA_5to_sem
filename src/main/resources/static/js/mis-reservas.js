@@ -5,7 +5,6 @@
     const token = localStorage.getItem("token");
     const rol = localStorage.getItem("rol");
 
-    // Si no hay token o el rol no es CLIENTE, redirigir al login inmediatamente
     if (!token || rol !== "CLIENTE") {
         console.warn("Acceso no autorizado detectado. Redirigiendo...");
         window.location.href = "/login";
@@ -13,7 +12,6 @@
 })();
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Al cargar la página, recuperamos el historial del usuario
     cargarMisReservas();
 });
 
@@ -25,7 +23,6 @@ async function cargarMisReservas() {
     const idUsuario = localStorage.getItem("usuarioId");
     const tbody = document.getElementById("listaReservasBody");
 
-    // Seguridad: Si no hay token o ID, rebote al login
     if (!token || !idUsuario) {
         window.location.href = "/login";
         return;
@@ -42,12 +39,12 @@ async function cargarMisReservas() {
 
         if (response.ok) {
             const reservas = await response.json();
-            tbody.innerHTML = ""; // Limpiar el mensaje de carga
+            tbody.innerHTML = ""; 
 
             if (reservas.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" style="text-align:center; padding: 80px; color: #666;">
+                        <td colspan="6" style="text-align:center; padding: 80px; color: #666;">
                             <span class="material-symbols-outlined" style="font-size: 48px; display: block; margin-bottom: 10px;">history_edu</span>
                             Aún no has escrito capítulos en tu historia culinaria.
                         </td>
@@ -55,9 +52,37 @@ async function cargarMisReservas() {
                 return;
             }
 
-            // Mapear y dibujar las reservas (Se redujo a 5 columnas al quitar el ojo)
+            const ahora = new Date();
+
             reservas.forEach(res => {
                 const nombreExperiencia = res.experiencia ? res.experiencia.replace('Mesa-', '') : 'Estándar';
+                
+                // Comparación cronológica estricta con la hora del sistema
+                const fechaReserva = new Date(`${res.fecha}T${res.hora}`);
+                const yaPaso = fechaReserva < ahora;
+
+                let estadoBadge = `<span class="status-pill">Confirmada</span>`;
+                let botonAccion = `
+                    <button class="btn-icon-table btn-cancel" onclick="cancelarReserva('${res.id}')" title="Cancelar Reserva">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>`;
+
+                // Si la reserva ya pasó en el tiempo
+                if (yaPaso) {
+                    estadoBadge = `<span class="status-pill pill-past">Completada</span>`;
+                    
+                    const tieneComentario = res.comentario && res.comentario !== "null" && res.comentario.trim() !== "";
+                    const icono = tieneComentario ? "rate_review" : "chat_bubble";
+                    const estiloDorado = tieneComentario ? "style='color: #d4af37;'" : "";
+                    
+                    // Escapamos el texto del comentario para pasarlo de forma segura al modal sin romper el HTML
+                    const comentarioSanitizado = tieneComentario ? encodeURIComponent(res.comentario) : "";
+
+                    botonAccion = `
+                        <button class="btn-icon-table" onclick="abrirModalComentario('${res.id}', '${comentarioSanitizado}')" title="Dejar Comentario">
+                            <span class="material-symbols-outlined" ${estiloDorado}>${icono}</span>
+                        </button>`;
+                }
 
                 tbody.innerHTML += `
                     <tr>
@@ -65,12 +90,8 @@ async function cargarMisReservas() {
                         <td>${res.hora}</td>
                         <td>${res.numeroPersonas} personas</td>
                         <td><span class="gold-text">${nombreExperiencia}</span></td>
-                        <td><span class="status-pill pill-confirmed">Confirmada</span></td>
-                        <td>
-                            <button class="btn-icon-table btn-cancel" onclick="cancelarReserva('${res.id}')" title="Cancelar Reserva">
-                                <span class="material-symbols-outlined">delete</span>
-                            </button>
-                        </td>
+                        <td>${estadoBadge}</td>
+                        <td>${botonAccion}</td>
                     </tr>
                 `;
             });
@@ -80,13 +101,12 @@ async function cargarMisReservas() {
         }
     } catch (error) {
         console.error("Error al cargar:", error);
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: #ff4444; padding: 20px;">Error de conexión con el servidor.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #ff4444; padding: 20px;">Error de conexión con el servidor.</td></tr>`;
     }
 }
 
 /**
- * Elimina una reserva y libera la mesa asociada de forma implícita
- * @param {string} id - ID de la reserva a eliminar
+ * Elimina una reserva futura del sistema
  */
 async function cancelarReserva(id) {
     const token = localStorage.getItem("token");
@@ -96,7 +116,6 @@ async function cancelarReserva(id) {
     }
 
     try {
-        // 🔥 CORRECCIÓN DE RUTA: Ajustado a la arquitectura REST de Spring (/reservas/{id})
         const response = await fetch(`/reservas/${id}`, {
             method: "DELETE",
             headers: {
@@ -106,14 +125,55 @@ async function cancelarReserva(id) {
 
         if (response.ok) {
             alert("Reserva cancelada con éxito. La mesa ha sido liberada.");
-            // Recargamos la lista de forma atómica para refrescar la tabla
             cargarMisReservas();
         } else {
             const msg = await response.text();
             alert("No se pudo cancelar: " + msg);
         }
     } catch (error) {
-        console.error("Error en la petición DELETE:", error);
         alert("Error al conectar con el servidor.");
+    }
+}
+
+// --- GESTIÓN INTERACTIVA DEL MODAL ---
+function abrirModalComentario(id, comentarioCodificado) {
+    document.getElementById("modalReservaId").value = id;
+    
+    // Decodificar el comentario si existía
+    const comentarioReal = comentarioCodificado ? decodeURIComponent(comentarioCodificado) : "";
+    document.getElementById("txtComentario").value = comentarioReal;
+    
+    document.getElementById("modalComentario").style.display = "flex";
+}
+
+function cerrarModal() {
+    document.getElementById("modalComentario").style.display = "none";
+}
+
+async function guardarComentarioServidor() {
+    const id = document.getElementById("modalReservaId").value;
+    const comentario = document.getElementById("txtComentario").value;
+    const token = localStorage.getItem("token");
+
+    try {
+        const response = await fetch(`/reservas/${id}/comentario`, {
+            method: "PATCH",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(comentario)
+        });
+
+        if (response.ok) {
+            alert("Tu reseña ha sido guardada en las páginas de nuestro manuscrito.");
+            cerrarModal();
+            cargarMisReservas(); 
+        } else {
+            alert("Error al guardar el comentario.");
+        }
+    } catch (error) {
+        console.error("Error en PATCH:", error);
+        alert("Error de conexión.");
     }
 }

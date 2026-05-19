@@ -95,6 +95,14 @@ public class ReservaServiceImpl implements ReservaService {
                         && r.getExperiencia() != null && r.getExperiencia().equalsIgnoreCase(sector))
                 .collect(Collectors.toList());
     }
+    // Agrega esto al final de tu archivo ReservaServiceImpl.java
+
+@Override
+@Transactional
+public ReservaEntity guardarReservaDirecta(ReservaEntity reserva) {
+    // Va directo al repositorio sin validar horas, sectores ni capacidades
+    return reservaRepo.save(reserva);
+}
 
     @Override public List<ReservaEntity> listarPorUsuario(String usuarioId) { return reservaRepo.findByUsuarioId(usuarioId); }
     @Override public ReservaEntity obtenerReserva(String id) { return reservaRepo.findById(id).orElse(null); }

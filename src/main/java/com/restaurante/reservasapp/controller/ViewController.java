@@ -54,16 +54,24 @@ public class ViewController {
     public String dashboard() {
         return "dashboard";
     }
-        @GetMapping("/mis-reservas")
+
+    @GetMapping("/mis-reservas")
     public String misReservas() {
         return "mis-reservas";
-    } 
+    }
+
     @GetMapping("/calendario")
-public String calendario() {
-    return "calendario"; 
-}
-@GetMapping("/perfil")
-public String perfil() {
-    return "perfil"; 
-}
+    public String calendario() {
+        return "calendario";
+    }
+
+    @GetMapping("/perfil")
+    public String perfil() {
+        return "perfil";
+    }
+
+    @GetMapping("/ver-menu")
+    public String verMenu() {
+        return "ver-menu"; // Renderiza ver-menu.html
+    }
 }
