@@ -5,30 +5,93 @@
     const token = localStorage.getItem("token");
     const rol = localStorage.getItem("rol");
 
-    // Si no hay token o el rol no es CLIENTE, redirigir al login inmediatamente
     if (!token || rol !== "CLIENTE") {
         console.warn("Acceso no autorizado detectado. Redirigiendo...");
         window.location.href = "/login";
     }
 })();
+
 document.addEventListener("DOMContentLoaded", () => {
     const fechaInput = document.getElementById("fecha");
+    const horaSelect = document.getElementById("hora");
+    const experiencias = document.querySelectorAll('input[name="experiencia"]');
     
-    // --- REGLA 1: No permitir fechas pasadas ---
-    // Obtenemos la fecha actual en formato YYYY-MM-DD
+    // Configurar la fecha mínima (Hoy)
     const hoy = new Date().toISOString().split("T")[0];
     if (fechaInput) {
         fechaInput.setAttribute("min", hoy);
+        
+        // Escuchar cambios para recalcular horas disponibles
+        fechaInput.addEventListener("change", comprobarHorariosDisponibles);
     }
+
+    experiencias.forEach(radio => {
+        radio.addEventListener("change", comprobarHorariosDisponibles);
+    });
 });
 
 /**
- * Envia los datos de la reserva al Backend
+ * Consulta las reservas del día y deshabilita las horas bloqueadas por el rango de 2 horas
+ */
+async function comprobarHorariosDisponibles() {
+    const fecha = document.getElementById("fecha").value;
+    const experienciaRadio = document.querySelector('input[name="experiencia"]:checked');
+    const horaSelect = document.getElementById("hora");
+    const token = localStorage.getItem("token");
+
+    if (!fecha || !experienciaRadio) return;
+
+    try {
+        // Consultamos las reservas existentes para ese sector y fecha
+        const response = await fetch(`/reservas/ocupadas?fecha=${fecha}&mesaId=${experienciaRadio.value}`, {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+            const reservasOcupadas = await response.json();
+            
+            // Habilitar todas las opciones inicialmente para resetear el estado
+            Array.from(horaSelect.options).forEach(option => {
+                option.disabled = false;
+                option.style.color = "#fff";
+                option.text = option.text.replace(" (Ocupado)", "");
+            });
+
+            // Analizar los conflictos de 2 horas para cada opción del select
+            reservasOcupadas.forEach(reserva => {
+                const [oHora, oMin] = reserva.hora.split(":").map(Number);
+                const tiempoOcupadoMinutos = oHora * 60 + oMin;
+
+                Array.from(horaSelect.options).forEach(option => {
+                    const [sHora, sMin] = option.value.split(":").map(Number);
+                    const tiempoSelectMinutos = sHora * 60 + sMin;
+
+                    // Calcular la diferencia absoluta en minutos
+                    const diferencia = Math.abs(tiempoSelectMinutos - tiempoOcupadoMinutos);
+
+                    // Si la diferencia es menor a 120 minutos (2 horas), se bloquea la celda
+                    if (diferencia < 120) {
+                        option.disabled = true;
+                        option.style.color = "#444"; // Color gris oscuro de bloqueado
+                        if (!option.text.includes("(Ocupado)")) {
+                            option.text += " (Ocupado)";
+                        }
+                    }
+                });
+            });
+        }
+    } catch (error) {
+        console.error("Error al mapear horarios disponibles:", error);
+    }
+}
+
+/**
+ * Envía los datos de la reserva al Backend
  */
 async function guardarReserva(event) {
     event.preventDefault();
 
-    // 1. COMPROBACIÓN DE CREDENCIALES
     const token = localStorage.getItem("token");
     const idUsuarioActual = localStorage.getItem("usuarioId");
 
@@ -38,48 +101,26 @@ async function guardarReserva(event) {
         return;
     }
 
-    // 2. CAPTURA DE DATOS DEL FORMULARIO
     const fecha = document.getElementById("fecha").value;
     const hora = document.getElementById("hora").value;
     const personas = parseInt(document.getElementById("personas").value);
-    
-    // Capturamos el Radio Button seleccionado para la experiencia
     const experienciaRadio = document.querySelector('input[name="experiencia"]:checked');
 
-    // 3. VALIDACIONES DE FRONTEND (Reglas de Negocio)
-    
     if (!fecha || !hora || !personas || !experienciaRadio) {
         alert("Por favor, completa todos los campos del manuscrito.");
         return;
     }
 
-    // --- REGLA 2: Límite de invitados (1 a 12) ---
-    if (personas > 12 || personas < 1) {
-        alert("Nuestras mesas están diseñadas para un máximo de 12 invitados.");
-        return;
-    }
+// En tu archivo reserva.js, dentro de la función guardarReserva:
+const reservaData = {
+    fecha: fecha,
+    hora: hora,
+    numeroPersonas: personas, // 🔥 CAMBIADO: De 'invitados' a 'numeroPersonas'
+    usuarioId: idUsuarioActual,
+    mesaId: experienciaRadio.value, 
+    experiencia: experienciaRadio.value 
+};
 
-    // --- REGLA 3: Horario de atención (10 AM a 10 PM) ---
-    const horaNum = parseInt(hora.split(":")[0]);
-    if (horaNum < 10 || horaNum > 22) {
-        alert("El restaurante atiende de 10:00 AM a 10:00 PM.");
-        return;
-    }
-
-    // 4. ESTRUCTURA DEL OBJETO PARA EL BACKEND
-    const reservaData = {
-        fecha: fecha,
-        hora: hora,
-        numeroPersonas: personas,
-        usuarioId: idUsuarioActual,
-        // mesaId se envía inicialmente con el nombre del sector (Mesa-Ventana / Mesa-Alcoba)
-        // para que el Service busque la mesa disponible en ese sector.
-        mesaId: experienciaRadio.value, 
-        // 🔥 Nueva variable para persistir el nombre legible de la experiencia
-        experiencia: experienciaRadio.value 
-    };
-
-    // 5. ENVÍO AL SERVIDOR
     try {
         const response = await fetch("/reservas/guardar", {
             method: "POST",
@@ -92,22 +133,17 @@ async function guardarReserva(event) {
 
         if (response.ok) {
             alert("¡Reserva exitosa! Su mesa ha sido preparada en nuestros registros.");
-            window.location.href = "/dashboard"; // Redirige al panel principal
+            window.location.href = "/dashboard"; 
         } else {
             const errorMsg = await response.text();
-            
-            // --- REGLA 4: Manejo de Mesa/Hora ocupada ---
-            if (response.status === 409 || errorMsg.includes("ocupada") || errorMsg.includes("disponibles")) {
-                alert("Lo sentimos: Ya existe una reserva para esa hora o no hay mesas disponibles en ese sector.");
-            } else if (response.status === 401 || response.status === 403) {
-                alert("Sesión inválida. Reingresa a tu cuenta.");
-                window.location.href = "/login";
+            if (response.status === 409 || errorMsg.includes("Conflicto")) {
+                alert(errorMsg);
             } else {
                 alert("Atención: " + errorMsg);
             }
         }
     } catch (error) {
         console.error("Error de conexión:", error);
-        alert("Error crítico de conexión con el servidor. Inténtalo más tarde.");
+        alert("Error crítico de conexión con el servidor.");
     }
 }

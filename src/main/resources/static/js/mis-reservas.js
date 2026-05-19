@@ -11,6 +11,7 @@
         window.location.href = "/login";
     }
 })();
+
 document.addEventListener("DOMContentLoaded", () => {
     // Al cargar la página, recuperamos el historial del usuario
     cargarMisReservas();
@@ -46,7 +47,7 @@ async function cargarMisReservas() {
             if (reservas.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="6" style="text-align:center; padding: 80px; color: #666;">
+                        <td colspan="5" style="text-align:center; padding: 80px; color: #666;">
                             <span class="material-symbols-outlined" style="font-size: 48px; display: block; margin-bottom: 10px;">history_edu</span>
                             Aún no has escrito capítulos en tu historia culinaria.
                         </td>
@@ -54,9 +55,8 @@ async function cargarMisReservas() {
                 return;
             }
 
-            // Mapear y dibujar las reservas
+            // Mapear y dibujar las reservas (Se redujo a 5 columnas al quitar el ojo)
             reservas.forEach(res => {
-                // Limpiamos el texto de la experiencia (quita el "Mesa-")
                 const nombreExperiencia = res.experiencia ? res.experiencia.replace('Mesa-', '') : 'Estándar';
 
                 tbody.innerHTML += `
@@ -67,9 +67,6 @@ async function cargarMisReservas() {
                         <td><span class="gold-text">${nombreExperiencia}</span></td>
                         <td><span class="status-pill pill-confirmed">Confirmada</span></td>
                         <td>
-                            <button class="btn-icon-table" onclick="verDetalle('${res.id}')" title="Ver Detalle">
-                                <span class="material-symbols-outlined">visibility</span>
-                            </button>
                             <button class="btn-icon-table btn-cancel" onclick="cancelarReserva('${res.id}')" title="Cancelar Reserva">
                                 <span class="material-symbols-outlined">delete</span>
                             </button>
@@ -78,18 +75,17 @@ async function cargarMisReservas() {
                 `;
             });
         } else if (response.status === 403 || response.status === 401) {
-            // Si el token es inválido o expiró
             localStorage.clear();
             window.location.href = "/login";
         }
     } catch (error) {
         console.error("Error al cargar:", error);
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #ff4444; padding: 20px;">Error de conexión con el servidor.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: #ff4444; padding: 20px;">Error de conexión con el servidor.</td></tr>`;
     }
 }
 
 /**
- * Elimina una reserva y libera la mesa asociada
+ * Elimina una reserva y libera la mesa asociada de forma implícita
  * @param {string} id - ID de la reserva a eliminar
  */
 async function cancelarReserva(id) {
@@ -100,7 +96,8 @@ async function cancelarReserva(id) {
     }
 
     try {
-        const response = await fetch(`/reservas/eliminar/${id}`, {
+        // 🔥 CORRECCIÓN DE RUTA: Ajustado a la arquitectura REST de Spring (/reservas/{id})
+        const response = await fetch(`/reservas/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -109,21 +106,14 @@ async function cancelarReserva(id) {
 
         if (response.ok) {
             alert("Reserva cancelada con éxito. La mesa ha sido liberada.");
-            // Recargamos la lista para reflejar los cambios
+            // Recargamos la lista de forma atómica para refrescar la tabla
             cargarMisReservas();
         } else {
             const msg = await response.text();
             alert("No se pudo cancelar: " + msg);
         }
     } catch (error) {
+        console.error("Error en la petición DELETE:", error);
         alert("Error al conectar con el servidor.");
     }
 }
-
-/**
- * Función extra para ver detalles (opcional)
- */
-function verDetalle(id) {
-    console.log("Consultando detalle de la reserva:", id);
-    // Aquí podrías abrir un modal con más info
-} 
