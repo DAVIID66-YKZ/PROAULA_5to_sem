@@ -12,4 +12,7 @@ public interface ReservaService {
     // Nuevo método:
     public List<ReservaEntity> listarPorUsuario(String usuarioId);
     public ReservaEntity guardarReservaDirecta(ReservaEntity reserva);
+    public List<String> obtenerHorasCompletamenteOcupadas(String fecha, String sector, int invitados);
+    
+    
 }

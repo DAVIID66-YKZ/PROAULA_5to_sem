@@ -103,6 +103,66 @@ public ReservaEntity guardarReservaDirecta(ReservaEntity reserva) {
     // Va directo al repositorio sin validar horas, sectores ni capacidades
     return reservaRepo.save(reserva);
 }
+// Agrega este método a tu ReservaServiceImpl.java
+
+public List<String> obtenerHorasCompletamenteOcupadas(String fecha, String sector, int invitados) {
+    java.util.List<String> horasBloqueadas = new java.util.ArrayList<>();
+    
+    // 1. Traer todas las mesas físicas capaces de alojar esa cantidad de comensales
+    List<MesaEntity> mesasAptas = mesaRepo.findAll().stream()
+            .filter(m -> m.getSector() != null && m.getSector().equalsIgnoreCase(sector))
+            .filter(m -> m.getCapacidad() >= invitados)
+            .collect(Collectors.toList());
+
+    if (mesasAptas.isEmpty()) {
+        // Si no hay ninguna mesa con esa capacidad en todo el sector, bloqueamos todo el día
+        return java.util.Arrays.asList("10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00");
+    }
+
+    // 2. Definir los turnos horarios del select del restaurante
+    String[] todosLosTurnos = {"10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"};
+
+    // Traer todas las reservas de la base de datos para esa fecha de una sola vez
+    List<ReservaEntity> reservasDelDia = reservaRepo.findAll().stream()
+            .filter(r -> r.getFecha() != null && r.getFecha().equals(fecha))
+            .collect(Collectors.toList());
+
+    // 3. Evaluar turno por turno si queda al menos una mesa física disponible
+    for (String turno : todosLosTurnos) {
+        LocalTime horaEvaluar = LocalTime.parse(turno);
+        LocalTime limiteInferior = horaEvaluar.minusHours(2).plusMinutes(1);
+        LocalTime limiteSuperior = horaEvaluar.plusHours(2).minusMinutes(1);
+
+        boolean existeAlMenosUnaMesaLibre = false;
+
+        for (MesaEntity mesa : mesasAptas) {
+            boolean mesaOcupadaEnTurno = false;
+
+            // Revisar si esta mesa en particular está ocupada en el rango de +-2 horas
+            for (ReservaEntity res : reservasDelDia) {
+                if (res.getMesaId() != null && res.getMesaId().equals(mesa.getId())) {
+                    LocalTime horaExistente = LocalTime.parse(res.getHora());
+                    if (horaExistente.isAfter(limiteInferior) && horaExistente.isBefore(limiteSuperior)) {
+                        mesaOcupadaEnTurno = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!mesaOcupadaEnTurno) {
+                existeAlMenosUnaMesaLibre = true;
+                break; // Con que una mesa física esté libre, el turno es válido
+            }
+        }
+
+        // Si recorrimos todas las mesas físicas aptas y ninguna está libre, este turno se bloquea
+        if (!existeAlMenosUnaMesaLibre) {
+            horasBloqueadas.add(turno);
+        }
+    }
+
+    return horasBloqueadas;
+}
 
     @Override public List<ReservaEntity> listarPorUsuario(String usuarioId) { return reservaRepo.findByUsuarioId(usuarioId); }
     @Override public ReservaEntity obtenerReserva(String id) { return reservaRepo.findById(id).orElse(null); }

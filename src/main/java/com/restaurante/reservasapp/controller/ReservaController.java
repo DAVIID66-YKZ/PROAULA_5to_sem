@@ -53,15 +53,15 @@ public ResponseEntity<List<ReservaEntity>> listarPorUsuario(@PathVariable String
     public List<ReservaEntity> listarTodas() {
         return reservaService.listarReservas();
     }
-    @GetMapping("/ocupadas")
-public ResponseEntity<List<ReservaEntity>> obtenerOcupadas(
+// Reemplaza este método en tu ReservaController.java
+@GetMapping("/ocupadas")
+public ResponseEntity<List<String>> obtenerOcupadas(
         @RequestParam String fecha, 
-        @RequestParam String mesaId) {
-    // mesaId recibe el sector como "Mesa-Estandar", "Mesa-Ventana", etc.
-    // Usamos un casteo de nuestra implementación para acceder al método dinámico
-    List<ReservaEntity> ocupadas = ((com.restaurante.reservasapp.services.impl.ReservaServiceImpl) reservaService)
-            .listarPorMesaYFecha(fecha, mesaId);
-    return ResponseEntity.ok(ocupadas);
+        @RequestParam String mesaId,
+        @RequestParam int invitados) {
+    
+    List<String> horasColapsadas = reservaService.obtenerHorasCompletamenteOcupadas(fecha, mesaId, invitados);
+    return ResponseEntity.ok(horasColapsadas);
 }
 // Agrega o reemplaza este método en tu ReservaController.java
 @DeleteMapping("/{id}")
