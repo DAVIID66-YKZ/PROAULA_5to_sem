@@ -28,12 +28,12 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .authorizeHttpRequests(auth -> auth
             // 1. Permitir que el navegador descargue los HTML y recursos
             .requestMatchers("/", "/index", "/login", "/register", "/dashboard", "/reserva", "/mis-reservas","/calendario","/perfil").permitAll()
-            .requestMatchers("/css/**", "/js/**", "/imagenes/**").permitAll()
+            .requestMatchers("/css/**", "/js/**", "/imagenes/**","/mesas/**").permitAll()
             .requestMatchers("/auth/**").permitAll()
 
             // 2. BLOQUEAR LOS DATOS (La API): Aquí es donde el ROL es ley
             .requestMatchers("/reservas/**","/calendario/**").hasRole("CLIENTE")
-            .requestMatchers("/mesas/**").hasRole("ADMIN")
+            
             
             .anyRequest().authenticated()
         )

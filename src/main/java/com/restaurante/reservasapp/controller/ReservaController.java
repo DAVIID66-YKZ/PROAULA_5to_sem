@@ -53,4 +53,25 @@ public ResponseEntity<List<ReservaEntity>> listarPorUsuario(@PathVariable String
     public List<ReservaEntity> listarTodas() {
         return reservaService.listarReservas();
     }
+    @GetMapping("/ocupadas")
+public ResponseEntity<List<ReservaEntity>> obtenerOcupadas(
+        @RequestParam String fecha, 
+        @RequestParam String mesaId) {
+    // mesaId recibe el sector como "Mesa-Estandar", "Mesa-Ventana", etc.
+    // Usamos un casteo de nuestra implementación para acceder al método dinámico
+    List<ReservaEntity> ocupadas = ((com.restaurante.reservasapp.services.impl.ReservaServiceImpl) reservaService)
+            .listarPorMesaYFecha(fecha, mesaId);
+    return ResponseEntity.ok(ocupadas);
+}
+// Agrega o reemplaza este método en tu ReservaController.java
+@DeleteMapping("/{id}")
+public ResponseEntity<?> eliminarReserva(@PathVariable String id) {
+    try {
+        reservaService.eliminarReserva(id);
+        return ResponseEntity.ok().body("Reserva eliminada correctamente.");
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al eliminar la reserva: " + e.getMessage());
+    }
+}
 }

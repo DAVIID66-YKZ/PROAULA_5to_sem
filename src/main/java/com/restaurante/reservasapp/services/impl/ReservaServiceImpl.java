@@ -1,5 +1,6 @@
 package com.restaurante.reservasapp.services.impl;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,57 +24,80 @@ public class ReservaServiceImpl implements ReservaService {
     private MesaRepository mesaRepo;
 
     @Override
-@Transactional
-public ReservaEntity guardarReserva(ReservaEntity reserva) {
-    // 1. Usamos el campo mesaId (que viene del front con el nombre del sector) para buscar
-    String sectorBuscado = reserva.getMesaId(); 
-
-    List<MesaEntity> mesasDisponibles = mesaRepo.findAll().stream()
-            .filter(m -> m.getSector() != null && m.getSector().equals(sectorBuscado))
-            .filter(MesaEntity::isDisponible)
-            .collect(Collectors.toList());
-
-    if (mesasDisponibles.isEmpty()) {
-        throw new RuntimeException("No hay mesas disponibles en " + sectorBuscado);
-    }
-
-    MesaEntity mesaAsignada = mesasDisponibles.get(0);
-    mesaAsignada.setDisponible(false);
-    mesaRepo.save(mesaAsignada);
-
-    // 2. Seteamos el ID técnico de la mesa asignada
-    reserva.setMesaId(mesaAsignada.getId()); 
-    
-    // 3. El campo 'experiencia' ya viene lleno desde el JSON del front, 
-    // así que se guardará automáticamente en MongoDB.
-    
-    return reservaRepo.save(reserva);
-}
-@Override
-    public List<ReservaEntity> listarPorUsuario(String usuarioId) {
-        return reservaRepo.findByUsuarioId(usuarioId);
-    }
-
-    @Override
-    public ReservaEntity obtenerReserva(String id) {
-        return reservaRepo.findById(id).orElse(null);
-    }
-
-    @Override
     @Transactional
-    public void eliminarReserva(String id) {
-        // Al eliminar una reserva, deberíamos liberar la mesa
-        reservaRepo.findById(id).ifPresent(reserva -> {
-            mesaRepo.findById(reserva.getMesaId()).ifPresent(mesa -> {
-                mesa.setDisponible(true);
-                mesaRepo.save(mesa);
-            });
-            reservaRepo.deleteById(id);
-        });
+    public ReservaEntity guardarReserva(ReservaEntity reserva) {
+        String sectorBuscado = reserva.getMesaId(); // Trae "Mesa-Ventana", "Mesa-Estandar", etc.
+        int cantidadInvitados = reserva.getNumeroPersonas(); // ¡Ya corregido el null/0!
+
+        // 1. FILTRO 1: Buscar mesas del sector que SOPORTEN la cantidad de personas
+        // Asumimos que tu MesaEntity tiene un atributo llamado 'capacidad' (ej: 2, 4, 6, 8)
+        List<MesaEntity> mesasAptasDelSector = mesaRepo.findAll().stream()
+                .filter(m -> m.getSector() != null && m.getSector().equalsIgnoreCase(sectorBuscado))
+                .filter(m -> m.getCapacidad() >= cantidadInvitados) // 🔥 VALIDACIÓN DE CAPACIDAD
+                .collect(Collectors.toList());
+
+        if (mesasAptasDelSector.isEmpty()) {
+            throw new RuntimeException("Lo sentimos: No tenemos mesas en el sector " + sectorBuscado + 
+                    " diseñadas para alojar a " + cantidadInvitados + " personas.");
+        }
+
+        // 2. Configurar la matemática de tiempo (+- 2 horas de bloqueo)
+        LocalTime horaSolicitada = LocalTime.parse(reserva.getHora());
+        LocalTime limiteInferior = horaSolicitada.minusHours(2).plusMinutes(1);
+        LocalTime limiteSuperior = horaSolicitada.plusHours(2).minusMinutes(1);
+
+        MesaEntity mesaAsignada = null;
+
+        // 3. FILTRO 2: Buscar cuál de las mesas aptas está libre en esa fecha y rango horario
+        for (MesaEntity mesa : mesasAptasDelSector) {
+            
+            // Consultar reservas previas de ESTA mesa específica en ESTA fecha
+            List<ReservaEntity> reservasDeEstaMesa = reservaRepo.findAll().stream()
+                    .filter(r -> r.getMesaId() != null && r.getMesaId().equals(mesa.getId()) 
+                            && r.getFecha() != null && r.getFecha().equals(reserva.getFecha()))
+                    .collect(Collectors.toList());
+
+            boolean tieneConflictoDeHorario = false;
+
+            for (ReservaEntity resExistente : reservasDeEstaMesa) {
+                LocalTime horaExistente = LocalTime.parse(resExistente.getHora());
+
+                // Validar solapamiento de la regla de 2 horas
+                if (horaExistente.isAfter(limiteInferior) && horaExistente.isBefore(limiteSuperior)) {
+                    tieneConflictoDeHorario = true;
+                    break; // Mesa ocupada en este rango, saltamos a la siguiente mesa apta
+                }
+            }
+
+            // Si la mesa tiene el tamaño correcto y está libre en el horario, la seleccionamos
+            if (!tieneConflictoDeHorario) {
+                mesaAsignada = mesa;
+                break; 
+            }
+        }
+
+        // 4. Si todas las mesas que cumplían con la capacidad están llenas en ese horario
+        if (mesaAsignada == null) {
+            throw new RuntimeException("Lo sentimos: Todas las mesas para " + cantidadInvitados + 
+                    " personas en el sector " + sectorBuscado + " están ocupadas en este horario. Intente otra hora.");
+        }
+
+        // 5. Asignar el ID real de la mesa física encontrada y persistir la reserva
+        reserva.setMesaId(mesaAsignada.getId()); 
+        
+        return reservaRepo.save(reserva);
     }
 
-    @Override
-    public List<ReservaEntity> listarReservas() {
-        return reservaRepo.findAll();
+    // Método de soporte para el controlador y el JS de deshabilitar horas
+    public List<ReservaEntity> listarPorMesaYFecha(String fecha, String sector) {
+        return reservaRepo.findAll().stream()
+                .filter(r -> r.getFecha() != null && r.getFecha().equals(fecha)
+                        && r.getExperiencia() != null && r.getExperiencia().equalsIgnoreCase(sector))
+                .collect(Collectors.toList());
     }
+
+    @Override public List<ReservaEntity> listarPorUsuario(String usuarioId) { return reservaRepo.findByUsuarioId(usuarioId); }
+    @Override public ReservaEntity obtenerReserva(String id) { return reservaRepo.findById(id).orElse(null); }
+    @Override public void eliminarReserva(String id) { reservaRepo.deleteById(id); }
+    @Override public List<ReservaEntity> listarReservas() { return reservaRepo.findAll(); }
 }
