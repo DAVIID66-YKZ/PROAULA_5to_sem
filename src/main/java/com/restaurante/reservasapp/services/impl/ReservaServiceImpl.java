@@ -44,11 +44,13 @@ public class ReservaServiceImpl implements ReservaService {
         List<ReservaEntity> todasLasReservasDelUsuario = reservaRepo
             .findByUsuarioId(reserva.getUsuarioId());
 
+       /* ── REGLA 2: Un usuario máximo 3 reservas en total ──
         if (todasLasReservasDelUsuario.size() >= 3) {
             throw new RuntimeException(
                 "Has alcanzado el límite de 3 reservas. " +
                 "Cancela una reserva existente para hacer una nueva.");
         }
+        */
         // ── REGLA 2B: El mismo usuario no puede tener dos reservas en la misma fecha y hora ──
 boolean mismaFechaHora = todasLasReservasDelUsuario.stream().anyMatch(r ->
     reserva.getFecha().equals(r.getFecha()) &&

@@ -997,7 +997,6 @@ input:checked + .slider:before {
 }
 /* ===== ADMIN FOOTER ===== */
 .admin-footer {
-    margin-top: 40px;
     margin-left: 250px;
     border-top: 1px solid rgba(212, 175, 55, 0.2);
     background-color: #000;
@@ -1006,6 +1005,8 @@ input:checked + .slider:before {
     align-items: center;
     padding: 20px 30px;
     width: calc(100% - 250px);
+    position: relative;
+    flex-shrink: 0;
 }
 
 .footer-left {
@@ -1061,4 +1062,10 @@ body {
 .status-completada {
     background-color: rgba(156, 39, 176, 0.2);
     color: #9c27b0;
+}
+@media (max-width: 768px) {
+    .admin-footer {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+    }
 }

@@ -267,13 +267,13 @@ function cargarMesasEnTabla() {
     visibles.forEach(m => {
        // DESPUÉS — verificar contra reservas reales
 const hoy = new Date().toISOString().split('T')[0]; // fecha actual
-const tieneReservaHoy = datosReservas.some(r => {
-    // Buscar si alguna reserva apunta a esta mesa y es de hoy en adelante
-    return r.mesaId === m.id || 
-           (r.numeroMesa && r.numeroMesa.includes(m.id));
+const tieneReservaFutura = datosReservas.some(r => {
+    if (r.estado !== 'CONFIRMADA') return false;
+    const mesaNum = 'Mesa ' + m.numero;
+    return (r.numeroMesa && r.numeroMesa.startsWith(mesaNum));
 });
 
-const estaDisponible = m.disponible && !tieneReservaHoy;
+const estaDisponible = m.disponible && !tieneReservaFutura;
 const badgeHtml = estaDisponible
     ? '<span class="badge active-badge">DISPONIBLE</span>'
     : '<span class="badge" style="background:rgba(244,67,54,.2);color:#f44336;">OCUPADA</span>';
@@ -500,14 +500,24 @@ function renderizarTablaReservasTodas(lista) {
     const visibles = datos.slice(inicio, inicio + ITEMS_POR_PAGINA);
 
     tbody.innerHTML = '';
+      const totalPags = Math.max(1, Math.ceil(datos.length / ITEMS_POR_PAGINA));
+    setEl('paginaActualTodas', paginaActualReservasTodas);
+    setEl('totalPaginasTodas', totalPags);
 
     if (datos.length === 0) {
         tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;padding:40px;">No se encontraron reservas.</td></tr>';
         return;
+        
     }
 
     visibles.forEach(r => {
-        const statusMap = { 'CONFIRMADA': 'status-confirmed', 'PENDIENTE': 'status-pending', 'LLEGADA': 'status-arrived', 'CANCELADA': 'status-cancelada' };
+      const statusMap = { 
+    'CONFIRMADA': 'status-confirmed', 
+    'PENDIENTE': 'status-pending', 
+    'LLEGADA': 'status-arrived', 
+    'CANCELADA': 'status-cancelada',
+    'COMPLETADA': 'status-completada'
+};
         const cls       = statusMap[r.estado] || 'status-pending';
         const iniciales = r.iniciales || (r.nombreHuesped || 'U').substring(0, 2).toUpperCase();
         const personas  = r.cantidadPersonas || r.numeroPersonas || 0;
@@ -759,6 +769,20 @@ function configurarBusquedas() {
 
 
 // UTILIDADES
+function paginaAnteriorTodas() {
+    if (paginaActualReservasTodas > 1) {
+        paginaActualReservasTodas--;
+        renderizarTablaReservasTodas();
+    }
+}
+
+function paginaSiguienteTodas() {
+    const totalPags = Math.ceil(datosReservasTodas.length / ITEMS_POR_PAGINA);
+    if (paginaActualReservasTodas < totalPags) {
+        paginaActualReservasTodas++;
+        renderizarTablaReservasTodas();
+    }
+}
 
 
 function logout() {

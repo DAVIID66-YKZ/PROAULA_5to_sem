@@ -24,8 +24,7 @@
             <div class="sidebar-header">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h3 class="gold-text">Panel Administrador</h3>
-                    <button id="toggleSidebar" style="background:none; border:none; color:#d4af37; cursor:pointer;">
-                        <span class="material-symbols-outlined">menu_open</span>
+                  <!-- ===== <button id="toggleSidebar" style="background:none; border:none; color:#d4af37; cursor:pointer;">* ===== -->
                     </button>
                 </div>
                 <p class="logo-subtitle">CONSOLA DE ADMINISTRACIÓN</p>
@@ -347,6 +346,14 @@
                             </tbody>
                         </table>
                     </div>
+                      <!-- PAGINACIÓN RESERVAS TODAS -->
+                    <div class="pagination">
+                        <button class="btn-pagination" onclick="paginaAnteriorTodas()">Anterior</button>
+                        <span class="page-info">
+                            Mostrando <span id="paginaActualTodas">1</span> de <span id="totalPaginasTodas">1</span>
+                        </span>
+                        <button class="btn-pagination" onclick="paginaSiguienteTodas()">Siguiente</button>
+                    </div>
                 </div>
             </section>
 
@@ -403,8 +410,10 @@
                                     </td>
                                 </tr>
                             </tbody>
+                            
                         </table>
                     </div>
+                    
                 </div>
             </section>
 
@@ -412,13 +421,13 @@
 <div th:replace="PerfilAdmin :: perfilAdmin"></div>
 
 <!-- Justo debajo del th:replace del perfil -->
-<div th:replace="analitics :: analitics"></div>
+  <div th:replace="analitics :: analitics"></div>
         </main>
 
     </div>
 
    
-  <div th:replace="~{fragmentos/footerAdmin :: footerAdmin}"></div>
+  <!-- ===== <div th:replace="~{fragmentos/footerAdmin :: footerAdmin}"></div>===== -->
 </body>
 
 
