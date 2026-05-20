@@ -179,7 +179,7 @@ async function cargarDatosDelBackend() {
 
     // Cargar reservas recientes
     const resReservas = await fetch(
-      `${API_BASE}/reservas-recientes?pagina=0&tamanio=50`,
+      `${API_BASE}/reservas-recientes?pagina=0&tamanio=99999999`,
       {
         headers: {
           Authorization: `Bearer ${TOKEN}`,
