@@ -30,10 +30,10 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 
 .requestMatchers("/", "/index", "/login", "/register", "/dashboard", "/dashboardAdmin",
     "/menu", "/reserva", "/mis-reservas", "/calendario", "/perfil", 
-    "/ver-menu", "/legal/privacidad", "/legal/terminosYCondiciones").permitAll()
+    "/ver-menu", "/legal/privacidad", "/legal/terminosYCondiciones" ,"/guardar-bulk","/register-bulk/**").permitAll()
 .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**").permitAll()
 .requestMatchers("/auth/**").permitAll()
-.requestMatchers("/usuarios/**", "/register-bulk/**").authenticated()
+.requestMatchers("/usuarios/**").authenticated()
 .requestMatchers("/reservas/**", "/calendario/**").hasAnyRole("CLIENTE", "ADMIN")
 .requestMatchers("/usuarios/**").hasAnyRole("CLIENTE", "ADMIN")
 .requestMatchers("/mesas/**").hasRole("ADMIN")
