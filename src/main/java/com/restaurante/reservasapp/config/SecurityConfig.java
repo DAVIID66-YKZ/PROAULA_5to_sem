@@ -18,31 +18,30 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                // 🔥 CORRECCIÓN 1: Ruta exacta agregada "/reservas/guardar-bulk"
-                .requestMatchers("/", "/index", "/login", "/register", "/dashboard", "/dashboardAdmin",
-                    "/menu", "/reserva", "/mis-reservas", "/calendario", "/perfil", 
-                    "/ver-menu", "/legal/privacidad", "/legal/terminosYCondiciones", 
-                    "/reservas/guardar-bulk", "/register-bulk/**").permitAll()
-                    
-                .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**").permitAll()
-                .requestMatchers("/auth/**").permitAll()
-                
-                // 🔥 CORRECCIÓN 2: Uso de hasAuthority para no chocar con MongoDB
-                .requestMatchers("/usuarios/**", "/register-bulk/**").authenticated()
-                .requestMatchers("/reservas/**", "/calendario/**").hasAnyAuthority("CLIENTE", "ADMIN")
-                .requestMatchers("/usuarios/**").hasAnyAuthority("CLIENTE", "ADMIN")
-                .requestMatchers("/mesas/**").hasAuthority("ADMIN")
-                
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .build();
-    }
+        @Bean
+
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+
+.requestMatchers("/", "/index", "/login", "/register", "/dashboard", "/dashboardAdmin",
+    "/menu", "/reserva", "/mis-reservas", "/calendario", "/perfil", 
+    "/ver-menu", "/legal/privacidad", "/legal/terminosYCondiciones" ,"/guardar-bulk").permitAll()
+.requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**").permitAll()
+.requestMatchers("/auth/**").permitAll()
+.requestMatchers("/usuarios/**", "/register-bulk/**").authenticated()
+.requestMatchers("/reservas/**", "/calendario/**").hasAnyRole("CLIENTE", "ADMIN")
+.requestMatchers("/usuarios/**").hasAnyRole("CLIENTE", "ADMIN")
+.requestMatchers("/mesas/**").hasRole("ADMIN")
+
+.anyRequest().authenticated()
+        )
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .build();
+}
+
 }
