@@ -1,7 +1,6 @@
 package com.restaurante.reservasapp.services.impl;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,6 @@ public class MesaServiceImpl implements MesaService {
     @Override
     public MesaEntity guardarMesa(MesaEntity mesa) {
         return repo.save(mesa);
-
     }
 
     @Override
@@ -36,4 +34,14 @@ public class MesaServiceImpl implements MesaService {
         return repo.findAll();
     }
 
+    // 🔥 NUEVA IMPLEMENTACIÓN DE CARGA MASIVA
+    @Override
+    public void guardarMesasBulk(List<MesaEntity> listaMesas) {
+        for (MesaEntity m : listaMesas) {
+            // Evita duplicar el registro si re-envías la petición por error
+            if (!repo.existsById(m.getId())) {
+                repo.save(m);
+            }
+        }
+    }
 }

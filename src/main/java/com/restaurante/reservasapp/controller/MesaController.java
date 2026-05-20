@@ -1,7 +1,7 @@
 package com.restaurante.reservasapp.controller;
 
 import java.util.List;
-
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,20 +15,31 @@ import com.restaurante.reservasapp.services.MesaService;
 @RequestMapping("mesas")
 public class MesaController {
 
-    private final MesaService mesa;
+    private final MesaService mesaService;
 
-    public MesaController(MesaService mesa) {
-        this.mesa = mesa;
+    // Inyección correcta a través del constructor usando la interfaz
+    public MesaController(MesaService mesaService) {
+        this.mesaService = mesaService;
     }
 
     @GetMapping("/listar")
     public List<MesaEntity> listarMesas() {
-        return mesa.listarMesas();
+        return mesaService.listarMesas();
     }
 
     @PostMapping("/guardar")
     public MesaEntity guardarMesa(@RequestBody MesaEntity mesa) {
-        return this.mesa.guardarMesa(mesa);
+        return mesaService.guardarMesa(mesa);
     }
 
+    // 🔥 NUEVO ENDPOINT PARA CARGA MASIVA
+    @PostMapping("/guardar-bulk")
+    public ResponseEntity<String> guardarMesasBulk(@RequestBody List<MesaEntity> listaMesas) {
+        try {
+            mesaService.guardarMesasBulk(listaMesas);
+            return ResponseEntity.ok("Se han registrado las " + listaMesas.size() + " mesas con éxito en MongoDB Atlas.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al procesar la carga masiva de mesas: " + e.getMessage());
+        }
+    }
 }

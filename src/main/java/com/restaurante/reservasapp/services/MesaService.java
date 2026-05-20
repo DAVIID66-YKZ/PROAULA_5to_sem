@@ -1,7 +1,6 @@
 package com.restaurante.reservasapp.services;
 
 import java.util.List;
-
 import com.restaurante.reservasapp.Entity.MesaEntity;
 
 public interface MesaService {
@@ -13,4 +12,7 @@ public interface MesaService {
     public void eliminarMesa(String id);
 
     public List<MesaEntity> listarMesas();
+
+    // 🔥 NUEVO MÉTODO AGREGADO PARA CARGA MASIVA
+    public void guardarMesasBulk(List<MesaEntity> listaMesas);
 }

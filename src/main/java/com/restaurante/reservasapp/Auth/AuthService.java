@@ -21,44 +21,67 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-public AuthResponse login(LoginRequest request) {
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(request.getCorreo(), request.getContrasena())
-    );
+    public AuthResponse login(LoginRequest request) {
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getCorreo(), request.getContrasena())
+        );
 
-    UsuarioEntity user = userRepository.findByCorreo(request.getCorreo())
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        UsuarioEntity user = userRepository.findByCorreo(request.getCorreo())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-    return AuthResponse.builder()
-            .token(jwtService.getToken(user))
-            .usuarioId(user.getId())
-            .nombre(user.getNombre())
-            .rol(user.getRol().name()) // 🔥 Enviamos el nombre del Rol (CLIENTE, ADMIN, etc.)
-            .build();
-}
-
-public AuthResponse register(RegisterRequest request) {
-    if (userRepository.findByCorreo(request.getCorreo()).isPresent()) {
-        throw new RuntimeException("El correo ya está registrado");
+        return AuthResponse.builder()
+                .token(jwtService.getToken(user))
+                .usuarioId(user.getId())
+                .nombre(user.getNombre())
+                .rol(user.getRol().name())
+                .build();
     }
 
-    UsuarioEntity user = UsuarioEntity.builder()
-            .nombre(request.getNombre())
-            .apellido(request.getApellido())
-            .correo(request.getCorreo())
-            .contrasena(passwordEncoder.encode(request.getContrasena()))
-            .direccion(request.getDireccion())
-            .telefono(request.getTelefono())
-            .rol(Rol.CLIENTE)
-            .build();
+    // Registro público normal desde tu página web (asigna CLIENTE por defecto)
+    public AuthResponse register(RegisterRequest request) {
+        if (userRepository.findByCorreo(request.getCorreo()).isPresent()) {
+            throw new RuntimeException("El correo ya está registrado");
+        }
 
-    UsuarioEntity savedUser = userRepository.save(user);
+        UsuarioEntity user = UsuarioEntity.builder()
+                .nombre(request.getNombre())
+                .apellido(request.getApellido())
+                .correo(request.getCorreo())
+                .contrasena(passwordEncoder.encode(request.getContrasena()))
+                .direccion(request.getDireccion())
+                .telefono(request.getTelefono())
+                .rol(Rol.CLIENTE)
+                .build();
 
-    return AuthResponse.builder()
-            .token(jwtService.getToken(savedUser))
-            .usuarioId(savedUser.getId())
-            .nombre(savedUser.getNombre()) // 🔥 Agregado
-            .rol(savedUser.getRol().name()) // 🔥 Agregado
-            .build();
-}
+        UsuarioEntity savedUser = userRepository.save(user);
+
+        return AuthResponse.builder()
+                .token(jwtService.getToken(savedUser))
+                .usuarioId(savedUser.getId())
+                .nombre(savedUser.getNombre())
+                .rol(savedUser.getRol().name())
+                .build();
+    }
+
+    // 🔥 NUEVO MÉTODO: Exclusivo para la carga masiva desde tu Thunder Client
+    public void registerBulk(RegisterRequest request) {
+        // Evita duplicados si ejecutas la petición más de una vez por error
+        if (userRepository.existsById(request.getId()) || userRepository.findByCorreo(request.getCorreo()).isPresent()) {
+            System.out.println("El usuario ya existe (ID o Correo): " + request.getCorreo());
+            return; 
+        }
+
+        UsuarioEntity user = UsuarioEntity.builder()
+                .id(request.getId()) // 👈 CRUCIAL: Asigna tu ID personalizado
+                .nombre(request.getNombre())
+                .apellido(request.getApellido())
+                .correo(request.getCorreo())
+                .contrasena(passwordEncoder.encode(request.getContrasena())) // Encripta la contraseña del CSV
+                .direccion(request.getDireccion())
+                .telefono(request.getTelefono())
+                .rol(Rol.valueOf(request.getRol().toUpperCase())) // 👈 Asigna CLIENTE o ADMIN dinámicamente
+                .build();
+
+        userRepository.save(user);
+    }
 }
