@@ -53,7 +53,6 @@ public class AuthService {
                 .rol(Rol.CLIENTE)
                 .build();
 
-<<<<<<< HEAD
         UsuarioEntity savedUser = userRepository.save(user);
 
         return AuthResponse.builder()

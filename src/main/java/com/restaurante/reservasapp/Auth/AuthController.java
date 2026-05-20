@@ -31,7 +31,7 @@ public class AuthController {
     @PostMapping(value = "register-admin")
 public ResponseEntity<AuthResponse> registerAdmin(@RequestBody RegisterRequest request)
 {
-    return ResponseEntity.ok(authService.registerAdmin(request));
+    return ResponseEntity.ok(authService.register(request));
 }
 @PostMapping(value = "register-bulk")
 public ResponseEntity<String> registerBulk(@RequestBody List<RegisterRequest> requests) {
@@ -47,4 +47,4 @@ public ResponseEntity<String> registerBulk(@RequestBody List<RegisterRequest> re
     }
     return ResponseEntity.ok("Se han registrado " + creados + " usuarios en la base de datos.");
 }
-
+}
