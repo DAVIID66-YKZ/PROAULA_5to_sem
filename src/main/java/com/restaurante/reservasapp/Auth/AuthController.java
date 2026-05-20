@@ -1,5 +1,7 @@
 package com.restaurante.reservasapp.Auth;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,5 +32,19 @@ public class AuthController {
 public ResponseEntity<AuthResponse> registerAdmin(@RequestBody RegisterRequest request)
 {
     return ResponseEntity.ok(authService.registerAdmin(request));
+}
+@PostMapping(value = "register-bulk")
+public ResponseEntity<String> registerBulk(@RequestBody List<RegisterRequest> requests) {
+    int creados = 0;
+    for (RegisterRequest request : requests) {
+        try {
+            authService.register(request);
+            creados++;
+        } catch (Exception e) {
+            // Por si algún correo ya existe, que no detenga el proceso completo
+            System.out.println("Error con el usuario: " + request.getCorreo());
+        }
+    }
+    return ResponseEntity.ok("Se han registrado " + creados + " usuarios en la base de datos.");
 }
 }

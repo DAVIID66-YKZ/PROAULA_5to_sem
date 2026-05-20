@@ -32,7 +32,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
     "/ver-menu", "/legal/privacidad", "/legal/terminosYCondiciones").permitAll()
 .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**").permitAll()
 .requestMatchers("/auth/**").permitAll()
-.requestMatchers("/usuarios/**").authenticated()
+.requestMatchers("/usuarios/**", "/register-bulk/**").authenticated()
 
 
 .requestMatchers("/reservas/**", "/calendario/**").hasAnyRole("CLIENTE", "ADMIN")
