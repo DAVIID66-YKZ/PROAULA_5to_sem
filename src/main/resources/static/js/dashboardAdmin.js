@@ -1,5 +1,5 @@
 // ===== CONFIGURACIÓN DE API =====
-const API_BASE = "http://proaula-5to-sem.onrender.com/api/admin/dashboardAdmin"
+const API_BASE = "/api/admin/dashboardAdmin"
 const TOKEN = localStorage.getItem("token") || localStorage.getItem("jwtToken")
 
 // ===== DATOS DE PRUEBA (Fallback si falla el backend) =====
