@@ -2,7 +2,6 @@
    ESTILOS DE MIS RESERVAS - THE CULINARY MANUSCRIPT
    ================================================================ */
 
-/* Contenedor idéntico al de Reserva para respetar Sidebar y Nav */
 * {
     margin: 0;
     padding: 0;
@@ -11,16 +10,16 @@
 
 body {
     font-family: 'Manrope', sans-serif;
-    background-color: #070707; /* Fondo ultra-oscuro */
+    background-color: #070707;
     color: #e0e0e0;
     overflow-x: hidden;
     font-weight: 400;
 }
-/* Tipografía Especial */
+
 .serif-italic {
     font-family: 'Noto Serif', serif;
     font-style: italic;
-    color: #d4af37; /* Dorado de la marca */
+    color: #d4af37;
 }
 
 .serif-title {
@@ -47,20 +46,19 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: calc(100vh - 80px); /* Ajuste exacto para el Nav */
+    min-height: calc(100vh - 80px);
     padding: 40px;
     width: 100%;
     box-sizing: border-box;
-    background-color: transparent; /* El fondo negro viene del layout global */
+    background-color: transparent;
 }
 
-/* --- CABECERA --- */
 .section-header-inline {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     width: 100%;
-    max-width: 1150px; /* Misma anchura que la card de reserva */
+    max-width: 1150px;
     margin-bottom: 40px;
     padding-bottom: 20px;
     border-bottom: 1px solid rgba(212, 175, 55, 0.15);
@@ -69,15 +67,14 @@ body {
 .section-header-inline .serif-title {
     font-family: 'Noto Serif', serif;
     color: #fff;
-    font-size: 3.2rem; /* Tamaño coherente con la otra vista */
+    font-size: 3.2rem;
     margin: 0;
 }
 
-/* --- TABLA (Estilo Card de Reserva) --- */
 .tabla-reservas-wrapper {
     width: 100%;
     max-width: 1150px;
-    background-color: #121212; /* Mismo fondo que la card */
+    background-color: #121212;
     border: 1px solid rgba(212, 175, 55, 0.15);
     border-radius: 15px;
     overflow: hidden;
@@ -91,7 +88,7 @@ body {
 }
 
 .tabla-manuscript thead {
-    background-color: #1a1a1a; /* Color de los inputs de reserva */
+    background-color: #1a1a1a;
 }
 
 .tabla-manuscript th {
@@ -111,8 +108,7 @@ body {
     font-size: 0.95rem;
 }
 
-/* --- PILLS Y TEXTOS --- */
-.td-fecha {
+.serif-gold {
     color: #d4af37 !important;
     font-family: 'Noto Serif', serif;
     font-weight: 600;
@@ -129,7 +125,12 @@ body {
     border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
-/* --- BOTONES --- */
+.pill-past {
+    background: rgba(255, 255, 255, 0.04) !important;
+    color: #888888 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
 .btn-new-reservation {
     background-color: #d4af37;
     color: #000;
@@ -166,7 +167,85 @@ body {
     color: #ff4444 !important;
 }
 
-/* Responsivo */
+/* --- INTERFAZ DEL MODAL EMERGENTE --- */
+.modal-manuscript {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: #111111;
+    border: 1px solid #d4af37;
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+}
+
+.modal-content textarea {
+    width: 100%;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    outline: none;
+    resize: none;
+    font-family: 'Manrope', sans-serif;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.modal-content textarea:focus {
+    border-color: #d4af37;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.btn-modal-cancel {
+    background: transparent;
+    color: #888;
+    border: 1px solid #333;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-modal-cancel:hover {
+    color: #fff;
+    background: #222;
+}
+
+.btn-modal-save {
+    background: #d4af37;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-modal-save:hover {
+    background: #f0c64d;
+}
+
 @media (max-width: 900px) {
     .section-header-inline {
         flex-direction: column;

@@ -1,0 +1,316 @@
+/* ===== MI PERFIL - CONTAINER PRINCIPAL ===== */
+
+.perfil-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;      /* cards no se estiran si tienen altura diferente */
+    max-width: 100%;         /* quitar el max-width: 700px */
+}
+/* ===== PERFIL SECTION - CARD INDIVIDUAL ===== */
+
+.perfil-card {
+    background-color: var(--bg-darker);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  padding: 22px 24px; 
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ===== PERFIL HEADER - TÍTULO CON ÍCONO ===== */
+
+.perfil-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.perfil-card-icon {
+    font-size: 28px;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.perfil-card-title {
+    font-size: 11px;      /* antes 18px — queda igual que tus otros títulos del panel */
+    letter-spacing: 0.13em;
+
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== FORM STYLES ===== */
+
+.perfil-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.perfil-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.perfil-form-row .perfil-form-group {
+    margin-bottom: 0;
+}
+
+/* ===== LABELS ===== */
+
+.perfil-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+    display: block;
+}
+
+/* ===== INPUTS ===== */
+
+.perfil-input {
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 15px;
+    color: var(--text-light);
+    font-size: 13px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.perfil-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: rgba(212, 175, 55, 0.05);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1);
+}
+
+.perfil-input:disabled {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.perfil-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ===== HINTS / AYUDA BAJO INPUTS ===== */
+
+.perfil-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: -4px;
+    display: block;
+}
+
+/* ===== FORTALEZA DE CONTRASEÑA ===== */
+
+.perfil-strength-container {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.perfil-strength-bar-wrapper {
+    width: 100%;
+    height: 6px;
+    background-color: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.perfil-strength-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #f44336 0%, #ff9800 33%, #4CAF50 100%);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.perfil-strength-text {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+/* Estados de fortaleza */
+.perfil-strength-bar.strength-very-weak {
+    background: linear-gradient(90deg, #f44336, #f44336);
+}
+
+.perfil-strength-bar.strength-weak {
+    background: linear-gradient(90deg, #ff9800, #ff9800);
+}
+
+.perfil-strength-bar.strength-good {
+    background: linear-gradient(90deg, #ffc107, #4CAF50);
+}
+
+.perfil-strength-bar.strength-strong {
+    background: linear-gradient(90deg, #4CAF50, #4CAF50);
+}
+
+/* ===== MENSAJES DE ERROR ===== */
+
+.perfil-error-container {
+    background-color: rgba(244, 67, 54, 0.1);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    border-radius: 6px;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+    animation: slideIn 0.3s ease;
+}
+
+.perfil-error-container.show {
+    display: flex;
+}
+
+.perfil-error-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.perfil-error-text {
+    flex: 1;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== BUTTONS ===== */
+
+.perfil-btn {
+    background-color: var(--primary);
+    color: var(--secondary);
+    border: none;
+    border-radius: 6px;
+    padding: 12px 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+   width: fit-content;
+    margin-left: auto;
+}
+
+.perfil-btn:hover {
+    background-color: #d4a835;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+.perfil-btn:active {
+    transform: translateY(0);
+}
+
+.perfil-btn:disabled {
+    background-color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.perfil-btn-icon {
+    font-size: 18px;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 1024px) {
+    .perfil-wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .perfil-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil-card {
+        padding: 20px;
+    }
+
+    .perfil-card-title {
+        font-size: 16px;
+    }
+
+    .perfil-card-header {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+    }
+}
+
+/* ===== ANIMACIONES ===== */
+
+.perfil-input:focus-visible {
+    outline: none;
+}
+
+.perfil-form-group {
+    transition: all 0.3s ease;
+}
+
+.perfil-card {
+    transition: all 0.3s ease;
+}
+
+/* ===== ESTADOS ESPECIALES ===== */
+
+.perfil-input.is-valid {
+    border-color: var(--success);
+    background-color: rgba(76, 175, 80, 0.05);
+}
+
+.perfil-input.is-invalid {
+    border-color: var(--danger);
+    background-color: rgba(244, 67, 54, 0.05);
+}
+
+.perfil-hint.is-error {
+    color: var(--danger);
+    font-weight: 600;
+}
+
+.perfil-hint.is-success {
+    color: var(--success);
+    font-weight: 600;
+}

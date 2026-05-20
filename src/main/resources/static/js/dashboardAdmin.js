@@ -192,7 +192,8 @@ function crearFilaReserva(r) {
         'CONFIRMADA': 'status-confirmed',
         'PENDIENTE':  'status-pending',
         'LLEGADA':    'status-arrived',
-        'CANCELADA':  'status-cancelada'
+        'CANCELADA':  'status-cancelada',
+        'COMPLETADA': 'status-completada'
     };
     const cls      = statusMap[r.estado] || 'status-pending';
     const iniciales = r.iniciales || (r.nombreHuesped || 'U').substring(0, 2).toUpperCase();
@@ -559,10 +560,10 @@ async function eliminarReservaAdmin(id) {
 
     if (conectadoAlBackend && TOKEN) {
         try {
-            const res = await fetch(`/reservas/eliminar/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${TOKEN}` }
-            });
+            const res = await fetch(`/reservas/${id}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${TOKEN}` }
+});
             if (res.ok) {
                 alert('✅ Reserva eliminada correctamente.');
             } else {
@@ -765,4 +766,61 @@ function logout() {
         localStorage.clear();
         window.location.href = '/login';
     }
+}
+function toggleFiltroPanel() {
+    const panel = document.getElementById('filtroPanel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function filtrarReservasRecientes() {
+    const estado = document.getElementById('filtroEstadoRecientes').value;
+    const filtradas = estado
+        ? datosReservas.filter(r => r.estado === estado)
+        : datosReservas;
+
+    const tbody = document.getElementById('reservasTableBody');
+    tbody.innerHTML = '';
+    filtradas.forEach(r => tbody.appendChild(crearFilaReserva(r)));
+}
+function filtrarMesas() {
+    const termino = document.getElementById('buscarMesa').value.toLowerCase().trim();
+
+    const filtradas = termino
+        ? todasLasMesas.filter(m =>
+            String(m.numero).includes(termino) ||
+            (m.numeroMesa || '').toLowerCase().includes(termino))
+        : todasLasMesas;
+
+    const container = document.getElementById('mesasListContainer');
+    container.innerHTML = '';
+
+    if (filtradas.length === 0) {
+        container.innerHTML = '<p style="color:#999;text-align:center;padding:20px;">No se encontró ninguna mesa.</p>';
+        return;
+    }
+
+    filtradas.forEach(m => {
+        const activa = m.disponible !== undefined ? m.disponible : (m.activa !== undefined ? m.activa : true);
+        const badgeHtml = activa
+            ? '<span class="badge active-badge">DISPONIBLE</span>'
+            : '<span class="badge" style="background:rgba(244,67,54,.2);color:#f44336;">OCUPADA</span>';
+
+        const div = document.createElement('div');
+        div.className = 'mesa-item';
+        div.innerHTML = `
+            <div class="mesa-info">
+                <div class="mesa-number">Mesa ${m.numero || m.numeroMesa || m.id}</div>
+                <div class="mesa-details">${m.sector || m.nombreUbicacion || 'Comedor Principal'} · ${m.capacidad} personas</div>
+            </div>
+            <div class="mesa-status">
+                ${badgeHtml}
+                <button class="mesa-edit-btn" title="Editar" onclick="editarMesa('${m.id}')">
+                    <img src="/iconos/pencil.png" alt="Editar" class="action-icon">
+                </button>
+                <button class="mesa-delete-btn" title="Eliminar" onclick="eliminarMesa('${m.id}')">
+                    <img src="/iconos/delete.png" alt="Eliminar" class="action-icon">
+                </button>
+            </div>`;
+        container.appendChild(div);
+    });
 }

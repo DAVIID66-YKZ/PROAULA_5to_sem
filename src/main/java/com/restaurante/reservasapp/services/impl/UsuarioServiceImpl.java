@@ -62,4 +62,18 @@ public class UsuarioServiceImpl implements UsuarioService {
         // Guardamos los cambios manteniendo la misma ID, rol y credenciales
         return repo.save(usuarioExistente);
     }
+    @Override
+public void cambiarPassword(String id, String passwordActual, String passwordNueva) {
+    UsuarioEntity usuario = repo.findById(id)
+        .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
+
+    // Verificar que la contraseña actual sea correcta
+    if (!passwordEncoder.matches(passwordActual, usuario.getContrasena())) {
+        throw new RuntimeException("La contraseña actual es incorrecta.");
+    }
+
+    // Guardar la nueva contraseña encriptada
+    usuario.setContrasena(passwordEncoder.encode(passwordNueva));
+    repo.save(usuario);
+}
 }

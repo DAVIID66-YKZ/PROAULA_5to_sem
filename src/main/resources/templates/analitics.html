@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="analitics">
+
+    <section id="analytics" class="content-section">
+
+        <header class="section-header">
+            <div>
+                <h1>Analytics</h1>
+                <p>Visualización en tiempo real de métricas del negocio.</p>
+            </div>
+            <div class="admin-profile">
+                <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
+                <span class="profile-name">MAÎTRE D'</span>
+                <div class="profile-avatar">
+                    <span class="material-symbols-outlined">account_circle</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="analytics-wrapper">
+            <div class="analytics-card">
+                <div class="analytics-card-header">
+                    <span class="material-symbols-outlined">analytics</span>
+                    <h2 class="analytics-card-title">Dashboard Live · Power BI</h2>
+                    <span class="analytics-live-badge">
+                        <span class="analytics-live-dot"></span>
+                        LIVE
+                    </span>
+                </div>
+                <div class="analytics-iframe-wrapper">
+                    <iframe
+                        title="powerbi"
+                        src="https://app.powerbi.com/view?r=eyJrIjoiNDNhMTk0OTgtYzhiOS00MjIxLThkMTItMTE3NWQxMGM4N2JiIiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9"
+                        frameborder="0"
+                        allowfullscreen="true">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</div>
+
+</body>
+</html>

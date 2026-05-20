@@ -52,5 +52,28 @@ public ResponseEntity<?> actualizarPerfil(
         return ResponseEntity.badRequest().body("Error: " + e.getMessage());
     }
 }
+@PutMapping("/cambiar-password/{id}")
+public ResponseEntity<?> cambiarPassword(
+        @PathVariable String id,
+        @RequestBody java.util.Map<String, String> passwords) {
+    try {
+        String passwordActual = passwords.get("passwordActual");
+        String passwordNueva = passwords.get("passwordNueva");
+
+        if (passwordActual == null || passwordNueva == null) {
+            return ResponseEntity.badRequest().body("Faltan campos de contraseña.");
+        }
+
+        if (passwordNueva.length() < 8) {
+            return ResponseEntity.badRequest().body("La nueva contraseña debe tener mínimo 8 caracteres.");
+        }
+
+        usuario.cambiarPassword(id, passwordActual, passwordNueva);
+        return ResponseEntity.ok("Contraseña actualizada correctamente.");
+
+    } catch (RuntimeException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
 
 }

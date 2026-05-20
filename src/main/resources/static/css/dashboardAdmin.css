@@ -1058,3 +1058,7 @@ body {
     flex-direction: column;
 }
 
+.status-completada {
+    background-color: rgba(156, 39, 176, 0.2);
+    color: #9c27b0;
+}

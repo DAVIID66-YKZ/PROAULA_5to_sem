@@ -18,6 +18,7 @@ public class ReservaEntity {
     private String hora;
     private int numeroPersonas;
     private String usuarioId;
-    private String mesaId; // Guardará el ID técnico de la mesa
-    private String experiencia; // 🔥 NUEVO: Guardará "Mesa-Ventana" o "Mesa-Alcoba"
+    private String mesaId; 
+    private String experiencia; 
+    private String comentario; // 🔥 NUEVO: Almacenará la reseña del manuscrito
 }

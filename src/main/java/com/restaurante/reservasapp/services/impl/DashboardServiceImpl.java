@@ -75,6 +75,18 @@ private UsuarioRepository usuarioRepository;
         // Adaptado a tu estructura sin campo estado
         return reservaRepository.findAll().size();
     }
+    private String determinarEstado(String fecha, String hora) {
+    try {
+        java.time.LocalDateTime fechaHoraReserva = java.time.LocalDateTime.parse(
+            fecha + "T" + hora
+        );
+        return fechaHoraReserva.isBefore(java.time.LocalDateTime.now()) 
+            ? "COMPLETADA" 
+            : "CONFIRMADA";
+    } catch (Exception e) {
+        return "CONFIRMADA";
+    }
+}
 private ReservaParaDashboardAdminResponse mapearReservaADashboard(ReservaEntity reserva) {
     
     // ── Nombre del usuario ──
@@ -132,7 +144,7 @@ private ReservaParaDashboardAdminResponse mapearReservaADashboard(ReservaEntity 
         .fechaHora(fechaHora)
         .cantidadPersonas(reserva.getNumeroPersonas())
         .numeroMesa(numeroMesa)
-        .estado("CONFIRMADA")
+        .estado(determinarEstado(reserva.getFecha(), reserva.getHora()))
         .tipoEvento(experiencia)
         .build();
 }
