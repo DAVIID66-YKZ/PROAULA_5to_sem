@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterRequest {
-    private String id;          // Recibe "USR0001", "USR0002", etc.
+    private String id; // <-- Clave para recibir USR0001, USR0002, etc.
     private String nombre;
     private String apellido;
-    private String correo;
-    private String contrasena;
     private String direccion;
+    private String rol; // O el tipo 'Rol' si es un enum
     private String telefono;
-    private String rol;         // Recibe "CLIENTE" o "ADMIN"
+    private String contrasena;
+    private String correo;
 }

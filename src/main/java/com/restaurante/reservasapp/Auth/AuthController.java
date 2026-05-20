@@ -27,24 +27,18 @@ public class AuthController {
         return ResponseEntity.ok(authService.register(request));
     }
 
-
-    @PostMapping(value = "register-admin")
-public ResponseEntity<AuthResponse> registerAdmin(@RequestBody RegisterRequest request)
-{
-    return ResponseEntity.ok(authService.register(request));
-}
-@PostMapping(value = "register-bulk")
-public ResponseEntity<String> registerBulk(@RequestBody List<RegisterRequest> requests) {
-    int creados = 0;
-    for (RegisterRequest request : requests) {
-        try {
-            authService.register(request);
-            creados++;
-        } catch (Exception e) {
-            // Por si algún correo ya existe, que no detenga el proceso completo
-            System.out.println("Error con el usuario: " + request.getCorreo());
+    // 🔥 ENDPOINT ACTUALIZADO PARA CARGA MASIVA
+    @PostMapping(value = "register-bulk")
+    public ResponseEntity<String> registerBulk(@RequestBody List<RegisterRequest> requests) {
+        int creados = 0;
+        for (RegisterRequest request : requests) {
+            try {
+                authService.registerBulk(request); // 👈 Usa el nuevo método
+                creados++;
+            } catch (Exception e) {
+                System.out.println("Error con el usuario " + request.getId() + ": " + e.getMessage());
+            }
         }
+        return ResponseEntity.ok("Se han registrado " + creados + " usuarios en la base de datos de manera masiva.");
     }
-    return ResponseEntity.ok("Se han registrado " + creados + " usuarios en la base de datos.");
-}
 }
