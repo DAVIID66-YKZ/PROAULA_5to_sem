@@ -3,6 +3,7 @@ package com.restaurante.reservasapp.services.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,13 +29,16 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioEntity obtenerUsuario(String id) {
-        return repo.findById(id).orElse(null);
+    @Nullable
+    public UsuarioEntity obtenerUsuario(@Nullable String id) {
+        return repo.findById(id != null ? id : "").orElse(null);
     }
 
     @Override
-    public void eliminarUsuario(String id) {
-        repo.deleteById(id);
+    public void eliminarUsuario(@Nullable String id) {
+        if (id != null) {
+            repo.deleteById(id);
+        }
     }
 
     @Override
@@ -58,4 +62,18 @@ public class UsuarioServiceImpl implements UsuarioService {
         // Guardamos los cambios manteniendo la misma ID, rol y credenciales
         return repo.save(usuarioExistente);
     }
+    @Override
+public void cambiarPassword(String id, String passwordActual, String passwordNueva) {
+    UsuarioEntity usuario = repo.findById(id)
+        .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
+
+    // Verificar que la contraseña actual sea correcta
+    if (!passwordEncoder.matches(passwordActual, usuario.getContrasena())) {
+        throw new RuntimeException("La contraseña actual es incorrecta.");
+    }
+
+    // Guardar la nueva contraseña encriptada
+    usuario.setContrasena(passwordEncoder.encode(passwordNueva));
+    repo.save(usuario);
+}
 }

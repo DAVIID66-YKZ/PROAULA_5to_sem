@@ -27,18 +27,18 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
     return http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            // 1. Permitir que el navegador descargue los HTML y recursos
-            .requestMatchers("/","/reservas/guardar-bulk","/index", "/login", "/register","/register-bulk","/guardar-bulk", "/dashboard", "/reserva", 
-            "/mis-reservas","/calendario","/perfil","/menu","/ver-menu","/legal/privacidad","/legal/terminosYCondiciones").permitAll()
-            .requestMatchers("/css/**", "/js/**", "/imagenes/**","/mesas/**").permitAll()
-            .requestMatchers("/auth/**").permitAll()
 
+.requestMatchers("/", "/index", "/login", "/register", "/dashboard", "/dashboardAdmin",
+    "/menu", "/reserva", "/mis-reservas", "/calendario", "/perfil", 
+    "/ver-menu", "/legal/privacidad", "/legal/terminosYCondiciones").permitAll()
+.requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**").permitAll()
+.requestMatchers("/auth/**").permitAll()
+.requestMatchers("/usuarios/**", "/register-bulk/**").authenticated()
+.requestMatchers("/reservas/**", "/calendario/**").hasAnyRole("CLIENTE", "ADMIN")
+.requestMatchers("/usuarios/**").hasAnyRole("CLIENTE", "ADMIN")
+.requestMatchers("/mesas/**").hasRole("ADMIN")
 
-            // 2. BLOQUEAR LOS DATOS (La API): Aquí es donde el ROL es ley
-            .requestMatchers("/reservas/**","/calendario/**").hasRole("CLIENTE")
-            
-            
-            .anyRequest().authenticated()
+.anyRequest().authenticated()
         )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .build();

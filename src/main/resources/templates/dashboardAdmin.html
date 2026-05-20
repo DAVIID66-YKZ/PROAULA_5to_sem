@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+    <html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin -  The Culinary Manuscript</title>
+   <link rel="stylesheet" href="/css/dashboardAdmin.css">
+   <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/reservaAdmin.css}">
+   <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+  <link rel="stylesheet" th:href="@{/css/perfilAdmin.css}">
+<link rel="stylesheet" th:href="@{/css/analitics.css}">
+<script src="/js/perfilAdmin.js"></script>
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<script src="/js/dashboardAdmin.js"></script>
+
+
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 class="gold-text">Panel Administrador</h3>
+                  <!-- ===== <button id="toggleSidebar" style="background:none; border:none; color:#d4af37; cursor:pointer;">* ===== -->
+                    </button>
+                </div>
+                <p class="logo-subtitle">CONSOLA DE ADMINISTRACIÓN</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+<a href="#" class="nav-item active" data-section="dashboard">
+    <span class="nav-icon">
+        <span class="material-symbols-outlined">dashboard</span>
+    </span>
+    <span>PANEL</span>
+</a>
+
+  <a href="#" class="nav-item" data-section="mesas">
+    <span class="nav-icon">
+        <span class="material-symbols-outlined">table_restaurant</span>
+    </span>
+    <span>GESTIONAR MESAS</span>
+</a>
+    <a href="#" class="nav-item" data-section="reservas">
+        <span class="nav-icon">
+            <span class="material-symbols-outlined">calendar_today</span>
+        </span>
+        <span>RESERVAS</span>
+    </a>
+
+    <a href="#" class="nav-item" data-section="usuarios">
+        <span class="nav-icon">
+            <span class="material-symbols-outlined">group</span>
+        </span>
+        <span>GESTIONAR USUARIOS</span>
+    </a>
+
+    <a href="#" class="nav-item" data-section="perfil">
+        <span class="nav-icon">
+            <span class="material-symbols-outlined">account_circle</span>
+        </span>
+        <span>MI PERFIL</span>
+    </a>
+     <a href="#" class="nav-item" data-section="analytics">
+        <span class="nav-icon">
+            <span class="material-symbols-outlined">analytics</span>
+        </span>
+        <span>ANALITICS</span>
+    </a>
+</nav>
+            <div class="sidebar-footer">
+                <a href="#" class="footer-link"> <span class="material-symbols-outlined">support_agent</span>
+                       Soporte</a>
+               <a href="#" class="footer-link" onclick="logout()">
+                <span class="material-symbols-outlined">logout</span>
+                Cerrar sesión
+            </a>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+            
+            <!-- ===== SECCIÓN DASHBOARD ===== -->
+            <section id="dashboard" class="content-section active">
+                <header class="section-header">
+                    <div>
+                        <h1>Registro de Reservas</h1>
+                        <p>Supervisa las reservas actuales y la logística de huéspedes.</p>
+                    </div>
+                    <div class="admin-profile">
+                        <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
+                        <span class="profile-name">MAÎTRE D'</span>
+                        <div class="profile-avatar"></div>
+                    </div>
+                </header>
+
+                <!-- Tarjetas de Estadísticas -->
+              <div class="stats-container">
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <span class="material-symbols-outlined">bar_chart</span>
+        </div>
+
+        <div class="stat-content">
+            <p class="stat-label">OCUPACIÓN</p>
+            <h2 class="stat-value" id="ocupancia">84%</h2>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <span class="material-symbols-outlined">groups</span>
+        </div>
+
+        <div class="stat-content">
+            <p class="stat-label">TOTAL DE HUÉSPEDES</p>
+            <h2 class="stat-value" id="totalHuespedes">142</h2>
+            <span class="stat-subtitle">+12 DEL TURNO ANTERIOR</span>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <span class="material-symbols-outlined">schedule</span>
+        </div>
+
+        <div class="stat-content">
+            <p class="stat-label">LISTA DE ESPERA</p>
+            <h2 class="stat-value" id="listaEspera">08</h2>
+            <span class="stat-subtitle">TIEMPO ESTIMADO DE ESPERA: 20M</span>
+        </div>
+    </div>
+
+</div>
+
+                <!-- Tabla de Reservas Recientes -->
+                <section class="reservas-section">
+                    <h2 class="section-title">Reservas Recientes</h2>
+                    
+                    <div class="reservas-controls">
+                        <input type="text" id="buscarHuesped" class="search-input" placeholder="BUSCAR UN HUÉSPED">
+                       <button class="filter-btn" onclick="toggleFiltroPanel()">
+    <span class="material-symbols-outlined">filter_list</span>
+</button>
+
+<div id="filtroPanel" style="display:none; margin-top:10px;">
+    <select id="filtroEstadoRecientes" class="filter-select" onchange="filtrarReservasRecientes()">
+        <option value="">Todos los Estados</option>
+        <option value="CONFIRMADA">Confirmada</option>
+        <option value="COMPLETADA">Completada</option>
+        <option value="PENDIENTE">Pendiente</option>
+        <option value="CANCELADA">Cancelada</option>
+    </select>
+</div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="reservas-table">
+                            <thead>
+                                <tr>
+                                    <th>NOMBRE DEL HUÉSPED</th>
+                                    <th>FECHA Y HORA</th>
+                                    <th>NÚMERO DE PERSONAS</th>
+                                    <th>MESA</th>
+                                    <th>ESTADO</th>
+                                    <th>ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservasTableBody">
+                                <!-- Se cargan datos aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination">
+                        <button class="btn-pagination" onclick="paginaAnterior()">Anterior</button>
+                        <span class="page-info">Mostrando <span id="paginaActual">1</span> de <span id="totalPaginas">5</span> reservas</span>
+                        <button class="btn-pagination" onclick="paginaSiguiente()">Siguiente</button>
+                    </div>
+                </section>
+            </section>
+
+            <!-- ===== SECCIÓN MESAS ===== -->
+            <section id="mesas" class="content-section">
+                <header class="section-header">
+                    <div>
+                        <h1>Configuración de Mesas</h1>
+                        <p>Organiza el diseño de tu piso de comedor. Ajusta la capacidad y disponibilidad para orquestar el flujo de la noche.</p>
+                    </div>
+                    <div class="admin-profile">
+                        <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
+                        <span class="profile-name">MAÎTRE D'</span>
+                        <div class="profile-avatar"></div>
+                    </div>
+                </header>
+
+                <div class="mesas-container">
+                    <!-- Panel Izquierdo: Crear/Editar Mesa -->
+                    <div class="mesa-form-panel">
+                       <h3 class="titulo-icono">
+                  <span class="material-symbols-outlined">table_restaurant</span>
+                          Gestionar Mesa</h3>
+                        
+                        <form id="formMesa" class="mesa-form">
+                            <div class="form-group">
+                                <label>NÚMERO DE MESA</label>
+                                <input type="text" id="numeroMesa" placeholder="ej. 12A" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>CAPACIDAD</label>
+                                <div class="capacity-input">
+                                    <input type="number" id="capacidad" placeholder="4" min="1" max="12" required>
+                                    <span class="capacity-icon"></span>
+                                </div>
+                            </div>
+                            
+                           <div class="form-group">
+    <label>SECTOR / UBICACIÓN</label>
+    <div class="sector-grid">
+
+        <label class="sector-card">
+            <input type="radio" name="sector" value="Mesa-Estandar" checked>
+            <div class="sector-ui">
+                <span class="material-symbols-outlined">restaurant</span>
+                <span class="sector-nombre">Estándar</span>
+                <span class="sector-detalle">Main Hall</span>
+            </div>
+        </label>
+
+        <label class="sector-card">
+            <input type="radio" name="sector" value="Mesa-Ventana">
+            <div class="sector-ui">
+                <span class="material-symbols-outlined">window</span>
+                <span class="sector-nombre">Ventana</span>
+                <span class="sector-detalle">City Views</span>
+            </div>
+        </label>
+
+        <label class="sector-card">
+            <input type="radio" name="sector" value="Mesa-Alcoba">
+            <div class="sector-ui">
+                <span class="material-symbols-outlined">meeting_room</span>
+                <span class="sector-nombre">Alcoba</span>
+                <span class="sector-detalle">Privado</span>
+            </div>
+        </label>
+
+    </div>
+</div>
+                            
+                            <div class="form-group">
+                                <label>Estado de Disponibilidad</label>
+                                <p>Habilitar para reservas en vivo</p>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="activa" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn-save">GUARDAR MESA</button>
+                            <button type="button" class="btn-clear" onclick="limpiarFormulario()">LIMPIAR FORMULARIO</button>
+                        </form>
+
+                        <div class="mesa-image-placeholder">
+                            <div class="placeholder-text">El Piso del Manuscrito</div>
+                            <div class="placeholder-subtitle">Colocación estratégica de huéspedes</div>
+                        </div>
+                    </div>
+
+                    <!-- Panel Derecho: Lista de Mesas -->
+                    <div class="mesas-registry">
+                        <div class="registry-header">
+                            <h3>Registro del Piso</h3>
+                            <div class="registry-stats">
+                                <span class="badge active-badge">ACTIVAS: <span id="mesasActivas">14</span></span>
+                                <span class="badge total-badge">TOTAL: <span id="mesasTotales">20</span></span>
+                            </div>
+                        </div>
+   <div style="margin-bottom: 15px;">
+    <input type="text" id="buscarMesa" class="search-input" 
+           placeholder="Buscar por número de mesa..."
+           oninput="filtrarMesas()">
+</div>
+
+                        <div class="mesas-list" id="mesasListContainer">
+
+                        </div>
+
+                        <div class="pagination-mesas">
+                            <button class="btn-pagination" onclick="mesaAnterior()">Anterior</button>
+                            <button class="btn-pagination" onclick="mesaSiguiente()">Siguiente</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== SECCIÓN RESERVAS ===== -->
+            <section id="reservas" class="content-section">
+                <header class="section-header">
+                    <div>
+                        <h1>Todas las Reservas</h1>
+                        <p>Vista completa de todas las reservas y citas.</p>
+                    </div>
+                    <div class="admin-profile">
+                        <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
+                        <span class="profile-name">pepi</span>
+                        <div class="profile-avatar">
+                <span class="material-symbols-outlined">account_circle</span>
+            </div>
+                    </div>
+                </header>
+
+                <div class="reservas-all-section">
+                    <div class="reservas-filters">
+                        <input type="text" id="buscarReserva" class="search-input" placeholder="Buscar reservas...">
+                        <select id="filtroEstado" class="filter-select">
+                            <option value="">Todos los Estados</option>
+                            <option value="CONFIRMADA">Confirmada</option>
+                            <option value="PENDIENTE">Pendiente</option>
+                            <option value="LLEGADA">Llegada</option>
+                            <option value="CANCELADA">Cancelada</option>
+                        </select>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="reservas-table-all">
+                            <thead>
+                                <tr>
+                                    <th>HUÉSPED</th>
+                                    <th>FECHA Y HORA</th>
+                                    <th>NÚMERO DE PERSONAS</th>
+                                    <th>MESA</th>
+                                    <th>ESTADO</th>
+                                    <th>TIPO DE EVENTO</th>
+                                    <th>ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservasAllTableBody">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                      <!-- PAGINACIÓN RESERVAS TODAS -->
+                    <div class="pagination">
+                        <button class="btn-pagination" onclick="paginaAnteriorTodas()">Anterior</button>
+                        <span class="page-info">
+                            Mostrando <span id="paginaActualTodas">1</span> de <span id="totalPaginasTodas">1</span>
+                        </span>
+                        <button class="btn-pagination" onclick="paginaSiguienteTodas()">Siguiente</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- = SECCIÓN USUARIOS =-->
+            <section id="usuarios" class="content-section">
+                <header class="section-header">
+                    <div>
+                        <h1>Gestionar Usuarios</h1>
+                        <p>Administra cuentas de usuario del sistema, visualiza roles y permisos.</p>
+                    </div>
+                    <div class="admin-profile">
+                        <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
+                        <span class="profile-name">MAÎTRE D'</span>
+                        <div class="profile-avatar">
+                            <span class="material-symbols-outlined">account_circle</span>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="reservas-all-section">
+                    <!-- CONTROLES DE BÚSQUEDA Y FILTRO -->
+                    <div class="reservas-filters">
+                        <input 
+                            type="text" 
+                            id="buscarUsuario" 
+                            class="search-input" 
+                            placeholder="Buscar por nombre o correo..."
+                        >
+                        <select id="filtroRol" class="filter-select">
+                            <option value="">Todos los roles</option>
+                            <option value="CLIENTE">Cliente</option>
+                            <option value="MESERO">Mesero</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+
+                    <!-- TABLA DE USUARIOS -->
+                    <div class="table-wrapper">
+                        <table class="reservas-table-all">
+                            <thead>
+                                <tr>
+                                    <th>NOMBRE COMPLETO</th>
+                                    <th>CORREO ELECTRÓNICO</th>
+                                    <th>ROL</th>
+                                    <th>TELÉFONO</th>
+                                    <th>DIRECCIÓN</th>
+                                    <th>ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usuariosTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: #999; padding: 40px;">
+                                        Cargando usuarios...
+                                    </td>
+                                </tr>
+                            </tbody>
+                            
+                        </table>
+                    </div>
+                    
+                </div>
+            </section>
+
+            <!-- ===== SECCIÓN PErfil ===== -->
+<div th:replace="PerfilAdmin :: perfilAdmin"></div>
+
+<!-- Justo debajo del th:replace del perfil -->
+  <div th:replace="analitics :: analitics"></div>
+        </main>
+
+    </div>
+
+   
+  <!-- ===== <div th:replace="~{fragmentos/footerAdmin :: footerAdmin}"></div>===== -->
+</body>
+
+
+</html>

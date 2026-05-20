@@ -146,8 +146,8 @@ async function guardarReserva(event) {
             const errorMsg = await response.text();
             
             // Captura de excepciones controladas de lógica de negocio (409 Conflict)
-            if (response.status === 409 || errorMsg.includes("Conflicto") || errorMsg.includes("ocupadas")) {
-                alert(errorMsg);
+           if (response.status === 409) {
+    alert("Lo sentimos: " + errorMsg);
             } else if (response.status === 401 || response.status === 403) {
                 alert("Sesión inválida. Reingresa a tu cuenta.");
                 window.location.href = "/login";

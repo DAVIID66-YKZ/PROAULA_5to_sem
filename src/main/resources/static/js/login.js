@@ -28,7 +28,7 @@ localStorage.setItem("rol", data.rol); // 🔥 REGLA DE ORO: Debe ser 'rol'
         if (data.rol === "CLIENTE") {
             window.location.href = "/dashboard";
         } else if (data.rol === "ADMIN") {
-            window.location.href = "/admin/panel"; // O la ruta que tengas para admin
+            window.location.href = "/dashboardAdmin";
         } else {
             // Caso por defecto si hay otros roles
             window.location.href = "/index";

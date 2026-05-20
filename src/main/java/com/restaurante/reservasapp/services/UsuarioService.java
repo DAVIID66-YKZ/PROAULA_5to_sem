@@ -13,6 +13,7 @@ public interface UsuarioService {
 
     public List<UsuarioEntity> listarUsuarios();
 
-    
+    void cambiarPassword(String id, String passwordActual, String passwordNueva);
+   
     public UsuarioEntity actualizarPerfil(String id, UsuarioEntity datosNuevos);
 }

@@ -1,0 +1,64 @@
+/* ===== SECTOR CARDS (Gestionar Mesas) ===== */
+.sector-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.sector-card {
+    flex: 1;
+    min-width: 80px;
+    cursor: pointer;
+}
+
+.sector-card input[type="radio"] {
+    display: none;
+}
+
+.sector-ui {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--bg-dark);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.sector-ui .material-symbols-outlined {
+    font-size: 26px;
+    color: var(--text-muted);
+}
+
+.sector-nombre {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.sector-detalle {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+/* Estado seleccionado */
+.sector-card input[type="radio"]:checked + .sector-ui {
+    border-color: var(--primary);
+    background-color: rgba(212, 175, 55, 0.1);
+}
+
+.sector-card input[type="radio"]:checked + .sector-ui .material-symbols-outlined {
+    color: var(--primary);
+}
+
+.sector-card input[type="radio"]:checked + .sector-ui .sector-nombre {
+    color: var(--primary);
+}
+
+.sector-card:hover .sector-ui {
+    border-color: rgba(212, 175, 55, 0.4);
+}

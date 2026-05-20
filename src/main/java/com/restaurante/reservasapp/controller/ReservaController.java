@@ -20,7 +20,7 @@ public class ReservaController {
     public ResponseEntity<?> guardarReserva(@RequestBody ReservaEntity reserva) {
         try {
             if (reserva.getUsuarioId() == null || reserva.getFecha() == null || reserva.getHora() == null) {
-                return ResponseEntity.badRequest().body("Error: Datos de reserva incompletos (Usuario, Fecha u Hora).");
+                return ResponseEntity.badRequest().body("Datos de reserva incompletos.");
             }
             ReservaEntity nuevaReserva = reservaService.guardarReserva(reserva);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaReserva);
@@ -30,6 +30,7 @@ public class ReservaController {
             return ResponseEntity.internalServerError().body("Error interno: " + e.getMessage());
         }
     }
+
 
     // 🔥 NUEVO ENDPOINT: CARGA MASIVA DE RESERVAS DEL DATASET
     @PostMapping("/guardar-bulk")
@@ -56,9 +57,7 @@ public class ReservaController {
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<ReservaEntity>> listarPorUsuario(@PathVariable String usuarioId) {
         List<ReservaEntity> reservas = reservaService.listarPorUsuario(usuarioId);
-        return ResponseEntity.ok(reservas);
-    }
-
+        return ResponseEntity.ok(reservas);}
     @GetMapping("/listar")
     public List<ReservaEntity> listarTodas() {
         return reservaService.listarReservas();
@@ -66,12 +65,15 @@ public class ReservaController {
 
     @GetMapping("/ocupadas")
     public ResponseEntity<List<String>> obtenerOcupadas(
-            @RequestParam String fecha, 
+
+            @RequestParam String fecha,
             @RequestParam String mesaId,
             @RequestParam int invitados) {
-        List<String> horasColapsadas = reservaService.obtenerHorasCompletamenteOcupadas(fecha, mesaId, invitados);
-        return ResponseEntity.ok(horasColapsadas);
+        List<String> horas = reservaService.obtenerHorasCompletamenteOcupadas(fecha, mesaId, invitados);
+        return ResponseEntity.ok(horas);
     }
+
+    // ── UN SOLO endpoint DELETE ──
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarReserva(@PathVariable String id) {
@@ -80,7 +82,8 @@ public class ReservaController {
             return ResponseEntity.ok().body("Reserva eliminada correctamente.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al eliminar la reserva: " + e.getMessage());
+
+                    .body("Error al eliminar: " + e.getMessage());
         }
     }
 
@@ -89,12 +92,12 @@ public class ReservaController {
         try {
             String comentarioLimpio = comentario.replace("\"", "").trim();
             ReservaEntity reserva = reservaService.obtenerReserva(id);
-            if (reserva == null) {
-                return ResponseEntity.notFound().build();
-            }
+
+            if (reserva == null) return ResponseEntity.notFound().build();
             reserva.setComentario(comentarioLimpio);
-            reservaService.guardarReservaDirecta(reserva); 
-            return ResponseEntity.ok().body("Comentario indexado correctamente.");
+            reservaService.guardarReservaDirecta(reserva);
+            return ResponseEntity.ok().body("Comentario guardado.");
+
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
         }
