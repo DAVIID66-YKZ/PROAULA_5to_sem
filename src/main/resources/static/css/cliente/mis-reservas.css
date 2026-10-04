@@ -50,7 +50,9 @@ body {
     padding: 40px;
     width: 100%;
     box-sizing: border-box;
-    background-color: transparent;
+
+    background: linear-gradient(rgba(7, 7, 7, 0.88), rgba(7, 7, 7, 0.88)),
+        url('/imagenes/img-fondo.webp') center center / cover no-repeat fixed;
 }
 
 .section-header-inline {

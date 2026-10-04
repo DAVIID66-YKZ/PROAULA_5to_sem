@@ -3,13 +3,14 @@
    ================================================================ */
 
 // 1. Guardián de navegación inmediato
-(function() {
+(function () {
     const token = localStorage.getItem("token");
     const rol = localStorage.getItem("rol");
+    const rolUpper = String(rol || "").trim().toUpperCase();
 
-    if (!token || rol !== "CLIENTE") {
-        console.warn("Acceso no autorizado detectado. Redirigiendo...");
-        window.location.href = "/login";
+    if (!token || (rolUpper !== "CLIENTE" && rolUpper !== "ADMIN")) {
+        console.warn("Acceso no autorizado detectado. Redirigiendo a registro...");
+        window.location.replace("/register");
     }
 })();
 
@@ -17,12 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const fechaInput = document.getElementById("fecha");
     const experiencias = document.querySelectorAll('input[name="experiencia"]');
     const personasInput = document.getElementById("personas");
-    
+
     // --- Configurar la fecha mínima (Hoy) ---
     const hoy = new Date().toISOString().split("T")[0];
     if (fechaInput) {
         fechaInput.setAttribute("min", hoy);
-        
+
         // Escuchar cambios para recalcular horas disponibles
         fechaInput.addEventListener("change", comprobarHorariosDisponibles);
     }
@@ -55,7 +56,7 @@ async function comprobarHorariosDisponibles() {
         // Consultamos al nuevo endpoint que evalúa la ocupación total real por capacidad
         const response = await fetch(`/reservas/ocupadas?fecha=${fecha}&mesaId=${experienciaRadio.value}&invitados=${personas}`, {
             method: "GET",
-            headers: { 
+            headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             }
@@ -63,8 +64,8 @@ async function comprobarHorariosDisponibles() {
 
         if (response.ok) {
             // El backend retorna un array de strings directo con las horas muertas, ej: ["12:00", "19:00"]
-            const horasColapsadas = await response.json(); 
-            
+            const horasColapsadas = await response.json();
+
             // Resetear y habilitar todas las opciones inicialmente
             Array.from(horaSelect.options).forEach(option => {
                 option.disabled = false;
@@ -126,7 +127,7 @@ async function guardarReserva(event) {
         numeroPersonas: personas, // Mapea directo con el int de Java
         usuarioId: idUsuarioActual,
         mesaId: experienciaRadio.value,   // Enviado inicialmente como sector para evaluación
-        experiencia: experienciaRadio.value 
+        experiencia: experienciaRadio.value
     };
 
     try {
@@ -134,20 +135,20 @@ async function guardarReserva(event) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}` 
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify(reservaData)
         });
 
         if (response.ok) {
             alert("¡Reserva exitosa! Su mesa ha sido preparada en nuestros registros.");
-            window.location.href = "/dashboard"; 
+            window.location.href = "/dashboard";
         } else {
             const errorMsg = await response.text();
-            
+
             // Captura de excepciones controladas de lógica de negocio (409 Conflict)
-           if (response.status === 409) {
-    alert("Lo sentimos: " + errorMsg);
+            if (response.status === 409) {
+                alert("Lo sentimos: " + errorMsg);
             } else if (response.status === 401 || response.status === 403) {
                 alert("Sesión inválida. Reingresa a tu cuenta.");
                 window.location.href = "/login";

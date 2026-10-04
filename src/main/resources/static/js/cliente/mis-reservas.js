@@ -4,8 +4,9 @@
 (function() {
     const token = localStorage.getItem("token");
     const rol = localStorage.getItem("rol");
+    const rolUpper = String(rol || "").trim().toUpperCase();
 
-    if (!token || rol !== "CLIENTE") {
+    if (!token || (rolUpper !== "CLIENTE" && rolUpper !== "ADMIN")) {
         console.warn("Acceso no autorizado detectado. Redirigiendo...");
         window.location.href = "/login";
     }

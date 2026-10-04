@@ -5,20 +5,20 @@
     <header th:fragment="navbarLogueado" class="header efecto-blur">
         
         <nav class="nav-contenedor">
-            <h2 style="cursor: pointer;" onclick="location.href='/dashboard'">The Culinary Manuscript</h2>
+            <h2 style="cursor: pointer;" onclick="location.href='/cliente/dashboard'">The Culinary Manuscript</h2>
             
             <ul class="nav-links">
                 <li class="nav-item">
                     <a th:href="@{/index}">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a th:href="@{/ver-menu}">Menú</a>
+                    <a th:href="@{/cliente/ver-menu}">Menú</a>
                 </li>
             </ul>
         </nav>
 
         <div class="perfil-contenedor">
-            <a th:href="@{/perfil}" class="perfil-link" title="Mi Perfil">
+            <a th:href="@{/cliente/perfil}" class="perfil-link" title="Mi Perfil">
                 <span class="material-symbols-outlined">account_circle</span>
             </a>
         </div>

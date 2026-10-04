@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú</title>
+
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
+    <link rel="stylesheet" th:href="@{/css/menu.css}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:wght@100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <header th:replace="~{fragmentos/nav :: navbar}"></header>
+
+    <!-- HERO -->
+
+    <section class="menu-hero">
+
+        <div class="overlay"></div>
+
+        <div class="menu-content">
+            <span>EST. 2025</span>
+
+            <h1>
+                The Manuscript <br>
+                <em>Menu</em>
+            </h1>
+
+            <p>
+                Una experiencia gastronómica premium diseñada para sorprender
+                cada uno de tus sentidos.
+            </p>
+        </div>
+
+    </section>
+
+    <!-- NAV -->
+
+    <div class="menu-nav">
+        <a href="#entradas">Entradas</a>
+        <a href="#especiales">Especiales</a>
+        <a href="#postres">Postres</a>
+    </div>
+
+    <!-- TITULO -->
+
+    <div class="menu-title" id="entradas">
+
+        <div class="menu-title-left">
+            <h2>The Prologue</h2>
+            <p>Delicados sabores para comenzar la experiencia.</p>
+        </div>
+
+        <span class="menu-number">Section 01</span>
+
+    </div>
+
+    <!-- CARDS -->
+
+    <section class="menu-section">
+
+        <div class="menu-card">
+
+            <img th:src="@{/imagenes/carne.webp}" alt="">
+
+            <div class="menu-info">
+
+                <div class="menu-top">
+                    <h2>Aged Wagyu Prime</h2>
+                    <span>$78k</span>
+                </div>
+
+                <p>
+                    Corte premium madurado por 45 días, acompañado de
+                    ingredientes seleccionados y una preparación exclusiva.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="menu-card">
+
+            <img th:src="@{/imagenes/pastas.webp}" alt="">
+
+            <div class="menu-info">
+
+                <div class="menu-top">
+                    <h2>Truffle Tagliatelle</h2>
+                    <span>$42k</span>
+                </div>
+
+                <p>
+                    Pasta artesanal preparada a mano con salsa cremosa
+                    y auténtica trufa negra italiana.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="menu-card">
+
+            <img th:src="@{/imagenes/sushi.webp}" alt="">
+
+            <div class="menu-info">
+
+                <div class="menu-top">
+                    <h2>Imperial Omakase</h2>
+                    <span>$55k</span>
+                </div>
+
+                <p>
+                    Selección premium del chef con ingredientes frescos
+                    y una presentación elegante.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- DESTACADO -->
+
+    <section class="featured-section" id="especiales">
+
+        <div class="featured-container">
+
+            <div class="featured-image">
+                <img th:src="@{/imagenes/carne.webp}" alt="">
+            </div>
+
+            <div class="featured-info">
+
+                <small>Chef Selection</small>
+
+                <h2>Midnight Wagyu Experience</h2>
+
+                <p>
+                    Una de nuestras creaciones más exclusivas. Preparado
+                    cuidadosamente con técnicas gourmet y sabores intensos
+                    que convierten cada bocado en una experiencia única.
+                </p>
+
+                <div class="featured-price">
+                    $145k
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- TITULO 2 -->
+
+    <div class="menu-title" id="postres">
+
+        <div class="menu-title-left">
+            <h2>The Epilogue</h2>
+            <p>El cierre perfecto para una experiencia inolvidable.</p>
+        </div>
+
+        <span class="menu-number">Section 02</span>
+
+    </div>
+
+    <!-- POSTRES -->
+
+    <section class="menu-section">
+
+        <div class="menu-card">
+
+            <img th:src="@{/imagenes/postre.webp}" alt="">
+
+            <div class="menu-info">
+
+                <div class="menu-top">
+                    <h2>Midnight Gold Ganache</h2>
+                    <span>$22k</span>
+                </div>
+
+                <p>
+                    Chocolate premium acompañado de detalles dorados
+                    y una textura suave irresistible.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="menu-card">
+
+            <img th:src="@{/imagenes/postre.webp}" alt="">
+
+            <div class="menu-info">
+
+                <div class="menu-top">
+                    <h2>Golden Velvet Cake</h2>
+                    <span>$18k</span>
+                </div>
+
+                <p>
+                    Bizcocho suave con crema artesanal y un delicado
+                    acabado elegante inspirado en alta cocina.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <footer th:replace="~{fragmentos/footer :: footer}"></footer>
+
+</body>
+
+</html>

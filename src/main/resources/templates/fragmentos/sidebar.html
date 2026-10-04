@@ -1,62 +1,65 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <body>
-<aside th:fragment="sidebar" class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 class="gold-text">Panel Cliente</h3>
-            <button id="toggleSidebar" style="background:none; border:none; color:#d4af37; cursor:pointer; transition: transform 0.3s;">
-                <span class="material-symbols-outlined">menu_open</span>
-            </button>
+    <aside th:fragment="sidebar" class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="gold-text">Panel Cliente</h3>
+                <button id="toggleSidebar"
+                    style="background:none; border:none; color:#d4af37; cursor:pointer; transition: transform 0.3s;">
+                    <span class="material-symbols-outlined">menu_open</span>
+                </button>
+            </div>
+            <p>GESTION DE RESERVAS</p>
         </div>
-        <p>GESTION DE RESERVAS</p>
-    </div>
-    
-    <nav class="sidebar-menu" id="sidebarNav">
-        <a th:href="@{/dashboard}" data-page="dashboard">
-            <span class="material-symbols-outlined">grid_view</span> 
-            <span class="menu-text">Dashboard</span>
-        </a>
 
-        <a th:href="@{/mis-reservas}" data-page="my-bookings">
-            <span class="material-symbols-outlined">book_online</span> 
-            <span class="menu-text">Mis Reservas</span>
-        </a>
+        <nav class="sidebar-menu" id="sidebarNav">
+            <a th:href="@{/cliente/dashboard}" data-page="dashboard">
+                <span class="material-symbols-outlined">grid_view</span>
+                <span class="menu-text">Dashboard</span>
+            </a>
 
-        <a th:href="@{/calendario}" data-page="calendar">
-            <span class="material-symbols-outlined">calendar_today</span> 
-            <span class="menu-text">Calendario</span>
-        </a>
+            <a th:href="@{/cliente/mis-reservas}" data-page="my-bookings">
+                <span class="material-symbols-outlined">book_online</span>
+                <span class="menu-text">Mis Reservas</span>
+            </a>
 
-        <a th:href="@{/reserva}" data-page="reservations">
-            <span class="material-symbols-outlined">add_circle</span> 
-            <span class="menu-text">Reserva Ahora</span>
-        </a>
+            <a th:href="@{/cliente/calendario}" data-page="calendar">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span class="menu-text">Calendario</span>
+            </a>
 
-        <a th:href="@{/perfil}" data-page="profile">
-            <span class="material-symbols-outlined">account_circle</span> 
-            <span class="menu-text">Mi Perfil</span>
-        </a>
-        <a th:href="@{/ver-menu}" data-page="view-menu">
-    <span class="material-symbols-outlined">restaurant_menu</span> 
-    <span class="menu-text">Ver Menú</span>
-</a>
-    </nav>
+            <a th:href="@{/cliente/reserva}" data-page="reservations">
+                <span class="material-symbols-outlined">add_circle</span>
+                <span class="menu-text">Reserva Ahora</span>
+            </a>
 
-    <div class="sidebar-footer">
-        <button class="new-booking-btn" onclick="location.href='/reserva'">
-            <span class="btn-text">+ Nueva reserva</span>
-            <span class="btn-icon" style="display:none;">+</span>
-        </button>
-        <a href="https://wa.me/573011733155">
-            <span class="material-symbols-outlined">help</span> 
-            <span class="menu-text">soporte</span>
-        </a>
-        <a href="javascript:void(0)" id="logoutBtnSidebar">
-            <span class="material-symbols-outlined">logout</span> 
-            <span class="menu-text">Logout</span>
-        </a>
-    </div>
-</aside>
+            <a th:href="@{/cliente/perfil}" data-page="profile">
+                <span class="material-symbols-outlined">account_circle</span>
+                <span class="menu-text">Mi Perfil</span>
+            </a>
+            <a th:href="@{/cliente/ver-menu}" data-page="view-menu">
+                <span class="material-symbols-outlined">restaurant_menu</span>
+                <span class="menu-text">Ver Menú</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="new-booking-btn" onclick="location.href='/cliente/reserva'">
+                <span class="btn-text">+ Nueva reserva</span>
+                <span class="btn-icon" style="display:none;">+</span>
+            </button>
+            <a href="https://wa.me/573011733155">
+                <span class="material-symbols-outlined">help</span>
+                <span class="menu-text">soporte</span>
+            </a>
+            <a href="javascript:void(0)" id="logoutBtnSidebar">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="menu-text">Logout</span>
+            </a>
+        </div>
+    </aside>
 </body>
+
 </html>

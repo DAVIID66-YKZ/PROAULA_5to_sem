@@ -25,7 +25,7 @@ function controlarSidebar() {
                 localStorage.removeItem("token");
                 localStorage.removeItem("usuarioId");
                 localStorage.removeItem("nombreUsuario");
-                
+
                 // Redirección al login
                 window.location.href = "/login";
             }
@@ -34,7 +34,7 @@ function controlarSidebar() {
 }
 document.addEventListener("DOMContentLoaded", () => {
     controlarSidebar();
-    
+
     // Nueva lógica para abrir/cerrar
     const sidebar = document.getElementById("sidebar");
     const toggleBtn = document.getElementById("toggleSidebar");
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     toggleBtn.addEventListener("click", () => {
         sidebar.classList.toggle("closed");
-        if(mainContent) mainContent.classList.toggle("expanded");
+        if (mainContent) mainContent.classList.toggle("expanded");
     });
 });
 

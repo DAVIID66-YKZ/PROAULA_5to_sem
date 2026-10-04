@@ -16,18 +16,19 @@ async function login(event) {
             return;
         }
 
-// En tu función de login.js
-const data = await response.json();
+        // En tu función de login.js
+        const data = await response.json();
 
-localStorage.setItem("token", data.token);
-localStorage.setItem("usuarioId", data.usuarioId);
-localStorage.setItem("nombreUsuario", data.nombre);
-localStorage.setItem("rol", data.rol); // 🔥 REGLA DE ORO: Debe ser 'rol'
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("usuarioId", data.usuarioId);
+        localStorage.setItem("nombreUsuario", data.nombre);
+        localStorage.setItem("rol", data.rol); // 🔥 REGLA DE ORO: Debe ser 'rol'
 
         // 2. VERIFICACIÓN DE ROL PARA REDIRECCIÓN
-        if (data.rol === "CLIENTE") {
-            window.location.href = "/dashboard";
-        } else if (data.rol === "ADMIN") {
+        const rolUpper = String(data.rol || "").trim().toUpperCase();
+        if (rolUpper === "CLIENTE" || rolUpper === "ROLE_CLIENTE") {
+            window.location.href = "/cliente/dashboard";
+        } else if (rolUpper === "ADMIN" || rolUpper === "ROLE_ADMIN") {
             window.location.href = "/dashboardAdmin";
         } else {
             // Caso por defecto si hay otros roles

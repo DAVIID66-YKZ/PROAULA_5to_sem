@@ -2,8 +2,9 @@
 (function() {
     const token = localStorage.getItem("token");
     const rol = localStorage.getItem("rol");
+    const rolUpper = String(rol || "").trim().toUpperCase();
 
-    if (!token || String(rol).trim().toUpperCase() !== "CLIENTE") {
+    if (!token || (rolUpper !== "CLIENTE" && rolUpper !== "ADMIN")) {
         window.location.href = "/login";
     }
 })();

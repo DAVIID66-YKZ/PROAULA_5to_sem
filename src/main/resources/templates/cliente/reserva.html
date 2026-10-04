@@ -5,15 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservar - The Culinary Manuscript</title>
+    <script>
+        (function () {
+            const token = localStorage.getItem("token");
+            const rol = (localStorage.getItem("rol") || "").trim().toUpperCase();
+            if (!token || (rol !== "CLIENTE" && rol !== "ADMIN")) {
+                window.location.replace("/register");
+            }
+        })();
+    </script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
     <link rel="stylesheet" th:href="@{/css/variables.css}">
-    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
-    <link rel="stylesheet" th:href="@{/css/reserva.css}">
-    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/css/navCliente.css}">
+    <link rel="stylesheet" th:href="@{/css/cliente/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/cliente/reserva.css}">
+    <link rel="stylesheet" th:href="@{/css/cliente/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/cliente/navCliente.css}">
 </head>
 
 <body class="dashboard-layout">
@@ -110,7 +121,7 @@
                                         </div>
                                     </div>
                                 </label>
-                                
+
                             </div>
                         </div>
 
@@ -125,7 +136,8 @@
         </main>
     </div>
 
-    <script th:src="@{/js/reserva.js}"></script>
-    <script th:src="@{/js/sidebar.js}"></script>
+    <script th:src="@{/js/cliente/reserva.js}"></script>
+    <script th:src="@{/js/cliente/sidebar.js}"></script>
 </body>
+
 </html>

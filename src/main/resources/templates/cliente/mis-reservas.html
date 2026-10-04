@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Reservas - The Culinary Manuscript</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    
+
     <link rel="stylesheet" th:href="@{/css/variables.css}">
-    <link rel="stylesheet" th:href="@{/css/dashboard-final.css}">
-    <link rel="stylesheet" th:href="@{/css/mis-reservas.css}">
-    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/css/navCliente.css}">
+    <link rel="stylesheet" th:href="@{/css/cliente/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/cliente/mis-reservas.css}">
+    <link rel="stylesheet" th:href="@{/css/cliente/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/cliente/navCliente.css}">
 </head>
+
 <body class="dashboard-layout">
 
     <div th:replace="~{fragmentos/sidebar :: sidebar}"></div>
@@ -59,11 +63,12 @@
     <div id="modalComentario" class="modal-manuscript" style="display: none;">
         <div class="modal-content">
             <h2 class="serif-title" style="color: #d4af37; margin-bottom: 5px;">Escribir Capítulo</h2>
-            <p style="color: #888; font-size: 0.85rem; margin-bottom: 20px;">Cuéntanos tu experiencia culinaria en este evento.</p>
-            
+            <p style="color: #888; font-size: 0.85rem; margin-bottom: 20px;">Cuéntanos tu experiencia culinaria en este
+                evento.</p>
+
             <input type="hidden" id="modalReservaId">
             <textarea id="txtComentario" placeholder="Escribe tu reseña aquí..." rows="5"></textarea>
-            
+
             <div class="modal-buttons">
                 <button class="btn-modal-cancel" onclick="cerrarModal()">Cerrar</button>
                 <button class="btn-modal-save" onclick="guardarComentarioServidor()">Guardar en Manuscrito</button>
@@ -71,7 +76,8 @@
         </div>
     </div>
 
-    <script th:src="@{/js/sidebar.js}"></script>
-    <script th:src="@{/js/mis-reservas.js}"></script>
+    <script th:src="@{/js/cliente/sidebar.js}"></script>
+    <script th:src="@{/js/cliente/mis-reservas.js}"></script>
 </body>
+
 </html>

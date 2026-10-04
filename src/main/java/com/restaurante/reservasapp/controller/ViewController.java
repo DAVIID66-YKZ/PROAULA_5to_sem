@@ -30,9 +30,9 @@ public class ViewController {
         return "index";
     }
 
-    @GetMapping("/reserva")
+    @GetMapping({"/reserva", "/cliente/reserva"})
     public String reserva() {
-        return "reserva";
+        return "cliente/reserva";
     }
 
     @GetMapping("/legal/privacidad")
@@ -45,33 +45,39 @@ public class ViewController {
         return "legal/terminosYCondiciones";
     }
 
-    @GetMapping("/menu")
+    @GetMapping({"/menu", "/cliente/menu"})
     public String menu() {
         return "menu";
     }
 
-    @GetMapping("/dashboard")
+    @GetMapping({"/dashboard", "/cliente/dashboard"})
     public String dashboard() {
-        return "dashboard";
+        return "cliente/dashboard";
     }
 
-    @GetMapping("/mis-reservas")
+    @GetMapping({"/mis-reservas", "/cliente/mis-reservas"})
     public String misReservas() {
-        return "mis-reservas";
+        return "cliente/mis-reservas";
     }
 
-    @GetMapping("/calendario")
+    @GetMapping({"/calendario", "/cliente/calendario"})
     public String calendario() {
-        return "calendario";
+        return "cliente/calendario";
     }
 
-    @GetMapping("/perfil")
+    @GetMapping({"/perfil", "/cliente/perfil"})
     public String perfil() {
-        return "perfil";
+        return "cliente/perfil";
     }
 
-    @GetMapping("/ver-menu")
+    @GetMapping({"/ver-menu", "/cliente/ver-menu"})
     public String verMenu() {
-        return "ver-menu"; // Renderiza ver-menu.html
+        return "cliente/ver-menu";
+    }
+
+    // Vistas de Administrador
+    @GetMapping({"/dashboardAdmin", "/admin/dashboardAdmin", "/admin/dashboard"})
+    public String dashboardAdmin() {
+        return "admin/dashboardAdmin";
     }
 }

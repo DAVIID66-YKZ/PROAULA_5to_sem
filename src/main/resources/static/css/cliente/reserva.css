@@ -14,7 +14,8 @@
 .reserva-card-full {
     display: flex;
     width: 100%;
-    max-width: 1150px; /* Aumentado un poco para las 3 columnas */
+    max-width: 1150px;
+    /* Aumentado un poco para las 3 columnas */
     background-color: #121212;
     border-radius: 15px;
     overflow: hidden;
@@ -23,9 +24,9 @@
 }
 
 .reserva-visual {
-    flex: 0.8; /* Ajustado para dar más espacio al formulario */
+    flex: 0.8;
     position: relative;
-    background: url('../imagenes/reserva.webp') no-repeat center center/cover;
+    background: url('/imagenes/reserva.webp') no-repeat center center/cover;
     min-height: 600px;
 }
 
@@ -92,7 +93,7 @@
     display: block;
 }
 
-.input-grupo-reserva input, 
+.input-grupo-reserva input,
 .input-grupo-reserva select {
     width: 100%;
     background-color: #1a1a1a;
@@ -128,8 +129,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     gap: 12px;
 }
 
-.exp-card input { 
-    display: none; 
+.exp-card input {
+    display: none;
 }
 
 .exp-ui {
@@ -138,7 +139,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding: 15px 10px;
     border-radius: 12px;
     display: flex;
-    flex-direction: column; /* Icono arriba, texto abajo para ahorrar espacio */
+    flex-direction: column;
+    /* Icono arriba, texto abajo para ahorrar espacio */
     align-items: center;
     text-align: center;
     gap: 10px;
@@ -146,7 +148,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     transition: all 0.3s ease;
 }
 
-.exp-card input:checked + .exp-ui {
+.exp-card input:checked+.exp-ui {
     border: 1px solid #d4af37 !important;
     background-color: rgba(212, 175, 55, 0.05);
 }
@@ -199,7 +201,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Responsivo */
 @media (max-width: 1000px) {
-    .reserva-card-full { flex-direction: column; }
-    .reserva-visual { min-height: 300px; flex: none; width: 100%; }
-    .reserva-experiencia-grid { grid-template-columns: 1fr; }
+    .reserva-card-full {
+        flex-direction: column;
+    }
+
+    .reserva-visual {
+        min-height: 300px;
+        flex: none;
+        width: 100%;
+    }
+
+    .reserva-experiencia-grid {
+        grid-template-columns: 1fr;
+    }
 }
