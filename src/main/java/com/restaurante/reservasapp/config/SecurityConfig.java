@@ -12,36 +12,39 @@ import com.restaurante.reservasapp.Jwt.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.config.http.SessionCreationPolicy;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-        private final JwtAuthenticationFilter jwtAuthenticationFilter;
-        
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-        @Bean
-
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    return http
-        .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(auth -> auth
-
-.requestMatchers("/", "/index", "/login", "/register", "/dashboard", "/dashboardAdmin",
-    "/menu", "/reserva", "/mis-reservas", "/calendario", "/perfil", 
-    "/ver-menu", "/legal/privacidad", "/legal/terminosYCondiciones" ,"/guardar-bulk").permitAll()
-.requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**").permitAll()
-.requestMatchers("/auth/**").permitAll()
-.requestMatchers("/usuarios/**", "/register-bulk/**").authenticated()
-.requestMatchers("/reservas/**", "/calendario/**").hasAnyRole("CLIENTE", "ADMIN")
-.requestMatchers("/usuarios/**").hasAnyRole("CLIENTE", "ADMIN")
-.requestMatchers("/mesas/**").hasRole("ADMIN")
-
-.anyRequest().authenticated()
-        )
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-        .build();
-}
-
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                // Recursos estáticos
+                .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**", "/favicon.ico").permitAll()
+                // Vistas públicas
+                .requestMatchers("/", "/index", "/login", "/register", "/menu", "/ver-menu", "/legal/**").permitAll()
+                // Endpoints de autenticación públicos
+                .requestMatchers("/auth/**").permitAll()
+                // Vistas HTML que protegen su contenido con token en localStorage vía JS
+                .requestMatchers("/dashboard", "/dashboardAdmin", "/reserva", "/mis-reservas", "/calendario", "/perfil").permitAll()
+                // Endpoints REST de Administración
+                .requestMatchers("/api/admin/**", "/mesas/**").hasRole("ADMIN")
+                // Endpoints REST compartidos
+                .requestMatchers("/reservas/**").hasAnyRole("CLIENTE", "ADMIN")
+                .requestMatchers("/usuarios/**").hasAnyRole("CLIENTE", "ADMIN")
+                // Cualquier otra petición requiere autenticación
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+    }
 }

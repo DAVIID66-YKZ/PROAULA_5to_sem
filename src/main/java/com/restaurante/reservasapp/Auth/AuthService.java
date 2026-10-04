@@ -23,8 +23,7 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request) {
         authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getCorreo(), request.getContrasena())
-        );
+                new UsernamePasswordAuthenticationToken(request.getCorreo(), request.getContrasena()));
 
         UsuarioEntity user = userRepository.findByCorreo(request.getCorreo())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -66,9 +65,10 @@ public class AuthService {
     // 🔥 NUEVO MÉTODO: Exclusivo para la carga masiva desde tu Thunder Client
     public void registerBulk(RegisterRequest request) {
         // Evita duplicados si ejecutas la petición más de una vez por error
-        if (userRepository.existsById(request.getId()) || userRepository.findByCorreo(request.getCorreo()).isPresent()) {
+        if (userRepository.existsById(request.getId())
+                || userRepository.findByCorreo(request.getCorreo()).isPresent()) {
             System.out.println("El usuario ya existe (ID o Correo): " + request.getCorreo());
-            return; 
+            return;
         }
 
         UsuarioEntity user = UsuarioEntity.builder()

@@ -17,7 +17,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -30,23 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
-            // no null//
     ) throws ServletException, IOException {
-
-        String path = request.getRequestURI();
-
-System.out.println("Intentando acceder a: " + path);
-
-
-
-if (path.equals("/") || path.equals("/menu") || path.equals("/login") || path.equals("/register") || 
-    path.equals("/dashboard") || path.equals("/mis-reservas") || path.equals("/reserva") ||
-    path.contains("/css/") || path.contains("/js/") || path.contains("/auth/")) {
-    
-    filterChain.doFilter(request, response);
-    return;
-}
-
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
@@ -56,27 +42,30 @@ if (path.equals("/") || path.equals("/menu") || path.equals("/login") || path.eq
         }
 
         final String token = authHeader.substring(7);
-        final String username = jwtService.getUsernameFromToken(token);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        try {
+            final String username = jwtService.getUsernameFromToken(token);
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            if (jwtService.isTokenValid(token, userDetails)) {
+                if (jwtService.isTokenValid(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                    );
 
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+        } catch (Exception e) {
+            log.warn("No se pudo autenticar el token JWT: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

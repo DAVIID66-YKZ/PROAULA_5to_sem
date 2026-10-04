@@ -32,49 +32,49 @@ public class ReservaServiceImpl implements ReservaService {
 
         // ── REGLA 1: Un usuario solo puede tener UNA reserva por sector ──
         List<ReservaEntity> reservasEnEsteSector = reservaRepo
-            .findByUsuarioIdAndExperiencia(reserva.getUsuarioId(), sectorBuscado);
+                .findByUsuarioIdAndExperiencia(reserva.getUsuarioId(), sectorBuscado);
 
         if (!reservasEnEsteSector.isEmpty()) {
             throw new RuntimeException(
-                "Ya tienes una reserva en el sector " + sectorBuscado +
-                ". Solo se permite una reserva por sector.");
+                    "Ya tienes una reserva en el sector " + sectorBuscado +
+                            ". Solo se permite una reserva por sector.");
         }
 
         // ── REGLA 2: Un usuario máximo 3 reservas en total ──
         List<ReservaEntity> todasLasReservasDelUsuario = reservaRepo
-            .findByUsuarioId(reserva.getUsuarioId());
+                .findByUsuarioId(reserva.getUsuarioId());
 
-       /* ── REGLA 2: Un usuario máximo 3 reservas en total ──
+        // ── REGLA 2: Un usuario máximo 3 reservas en total ──
         if (todasLasReservasDelUsuario.size() >= 3) {
             throw new RuntimeException(
-                "Has alcanzado el límite de 3 reservas. " +
-                "Cancela una reserva existente para hacer una nueva.");
+                    "Has alcanzado el límite de 3 reservas. " +
+                            "Cancela una reserva existente para hacer una nueva.");
         }
-        */
-        // ── REGLA 2B: El mismo usuario no puede tener dos reservas en la misma fecha y hora ──
-boolean mismaFechaHora = todasLasReservasDelUsuario.stream().anyMatch(r ->
-    reserva.getFecha().equals(r.getFecha()) &&
-    reserva.getHora().equals(r.getHora())
-);
 
-if (mismaFechaHora) {
-    throw new RuntimeException(
-        "Ya tienes una reserva el " + reserva.getFecha() + 
-        " a las " + reserva.getHora() + 
-        ". Elige otra fecha u hora.");
-}
+        // ── REGLA 2B: El mismo usuario no puede tener dos reservas en la misma fecha y
+        // hora ──
+        boolean mismaFechaHora = todasLasReservasDelUsuario.stream()
+                .anyMatch(r -> reserva.getFecha().equals(r.getFecha()) &&
+                        reserva.getHora().equals(r.getHora()));
+
+        if (mismaFechaHora) {
+            throw new RuntimeException(
+                    "Ya tienes una reserva el " + reserva.getFecha() +
+                            " a las " + reserva.getHora() +
+                            ". Elige otra fecha u hora.");
+        }
 
         // ── REGLA 3: Buscar mesas del sector que soporten la cantidad de personas ──
         List<MesaEntity> mesasAptasDelSector = mesaRepo.findAll().stream()
-            .filter(m -> m.getSector() != null && m.getSector().equalsIgnoreCase(sectorBuscado))
-            .filter(m -> m.getCapacidad() >= cantidadInvitados)
-            .filter(MesaEntity::isDisponible)
-            .collect(Collectors.toList());
+                .filter(m -> m.getSector() != null && m.getSector().equalsIgnoreCase(sectorBuscado))
+                .filter(m -> m.getCapacidad() >= cantidadInvitados)
+                .filter(MesaEntity::isDisponible)
+                .collect(Collectors.toList());
 
         if (mesasAptasDelSector.isEmpty()) {
             throw new RuntimeException(
-                "No hay mesas en el sector " + sectorBuscado +
-                " con capacidad para " + cantidadInvitados + " personas.");
+                    "No hay mesas en el sector " + sectorBuscado +
+                            " con capacidad para " + cantidadInvitados + " personas.");
         }
 
         // ── REGLA 4: Buscar mesa libre en esa fecha con bloqueo de ±2 horas ──
@@ -83,8 +83,8 @@ if (mismaFechaHora) {
         LocalTime limiteSuperior = horaSolicitada.plusHours(2).minusMinutes(1);
 
         List<ReservaEntity> reservasDelDia = reservaRepo.findAll().stream()
-            .filter(r -> r.getFecha() != null && r.getFecha().equals(reserva.getFecha()))
-            .collect(Collectors.toList());
+                .filter(r -> r.getFecha() != null && r.getFecha().equals(reserva.getFecha()))
+                .collect(Collectors.toList());
 
         MesaEntity mesaAsignada = null;
 
@@ -92,11 +92,11 @@ if (mismaFechaHora) {
             boolean tieneConflicto = false;
 
             for (ReservaEntity resExistente : reservasDelDia) {
-                if (resExistente.getMesaId() != null && 
-                    resExistente.getMesaId().equals(mesa.getId())) {
+                if (resExistente.getMesaId() != null &&
+                        resExistente.getMesaId().equals(mesa.getId())) {
                     LocalTime horaExistente = LocalTime.parse(resExistente.getHora());
-                    if (horaExistente.isAfter(limiteInferior) && 
-                        horaExistente.isBefore(limiteSuperior)) {
+                    if (horaExistente.isAfter(limiteInferior) &&
+                            horaExistente.isBefore(limiteSuperior)) {
                         tieneConflicto = true;
                         break;
                     }
@@ -111,8 +111,8 @@ if (mismaFechaHora) {
 
         if (mesaAsignada == null) {
             throw new RuntimeException(
-                "No hay mesas disponibles en el sector " + sectorBuscado +
-                " para la fecha y hora seleccionada. Intenta otra hora.");
+                    "No hay mesas disponibles en el sector " + sectorBuscado +
+                            " para la fecha y hora seleccionada. Intenta otra hora.");
         }
 
         // ── ASIGNAR mesa y experiencia ──
@@ -127,24 +127,24 @@ if (mismaFechaHora) {
         List<String> horasBloqueadas = new java.util.ArrayList<>();
 
         List<MesaEntity> mesasAptas = mesaRepo.findAll().stream()
-            .filter(m -> m.getSector() != null && m.getSector().equalsIgnoreCase(sector))
-            .filter(m -> m.getCapacidad() >= invitados)
-            .collect(Collectors.toList());
+                .filter(m -> m.getSector() != null && m.getSector().equalsIgnoreCase(sector))
+                .filter(m -> m.getCapacidad() >= invitados)
+                .collect(Collectors.toList());
 
         if (mesasAptas.isEmpty()) {
             return java.util.Arrays.asList(
-                "10:00","11:00","12:00","13:00","14:00",
-                "15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00");
+                    "10:00", "11:00", "12:00", "13:00", "14:00",
+                    "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00");
         }
 
         String[] todosLosTurnos = {
-            "10:00","11:00","12:00","13:00","14:00",
-            "15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00"
+                "10:00", "11:00", "12:00", "13:00", "14:00",
+                "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"
         };
 
         List<ReservaEntity> reservasDelDia = reservaRepo.findAll().stream()
-            .filter(r -> r.getFecha() != null && r.getFecha().equals(fecha))
-            .collect(Collectors.toList());
+                .filter(r -> r.getFecha() != null && r.getFecha().equals(fecha))
+                .collect(Collectors.toList());
 
         for (String turno : todosLosTurnos) {
             LocalTime horaEvaluar = LocalTime.parse(turno);
@@ -158,8 +158,8 @@ if (mismaFechaHora) {
                 for (ReservaEntity res : reservasDelDia) {
                     if (res.getMesaId() != null && res.getMesaId().equals(mesa.getId())) {
                         LocalTime horaExistente = LocalTime.parse(res.getHora());
-                        if (horaExistente.isAfter(limiteInferior) && 
-                            horaExistente.isBefore(limiteSuperior)) {
+                        if (horaExistente.isAfter(limiteInferior) &&
+                                horaExistente.isBefore(limiteSuperior)) {
                             mesaOcupada = true;
                             break;
                         }

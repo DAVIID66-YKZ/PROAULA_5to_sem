@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,10 +31,15 @@ public class UsuarioEntity implements UserDetails {
     private Rol rol;
     private String telefono;
     private String contrasena;
+
+    @Indexed(unique = true)
     private String correo;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (rol == null) {
+            return List.of(new SimpleGrantedAuthority("ROLE_CLIENTE"));
+        }
         return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
     }
 

@@ -1,3 +1,14 @@
+// 1. Guardián de Validación Inmediata de Sesión y Rol ADMIN
+(function() {
+    const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
+    const rol = localStorage.getItem("rol");
+
+    if (!token || String(rol).trim().toUpperCase() !== "ADMIN") {
+        console.warn("Acceso denegado: Se requiere rol ADMIN. Redirigiendo a login...");
+        window.location.href = "/login";
+    }
+})();
+
 // ===== CONFIGURACIÓN DE API =====
 const API_BASE = "/api/admin/dashboardAdmin"
 const TOKEN = localStorage.getItem("token") || localStorage.getItem("jwtToken")

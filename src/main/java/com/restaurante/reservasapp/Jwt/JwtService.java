@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,29 +20,31 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY="586E3272357538782F413F4428472B4B6250655368566B597033733676397924";
+    @Value("${jwt.secret:586E3272357538782F413F4428472B4B6250655368566B597033733676397924}")
+    private String secretKey;
 
-public String getToken(UserDetails user) {
-    Map<String, Object> extraClaims = new HashMap<>();
-    // 🔥 IMPORTANTE: Meter los roles (authorities) dentro del token
-    extraClaims.put("role", user.getAuthorities().iterator().next().getAuthority()); 
-    return getToken(extraClaims, user);
-}
+    public String getToken(UserDetails user) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        if (user.getAuthorities() != null && !user.getAuthorities().isEmpty()) {
+            extraClaims.put("role", user.getAuthorities().iterator().next().getAuthority());
+        }
+        return getToken(extraClaims, user);
+    }
 
-    private String getToken(Map<String,Object> extraClaims, UserDetails user) {
+    private String getToken(Map<String, Object> extraClaims, UserDetails user) {
         return Jwts
             .builder()
             .setClaims(extraClaims)
             .setSubject(user.getUsername())
             .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis()+1000*60*24))
+            .setExpiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24)) // 24 horas
             .signWith(getKey(), SignatureAlgorithm.HS256)
             .compact();
     }
 
     private Key getKey() {
-       byte[] keyBytes=Decoders.BASE64.decode(SECRET_KEY);
-       return Keys.hmacShaKeyFor(keyBytes);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String getUsernameFromToken(String token) {
@@ -49,8 +52,12 @@ public String getToken(UserDetails user) {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username=getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername())&& !isTokenExpired(token));
+        try {
+            final String username = getUsernameFromToken(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private Claims getAllClaims(String token)
