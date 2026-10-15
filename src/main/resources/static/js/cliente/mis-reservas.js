@@ -62,7 +62,11 @@ async function cargarMisReservas() {
                 const fechaReserva = new Date(`${res.fecha}T${res.hora}`);
                 const yaPaso = fechaReserva < ahora;
 
-                let estadoBadge = `<span class="status-pill">Confirmada</span>`;
+                const estadoRes = String(res.estado || "CONFIRMADA").toUpperCase();
+                let estadoBadge = estadoRes === "PENDIENTE"
+                    ? `<span class="status-pill" style="background:rgba(224,170,62,0.15); color:#e0aa3e; border:1px solid rgba(224,170,62,0.4);">Pendiente</span>`
+                    : `<span class="status-pill">Confirmada</span>`;
+
                 let botonAccion = `
                     <button class="btn-icon-table btn-cancel" onclick="cancelarReserva('${res.id}')" title="Cancelar Reserva">
                         <span class="material-symbols-outlined">delete</span>

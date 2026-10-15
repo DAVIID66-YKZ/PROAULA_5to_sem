@@ -23,6 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const hoy = new Date().toISOString().split("T")[0];
     if (fechaInput) {
         fechaInput.setAttribute("min", hoy);
+        if (!fechaInput.value) {
+            fechaInput.value = hoy;
+        }
 
         // Escuchar cambios para recalcular horas disponibles
         fechaInput.addEventListener("change", comprobarHorariosDisponibles);
@@ -127,7 +130,8 @@ async function guardarReserva(event) {
         numeroPersonas: personas, // Mapea directo con el int de Java
         usuarioId: idUsuarioActual,
         mesaId: experienciaRadio.value,   // Enviado inicialmente como sector para evaluación
-        experiencia: experienciaRadio.value
+        experiencia: experienciaRadio.value,
+        estado: "PENDIENTE"
     };
 
     try {

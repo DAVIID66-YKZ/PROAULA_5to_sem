@@ -118,6 +118,9 @@ public class ReservaServiceImpl implements ReservaService {
         // ── ASIGNAR mesa y experiencia ──
         reserva.setMesaId(mesaAsignada.getId());
         reserva.setExperiencia(sectorBuscado);
+        if (reserva.getEstado() == null || reserva.getEstado().isBlank()) {
+            reserva.setEstado("PENDIENTE");
+        }
 
         return reservaRepo.save(reserva);
     }

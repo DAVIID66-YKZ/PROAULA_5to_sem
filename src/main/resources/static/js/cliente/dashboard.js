@@ -110,7 +110,7 @@ function generateFeaturedCardHtml(reserva) {
                         </div>
                         <div class="meta-item">
                             <span class="meta-label">STATUS</span>
-                            <span class="meta-value" style="color: #d4af37; font-weight:700;">CONFIRMED</span>
+                            <span class="meta-value" style="color: #d4af37; font-weight:700;">${(reserva.estado || "CONFIRMADA").toUpperCase()}</span>
                         </div>
                     </div>
                 </div>

@@ -4,6 +4,7 @@
    ================================================================ */
 
 let datosReservasRecientes = [];
+let listaActualFiltrada = null;
 let paginaActualRecientes = 1;
 let itemsPorPaginaRecientes = 5;
 let reservaEnEdicion = null;
@@ -48,7 +49,7 @@ async function cargarEstadisticasDashboard() {
 
             if (elOcup) elOcup.textContent = (data.ocupanciaTotal !== undefined ? data.ocupanciaTotal : 0) + "%";
             if (elHues) elHues.textContent = data.totalHuespedes || 0;
-            if (elEsp) elEsp.textContent = String(data.listaEsperaCount || 0).padStart(2, "0");
+            if (elEsp) elEsp.textContent = String(data.listaEsperaCount !== undefined ? data.listaEsperaCount : 0).padStart(2, "0");
         }
     } catch (e) {
         console.error("Error al cargar estadísticas:", e);
@@ -64,7 +65,7 @@ async function cargarReservasRecientes() {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:35px;">Consultando manuscrito de reservas en vivo...</td></tr>';
 
     try {
-        let resp = await fetch("/api/admin/reservas-recientes?pagina=0&tamanio=50", {
+        let resp = await fetch("/api/admin/reservas-recientes?pagina=0&tamanio=200", {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
@@ -72,7 +73,7 @@ async function cargarReservasRecientes() {
         });
 
         if (!resp.ok && resp.status === 404) {
-            resp = await fetch("/api/admin/dashboardAdmin/reservas-recientes?pagina=0&tamanio=50", {
+            resp = await fetch("/api/admin/dashboardAdmin/reservas-recientes?pagina=0&tamanio=200", {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
@@ -83,14 +84,19 @@ async function cargarReservasRecientes() {
         if (resp.ok) {
             datosReservasRecientes = await resp.json();
             paginaActualRecientes = 1;
-            renderizarTablaRecientes();
+            filtrarReservasRecientes();
         } else {
             tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:35px;font-style:italic;">No hay reservas registradas en el sistema.</td></tr>';
+            actualizarPaginacionRecientes(1, 1);
         }
     } catch (e) {
         console.error("Error al cargar reservas recientes:", e);
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#f44336;padding:35px;">Error al conectar con la base de datos.</td></tr>';
     }
+}
+
+function obtenerListaActiva() {
+    return listaActualFiltrada !== null ? listaActualFiltrada : datosReservasRecientes;
 }
 
 // ===== RENDERIZAR TABLA =====
@@ -99,11 +105,11 @@ function renderizarTablaRecientes(lista) {
     if (!tbody) return;
     tbody.innerHTML = "";
 
-    let datos = lista !== undefined ? lista : datosReservasRecientes;
+    let datos = lista !== undefined ? lista : obtenerListaActiva();
     let total = datos.length;
 
     if (total === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:35px;font-style:italic;">No se encontraron reservas registradas.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:35px;font-style:italic;">No se encontraron reservas con ese criterio.</td></tr>';
         actualizarPaginacionRecientes(1, 1);
         return;
     }
@@ -122,7 +128,7 @@ function renderizarTablaRecientes(lista) {
             CANCELADA: "status-cancelada",
             COMPLETADA: "status-completada"
         };
-        let estadoKey = String(r.estado || "CONFIRMADA").trim().toUpperCase();
+        let estadoKey = String(r.estado || "PENDIENTE").trim().toUpperCase();
         let cls = statusMap[estadoKey] || "status-pending";
 
         let id = r.id || r._id;
@@ -175,15 +181,16 @@ function actualizarPaginacionRecientes(actual, total) {
 function paginaAnterior() {
     if (paginaActualRecientes > 1) {
         paginaActualRecientes--;
-        renderizarTablaRecientes();
+        renderizarTablaRecientes(obtenerListaActiva());
     }
 }
 
 function paginaSiguiente() {
-    let totalPags = Math.ceil(datosReservasRecientes.length / itemsPorPaginaRecientes);
+    let datos = obtenerListaActiva();
+    let totalPags = Math.max(1, Math.ceil(datos.length / itemsPorPaginaRecientes));
     if (paginaActualRecientes < totalPags) {
         paginaActualRecientes++;
-        renderizarTablaRecientes();
+        renderizarTablaRecientes(datos);
     }
 }
 
@@ -192,13 +199,8 @@ function configurarBusquedasDashboard() {
     let buscarHuesped = document.getElementById("buscarHuesped");
     if (buscarHuesped) {
         buscarHuesped.addEventListener("input", function () {
-            let termino = this.value.toLowerCase().trim();
             paginaActualRecientes = 1;
-            let filtradas = datosReservasRecientes.filter(function (r) {
-                let texto = `${r.nombreHuesped || ""} ${r.cliente || ""} ${r.numeroMesa || ""} ${r.fechaHora || ""} ${r.tipoEvento || ""}`.toLowerCase();
-                return texto.includes(termino);
-            });
-            renderizarTablaRecientes(filtradas);
+            filtrarReservasRecientes();
         });
     }
 }
@@ -212,14 +214,28 @@ function toggleFiltroPanel() {
 
 function filtrarReservasRecientes() {
     let filtro = document.getElementById("filtroEstadoRecientes");
-    if (!filtro) return;
-    let estado = filtro.value;
+    let estado = filtro ? filtro.value.trim().toUpperCase() : "";
+    let buscarHuesped = document.getElementById("buscarHuesped");
+    let termino = buscarHuesped ? buscarHuesped.value.toLowerCase().trim() : "";
 
     paginaActualRecientes = 1;
-    let filtradas = estado ? datosReservasRecientes.filter(function (r) {
-        return String(r.estado || "").toUpperCase() === estado.toUpperCase();
-    }) : datosReservasRecientes;
 
+    let filtradas = datosReservasRecientes.filter(function (r) {
+        let matchEstado = true;
+        if (estado) {
+            matchEstado = String(r.estado || "").trim().toUpperCase() === estado;
+        }
+
+        let matchTermino = true;
+        if (termino) {
+            let texto = `${r.nombreHuesped || ""} ${r.cliente || ""} ${r.correoHuesped || ""} ${r.numeroMesa || ""} ${r.fechaHora || ""} ${r.tipoEvento || ""}`.toLowerCase();
+            matchTermino = texto.includes(termino);
+        }
+
+        return matchEstado && matchTermino;
+    });
+
+    listaActualFiltrada = filtradas;
     renderizarTablaRecientes(filtradas);
 }
 
@@ -234,7 +250,7 @@ function editarReservaDashboard(id) {
 
     document.getElementById("modalReservaId").value = id;
     document.getElementById("modalHuespedNombre").textContent = r.nombreHuesped || r.cliente || "Huésped";
-    document.getElementById("modalSelectEstado").value = r.estado || "CONFIRMADA";
+    document.getElementById("modalSelectEstado").value = r.estado || "PENDIENTE";
     modal.style.display = "flex";
 }
 
