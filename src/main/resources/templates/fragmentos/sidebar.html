@@ -6,57 +6,69 @@
         <div class="sidebar-header">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h3 class="gold-text">Panel Cliente</h3>
-                <button id="toggleSidebar"
-                    style="background:none; border:none; color:#d4af37; cursor:pointer; transition: transform 0.3s;">
+                <button id="toggleSidebar" class="toggle-btn" title="Colapsar / Expandir menú">
                     <span class="material-symbols-outlined">menu_open</span>
                 </button>
             </div>
-            <p>GESTION DE RESERVAS</p>
+            <p class="logo-subtitle">GESTIÓN DE RESERVAS</p>
         </div>
 
-        <nav class="sidebar-menu" id="sidebarNav">
-            <a th:href="@{/cliente/dashboard}" data-page="dashboard">
-                <span class="material-symbols-outlined">grid_view</span>
-                <span class="menu-text">Dashboard</span>
+        <nav class="sidebar-nav sidebar-menu" id="sidebarNav">
+            <a th:href="@{/cliente/dashboard}" class="nav-item" data-page="dashboard">
+                <span class="nav-icon">
+                    <span class="material-symbols-outlined">dashboard</span>
+                </span>
+                <span class="menu-text">PANEL</span>
             </a>
 
-            <a th:href="@{/cliente/mis-reservas}" data-page="my-bookings">
-                <span class="material-symbols-outlined">book_online</span>
-                <span class="menu-text">Mis Reservas</span>
+            <a th:href="@{/cliente/mis-reservas}" class="nav-item" data-page="my-bookings">
+                <span class="nav-icon">
+                    <span class="material-symbols-outlined">calendar_today</span>
+                </span>
+                <span class="menu-text">MIS RESERVAS</span>
             </a>
 
-            <a th:href="@{/cliente/calendario}" data-page="calendar">
-                <span class="material-symbols-outlined">calendar_today</span>
-                <span class="menu-text">Calendario</span>
+            <a th:href="@{/cliente/calendario}" class="nav-item" data-page="calendar">
+                <span class="nav-icon">
+                    <span class="material-symbols-outlined">event</span>
+                </span>
+                <span class="menu-text">CALENDARIO</span>
             </a>
 
-            <a th:href="@{/cliente/reserva}" data-page="reservations">
-                <span class="material-symbols-outlined">add_circle</span>
-                <span class="menu-text">Reserva Ahora</span>
+            <a th:href="@{/cliente/reserva}" class="nav-item" data-page="reservations">
+                <span class="nav-icon">
+                    <span class="material-symbols-outlined">table_restaurant</span>
+                </span>
+                <span class="menu-text">RESERVAR MESA</span>
             </a>
 
-            <a th:href="@{/cliente/perfil}" data-page="profile">
-                <span class="material-symbols-outlined">account_circle</span>
-                <span class="menu-text">Mi Perfil</span>
+            <a th:href="@{/cliente/perfil}" class="nav-item" data-page="profile">
+                <span class="nav-icon">
+                    <span class="material-symbols-outlined">account_circle</span>
+                </span>
+                <span class="menu-text">MI PERFIL</span>
             </a>
-            <a th:href="@{/cliente/ver-menu}" data-page="view-menu">
-                <span class="material-symbols-outlined">restaurant_menu</span>
-                <span class="menu-text">Ver Menú</span>
+
+            <a th:href="@{/cliente/ver-menu}" class="nav-item" data-page="view-menu">
+                <span class="nav-icon">
+                    <span class="material-symbols-outlined">restaurant_menu</span>
+                </span>
+                <span class="menu-text">VER MENÚ</span>
             </a>
         </nav>
 
         <div class="sidebar-footer">
             <button class="new-booking-btn" onclick="location.href='/cliente/reserva'">
-                <span class="btn-text">+ Nueva reserva</span>
+                <span class="btn-text">+ NUEVA RESERVA</span>
                 <span class="btn-icon" style="display:none;">+</span>
             </button>
-            <a href="https://wa.me/573011733155">
-                <span class="material-symbols-outlined">help</span>
-                <span class="menu-text">soporte</span>
+            <a href="https://wa.me/573011733155" class="footer-link" target="_blank" rel="noopener">
+                <span class="material-symbols-outlined">support_agent</span>
+                <span class="menu-text">SOPORTE</span>
             </a>
-            <a href="javascript:void(0)" id="logoutBtnSidebar">
+            <a href="javascript:void(0)" class="footer-link" id="logoutBtnSidebar">
                 <span class="material-symbols-outlined">logout</span>
-                <span class="menu-text">Logout</span>
+                <span class="menu-text">CERRAR SESIÓN</span>
             </a>
         </div>
     </aside>

@@ -282,27 +282,79 @@ body {
 
 /******** RESPONSIVE ********/
 
+@media (max-width: 992px) {
+    .menu-title {
+        margin: 70px auto 30px auto;
+    }
+
+    .featured-section {
+        padding: 60px 25px;
+        margin: 60px 0;
+    }
+
+    .featured-container {
+        gap: 35px;
+    }
+
+    .featured-image img {
+        height: 350px;
+    }
+}
+
 @media (max-width: 768px) {
+    .menu-hero {
+        height: 60vh;
+        min-height: 380px;
+    }
 
     .menu-content h1 {
-        font-size: 3rem;
+        font-size: 2.6rem;
+    }
+
+    .menu-content p {
+        font-size: 1rem;
     }
 
     .menu-nav {
         gap: 20px;
-        flex-wrap: wrap;
+        padding: 15px 20px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
     }
 
     .menu-title {
         flex-direction: column;
         align-items: flex-start;
+        margin: 50px auto 25px auto;
     }
 
     .menu-title-left h2 {
-        font-size: 2.2rem;
+        font-size: 2rem;
+    }
+
+    .menu-section {
+        gap: 25px;
+        margin-bottom: 70px;
+        grid-template-columns: 1fr;
+    }
+
+    .menu-card img {
+        height: 240px;
+    }
+
+    .featured-section {
+        padding: 40px 20px;
+        border-radius: 20px;
+        margin: 40px 0;
     }
 
     .featured-info h2 {
-        font-size: 2.2rem;
+        font-size: 2rem;
+    }
+
+    .featured-image img {
+        height: 260px;
     }
 }

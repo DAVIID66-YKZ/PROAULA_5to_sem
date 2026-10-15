@@ -1,13 +1,21 @@
-/************** base ****************/
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+    margin: 0;
+    padding: 0;
+}
 
 body {
     min-height: 100vh;
     color: var(--color-text);
     background-color: var(--color-neutral);
     font-family: 'Manrope', sans-serif, Arial;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    position: relative;
 }
 
 h1 {
@@ -325,8 +333,123 @@ h1 {
     min-height: 500px;
     border-radius: 10px;
     border: none;
+    filter: grayscale(100%) invert(90%) contrast(90%);
+}
 
-    filter:
-        grayscale(100%) invert(90%) contrast(90%);
+/* ================================================================
+   RESPONSIVE - INICIO / HOME
+   ================================================================ */
+@media (max-width: 992px) {
+    .platillos {
+        margin-top: 80px;
+    }
+
+    .platillos-contenedor {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        gap: 20px;
+        padding: 15px;
+    }
+
+    .platillo-uno,
+    .platillo-dos,
+    .platillo-tres,
+    .platillo-cuatro {
+        grid-column: auto !important;
+        grid-row: auto !important;
+        min-height: 280px;
+    }
+
+    .about {
+        margin-top: 80px;
+        padding: 40px 20px;
+    }
+
+    .about-contenedor {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .about-image {
+        width: 100%;
+        height: 320px;
+    }
+
+    .about-info {
+        width: 100%;
+    }
+
+    .about-info h3 {
+        font-size: 2.2rem;
+    }
+
+    #contacto {
+        margin-top: 80px;
+    }
+
+    .contacto-contenedor {
+        flex-direction: column;
+        background: #1f1f1f;
+        gap: 20px;
+        padding: 20px;
+        margin: 0 15px;
+    }
+
+    .info-contacto {
+        padding: 10px 0;
+        width: 100%;
+    }
+
+    .ubicacion {
+        width: 100%;
+    }
+
+    .ubicacion iframe {
+        min-height: 320px;
+    }
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2.2rem;
+        line-height: 1.2;
+    }
+
+    .hero-texto {
+        font-size: 1.05rem;
+        margin-bottom: 35px;
+        padding: 0 15px;
+    }
+
+    .hero-contenido {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 15px;
+    }
+
+    .reserva-link,
+    .menu-link {
+        display: block;
+        width: 100%;
+        max-width: 260px;
+        margin: 6px 0;
+        text-align: center;
+        padding: 12px 18px;
+        font-size: 0.9rem;
+    }
+
+    .platillos-contenedor {
+        grid-template-columns: 1fr;
+    }
+
+    .about-benefits {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .about-info h3 {
+        font-size: 1.8rem;
+    }
 }
 

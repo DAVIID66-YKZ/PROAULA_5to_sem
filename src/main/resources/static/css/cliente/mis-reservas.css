@@ -249,9 +249,52 @@ body {
 }
 
 @media (max-width: 900px) {
+    .mis-reservas-container {
+        padding: 25px 15px;
+        margin-top: 60px;
+    }
+
     .section-header-inline {
         flex-direction: column;
         align-items: flex-start;
-        gap: 20px;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .section-header-inline .serif-title {
+        font-size: 2.2rem;
+    }
+
+    .btn-new-reservation {
+        width: 100%;
+        text-align: center;
+    }
+
+    .tabla-reservas-wrapper {
+        border-radius: 12px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .tabla-manuscript th,
+    .tabla-manuscript td {
+        padding: 14px 12px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    .modal-content {
+        max-width: 92%;
+        padding: 22px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mis-reservas-container {
+        padding: 15px 8px;
+    }
+
+    .section-header-inline .serif-title {
+        font-size: 1.8rem;
     }
 }

@@ -1,132 +1,158 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - The Culinary Manuscript</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboardAdmin.css}">
+    <link rel="stylesheet" th:href="@{/css/perfilAdmin.css}">
+</head>
 <body>
+    <div class="dashboard-container">
+        <!-- ===== SIDEBAR ADMIN ===== -->
+        <div th:replace="~{fragmentos/sidebarAdmin :: sidebarAdmin}"></div>
 
-<div th:fragment="perfilAdmin">
+        <!-- ===== MOBILE BACKDROP ===== -->
+        <div id="adminSidebarBackdrop" class="admin-sidebar-backdrop"></div>
 
-    <!-- ===== SECCIÓN MI PERFIL ===== -->
-    <section id="perfil" class="content-section">
-
-         <!-- Header -->
-    <header class="section-header">
-        <div>
-            <h1>MI PERFIL</h1>
-            <p>Gestiona tu información personal y seguridad de cuenta.</p>
-        </div>
-
-        <div class="admin-profile">
-            <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
-            <span class="profile-name">MAÎTRE D'</span>
-
-            <div class="profile-avatar">
-                <span class="material-symbols-outlined">account_circle</span>
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+            <div class="mobile-admin-bar">
+                <button id="adminSidebarToggle" class="mobile-toggle-btn" aria-label="Abrir Menú">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <span class="mobile-admin-title">Mi Perfil</span>
             </div>
-        </div>
-    </header>
+            
+            <div th:fragment="perfilAdmin">
+                <section id="perfil" class="content-section active">
+                    <header class="section-header">
+                        <div>
+                            <h1>MI PERFIL</h1>
+                            <p>Gestiona tu información personal y seguridad de cuenta.</p>
+                        </div>
+                        <div class="admin-profile">
+                            <span class="profile-label">PERFIL DE USUARIO ADMIN</span>
+                            <span class="profile-name">MAÎTRE D'</span>
+                            <div class="profile-avatar">AD</div>
+                        </div>
+                    </header>
 
-<div class="perfil-wrapper">
+                    <div class="perfil-wrapper">
+                        <!-- DATOS PERSONALES -->
+                        <div class="perfil-card">
+                            <div class="perfil-card-header">
+                                <div class="perfil-card-icon">
+                                    <span class="material-symbols-outlined">person</span>
+                                </div>
+                                <h2 class="perfil-card-title">Datos Personales</h2>
+                            </div>
 
-    <!-- DATOS PERSONALES -->
-    <div class="perfil-card">
-        <div class="perfil-card-header">
-            <div class="perfil-card-icon">
-                <span class="material-symbols-outlined">person</span>
-            </div>
-            <h2 class="perfil-card-title">Datos Personales</h2>
-        </div>
+                            <form id="formPerfil" class="perfil-form">
+                                <div class="perfil-form-row">
+                                    <div class="perfil-form-group">
+                                        <label class="perfil-label">Nombre</label>
+                                        <input type="text" id="nombrePerfil" class="perfil-input" placeholder="Tu nombre" required>
+                                    </div>
+                                    <div class="perfil-form-group">
+                                        <label class="perfil-label">Apellido</label>
+                                        <input type="text" id="apellidoPerfil" class="perfil-input" placeholder="Tu apellido" required>
+                                    </div>
+                                </div>
 
-        <form id="formPerfil" class="perfil-form">
-            <div class="perfil-form-row">
-                <div class="perfil-form-group">
-                    <label class="perfil-label">Nombre</label>
-                    <input type="text" id="nombrePerfil" class="perfil-input" placeholder="Tu nombre" required>
-                </div>
-                <div class="perfil-form-group">
-                    <label class="perfil-label">Apellido</label>
-                    <input type="text" id="apellidoPerfil" class="perfil-input" placeholder="Tu apellido" required>
-                </div>
-            </div>
+                                <div class="perfil-form-group">
+                                    <label class="perfil-label">Correo Electrónico</label>
+                                    <input type="email" id="correoPerfil" class="perfil-input" disabled>
+                                    <span class="perfil-hint">El correo no puede modificarse por seguridad</span>
+                                </div>
 
-            <div class="perfil-form-group">
-                <label class="perfil-label">Correo Electrónico</label>
-                <input type="email" id="correoPerfil" class="perfil-input" disabled>
-                <span class="perfil-hint">El correo no puede modificarse por seguridad</span>
-            </div>
+                                <div class="perfil-form-row">
+                                    <div class="perfil-form-group">
+                                        <label class="perfil-label">Teléfono</label>
+                                        <input type="tel" id="telefonoPerfil" class="perfil-input" placeholder="+57 300 1234567">
+                                    </div>
+                                    <div class="perfil-form-group">
+                                        <label class="perfil-label">Rol</label>
+                                        <input type="text" id="rolPerfil" class="perfil-input" disabled>
+                                    </div>
+                                </div>
 
-            <div class="perfil-form-row">
-                <div class="perfil-form-group">
-                    <label class="perfil-label">Teléfono</label>
-                    <input type="tel" id="telefonoPerfil" class="perfil-input" placeholder="+57 300 1234567">
-                </div>
-                <div class="perfil-form-group">
-                    <label class="perfil-label">Rol</label>
-                    <input type="text" id="rolPerfil" class="perfil-input" disabled>
-                </div>
-            </div>
+                                <div class="perfil-form-group">
+                                    <label class="perfil-label">Dirección de Residencia</label>
+                                    <input type="text" id="direccionPerfil" class="perfil-input" placeholder="Tu dirección completa">
+                                </div>
 
-            <div class="perfil-form-group">
-                <label class="perfil-label">Dirección de Residencia</label>
-                <input type="text" id="direccionPerfil" class="perfil-input" placeholder="Tu dirección completa">
-            </div>
+                                <button type="submit" class="perfil-btn">
+                                    <span class="material-symbols-outlined perfil-btn-icon">check</span>
+                                    Actualizar Datos
+                                </button>
+                            </form>
+                        </div>
 
-            <button type="submit" class="perfil-btn">
-                <span class="material-symbols-outlined perfil-btn-icon">check</span>
-                Actualizar Datos
-            </button>
-        </form>
-    </div>
+                        <!-- CAMBIAR CONTRASEÑA -->
+                        <div class="perfil-card">
+                            <div class="perfil-card-header">
+                                <div class="perfil-card-icon">
+                                    <span class="material-symbols-outlined">lock</span>
+                                </div>
+                                <h2 class="perfil-card-title">Cambiar Contraseña</h2>
+                            </div>
 
-    <!-- CAMBIAR CONTRASEÑA -->
-    <div class="perfil-card">
-        <div class="perfil-card-header">
-            <div class="perfil-card-icon">
-                <span class="material-symbols-outlined">lock</span>
-            </div>
-            <h2 class="perfil-card-title">Cambiar Contraseña</h2>
-        </div>
+                            <form id="formPassword" class="perfil-form">
+                                <div class="perfil-form-group">
+                                    <label class="perfil-label">Contraseña Actual</label>
+                                    <input type="password" id="passwordActual" class="perfil-input">
+                                </div>
 
-        <form id="formPassword" class="perfil-form">
-            <div class="perfil-form-group">
-                <label class="perfil-label">Contraseña Actual</label>
-                <input type="password" id="passwordActual" class="perfil-input">
-            </div>
+                                <div class="perfil-form-group">
+                                    <label class="perfil-label">Nueva Contraseña</label>
+                                    <input type="password" id="passwordNueva" class="perfil-input">
+                                    <div class="perfil-strength-container">
+                                        <div class="perfil-strength-bar-wrapper">
+                                            <div class="perfil-strength-bar"></div>
+                                        </div>
+                                        <p class="perfil-strength-text" id="textoFortaleza">Muy débil</p>
+                                    </div>
+                                </div>
 
-            <div class="perfil-form-group">
-                <label class="perfil-label">Nueva Contraseña</label>
-                <input type="password" id="passwordNueva" class="perfil-input">
-                <div class="perfil-strength-container">
-                    <div class="perfil-strength-bar-wrapper">
-                        <div class="perfil-strength-bar"></div>
+                                <div class="perfil-form-group">
+                                    <label class="perfil-label">Confirmar Contraseña</label>
+                                    <input type="password" id="passwordConfirmar" class="perfil-input">
+                                </div>
+
+                                <div id="mensajeError" class="perfil-error-container">
+                                    <span class="material-symbols-outlined perfil-error-icon">error</span>
+                                    <span class="perfil-error-text" id="textoError"></span>
+                                </div>
+
+                                <button type="submit" class="perfil-btn">
+                                    <span class="material-symbols-outlined perfil-btn-icon">lock_reset</span>
+                                    Cambiar Contraseña
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    <p class="perfil-strength-text" id="textoFortaleza">Muy débil</p>
-                </div>
+                </section>
             </div>
-
-            <div class="perfil-form-group">
-                <label class="perfil-label">Confirmar Contraseña</label>
-                <input type="password" id="passwordConfirmar" class="perfil-input">
-            </div>
-
-            <div id="mensajeError" class="perfil-error-container">
-                <span class="material-symbols-outlined perfil-error-icon">error</span>
-                <span class="perfil-error-text" id="textoError"></span>
-            </div>
-
-            <button type="submit" class="perfil-btn">
-                <span class="material-symbols-outlined perfil-btn-icon">lock_reset</span>
-                Cambiar Contraseña
-            </button>
-        </form>
+        </main>
     </div>
 
-</div>
-</div> <!-- cierre perfil-security -->
-</div> <!-- cierre perfil-wrapper -->
-
-    </section>
-
-</div>
-
+    <script th:src="@{/js/admin/adminNav.js}"></script>
+    <script th:src="@{/js/perfilAdmin.js}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if (window.perfilAdminInstancia) {
+                window.perfilAdminInstancia.inicializar();
+            } else if (typeof PerfilAdmin !== "undefined") {
+                const p = new PerfilAdmin();
+                p.inicializar();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -102,4 +102,20 @@ public class ReservaController {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
         }
     }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<?> actualizarEstadoReserva(
+            @PathVariable String id,
+            @RequestBody java.util.Map<String, String> body) {
+        try {
+            String nuevoEstado = body.get("estado");
+            ReservaEntity reserva = reservaService.obtenerReserva(id);
+            if (reserva == null) return ResponseEntity.notFound().build();
+            reserva.setEstado(nuevoEstado);
+            reservaService.guardarReservaDirecta(reserva);
+            return ResponseEntity.ok(reserva);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error al actualizar estado: " + e.getMessage());
+        }
+    }
 }

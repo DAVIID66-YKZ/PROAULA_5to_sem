@@ -1,0 +1,330 @@
+/* ================================================================
+   ESTILOS DE SIDEBAR CLIENTE - THE CULINARY MANUSCRIPT
+   Diseño Responsive y Adaptativo
+   ================================================================ */
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #121212;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    border-right: 1px solid rgba(212, 175, 55, 0.15);
+    z-index: 1000;
+    box-sizing: border-box;
+    overflow-y: auto;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s ease, padding 0.3s ease;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Scrollbar estilizado para el sidebar */
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(212, 175, 55, 0.2);
+    border-radius: 4px;
+}
+
+/* ===== CABECERA ===== */
+.sidebar-header {
+    margin-bottom: 30px;
+}
+
+.sidebar-header h3.gold-text {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary, #d4af37);
+    margin: 0;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.logo-subtitle {
+    font-size: 10px;
+    color: #888888;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 6px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.toggle-btn {
+    background: transparent;
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    color: var(--primary, #d4af37);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+    background-color: rgba(212, 175, 55, 0.15);
+    border-color: #d4af37;
+    transform: scale(1.05);
+}
+
+.toggle-btn .material-symbols-outlined {
+    font-size: 20px;
+    color: var(--primary, #d4af37) !important;
+    transition: transform 0.3s ease;
+}
+
+/* ===== NAVEGACIÓN ===== */
+.sidebar-nav,
+.sidebar-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-nav a,
+.sidebar-menu a,
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    transition: all 0.25s ease;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.sidebar-nav a:hover,
+.sidebar-menu a:hover,
+.nav-item:hover {
+    background-color: rgba(212, 175, 55, 0.1);
+    border-left-color: var(--primary, #d4af37);
+    color: var(--primary, #d4af37);
+    transform: translateX(3px);
+}
+
+/* Elemento Activo idéntico al Admin */
+.sidebar-nav a.active,
+.sidebar-menu a.active,
+.nav-item.active {
+    background-color: rgba(212, 175, 55, 0.15);
+    border-left-color: var(--primary, #d4af37);
+    color: var(--primary, #d4af37);
+    font-weight: 800;
+    box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.05);
+}
+
+.nav-icon,
+.nav-item .material-symbols-outlined,
+.sidebar-nav a .material-symbols-outlined,
+.sidebar-menu a .material-symbols-outlined {
+    font-size: 20px;
+    color: var(--primary, #d4af37) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.nav-item:hover .nav-icon,
+.nav-item:hover .material-symbols-outlined,
+.sidebar-menu a:hover .material-symbols-outlined {
+    filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.4));
+}
+
+/* ===== FOOTER DEL SIDEBAR ===== */
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: auto;
+    border-top: 1px solid rgba(212, 175, 55, 0.15);
+    padding-top: 20px;
+}
+
+.new-booking-btn {
+    width: 100%;
+    background-color: var(--primary, #d4af37);
+    color: #000000;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 6px;
+    font-family: 'Manrope', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.new-booking-btn:hover {
+    background-color: #f0c64d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+}
+
+.footer-link,
+.sidebar-footer a {
+    color: #888888;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: color 0.25s ease, background-color 0.25s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.footer-link:hover,
+.sidebar-footer a:hover {
+    color: var(--primary, #d4af37);
+    background-color: rgba(212, 175, 55, 0.08);
+}
+
+.footer-link .material-symbols-outlined,
+.sidebar-footer a .material-symbols-outlined {
+    font-size: 18px;
+    color: var(--primary, #d4af37) !important;
+}
+
+/* ===== ESTADO COLAPSADO EN ESCRITORIO ===== */
+@media (min-width: 993px) {
+    .sidebar.closed {
+        width: 80px;
+        padding: 30px 14px;
+    }
+
+    .sidebar.closed .menu-text,
+    .sidebar.closed .logo-subtitle,
+    .sidebar.closed .sidebar-header h3,
+    .sidebar.closed .btn-text {
+        display: none !important;
+    }
+
+    .sidebar.closed .toggle-btn .material-symbols-outlined {
+        transform: rotate(180deg);
+    }
+
+    .sidebar.closed .nav-item,
+    .sidebar.closed .sidebar-menu a {
+        justify-content: center;
+        padding: 12px 0;
+        gap: 0;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+    }
+
+    .sidebar.closed .nav-item.active,
+    .sidebar.closed .sidebar-menu a.active {
+        border-bottom-color: var(--primary, #d4af37);
+        border-left-color: transparent;
+    }
+
+    .sidebar.closed .new-booking-btn {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        margin: 0 auto 6px;
+        border-radius: 50%;
+    }
+
+    .sidebar.closed .btn-icon {
+        display: block !important;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .sidebar.closed .footer-link,
+    .sidebar.closed .sidebar-footer a {
+        justify-content: center;
+        padding: 8px 0;
+    }
+
+    .dashboard-main,
+    .main-content {
+        margin-left: 250px;
+        transition: margin-left 0.3s ease;
+    }
+
+    .sidebar.closed ~ .dashboard-main,
+    .sidebar.closed ~ .main-content,
+    .dashboard-main.expanded,
+    .main-content.expanded {
+        margin-left: 80px !important;
+    }
+}
+
+/* ===== BACKDROP PARA MÓVIL ===== */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 995;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-backdrop.active {
+    display: block;
+    opacity: 1;
+}
+
+/* ===== RESPONSIVE MÓVIL Y TABLET (<= 992px) ===== */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 270px !important;
+        padding: 25px 20px;
+        z-index: 1000;
+        box-shadow: 20px 0 60px rgba(0, 0, 0, 0.9);
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0) !important;
+    }
+
+    .dashboard-main,
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding-top: 75px;
+        box-sizing: border-box;
+    }
+
+    .sidebar.closed {
+        transform: translateX(-100%);
+    }
+}

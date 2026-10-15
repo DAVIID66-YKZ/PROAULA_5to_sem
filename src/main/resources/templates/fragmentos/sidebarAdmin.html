@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<aside th:fragment="sidebarAdmin" class="sidebar" id="sidebarAdmin">
+    <div class="sidebar-header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 class="gold-text">Panel Administrador</h3>
+        </div>
+        <p class="logo-subtitle">CONSOLA DE ADMINISTRACIÓN</p>
+    </div>
+    
+    <nav class="sidebar-nav" id="sidebarAdminNav">
+        <a th:href="@{/admin/dashboard}" class="nav-item" data-path="/admin/dashboard">
+            <span class="nav-icon">
+                <span class="material-symbols-outlined">dashboard</span>
+            </span>
+            <span>PANEL</span>
+        </a>
+
+        <a th:href="@{/admin/mesas}" class="nav-item" data-path="/admin/mesas">
+            <span class="nav-icon">
+                <span class="material-symbols-outlined">table_restaurant</span>
+            </span>
+            <span>GESTIONAR MESAS</span>
+        </a>
+
+        <a th:href="@{/admin/reservas}" class="nav-item" data-path="/admin/reservas">
+            <span class="nav-icon">
+                <span class="material-symbols-outlined">calendar_today</span>
+            </span>
+            <span>RESERVAS</span>
+        </a>
+
+        <a th:href="@{/admin/usuarios}" class="nav-item" data-path="/admin/usuarios">
+            <span class="nav-icon">
+                <span class="material-symbols-outlined">group</span>
+            </span>
+            <span>GESTIONAR USUARIOS</span>
+        </a>
+
+        <a th:href="@{/admin/perfil}" class="nav-item" data-path="/admin/perfil">
+            <span class="nav-icon">
+                <span class="material-symbols-outlined">account_circle</span>
+            </span>
+            <span>MI PERFIL</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="/index" class="footer-link">
+            <span class="material-symbols-outlined">storefront</span>
+            Ver Sitio
+        </a>
+        <a href="#" class="footer-link" id="btnAdminLogout" onclick="cerrarSesionAdmin(event)">
+            <span class="material-symbols-outlined">logout</span>
+            Cerrar Sesión
+        </a>
+    </div>
+</aside>
+
+</body>
+</html>

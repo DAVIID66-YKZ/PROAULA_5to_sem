@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Reservas - The Culinary Manuscript</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboardAdmin.css}">
+    <link rel="stylesheet" th:href="@{/css/reservaAdmin.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- ===== SIDEBAR ADMIN ===== -->
+        <div th:replace="~{fragmentos/sidebarAdmin :: sidebarAdmin}"></div>
+
+        <!-- ===== MOBILE BACKDROP ===== -->
+        <div id="adminSidebarBackdrop" class="admin-sidebar-backdrop"></div>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+            <!-- ===== TOP NAVBAR (IDÉNTICO AL CLIENTE) ===== -->
+            <header th:replace="~{fragmentos/navAdmin :: navbarAdmin}"></header>
+            
+            <section id="reservas" class="content-section active">
+                <header class="section-header">
+                    <div>
+                        <h1>Todas las Reservas</h1>
+                        <p>Vista completa de todas las reservas y citas del restaurante.</p>
+                    </div>
+                </header>
+
+                <div class="reservas-all-section">
+                    <div class="reservas-filters">
+                        <input type="text" id="buscarReserva" class="search-input" placeholder="Buscar por huésped, mesa o fecha...">
+                        <select id="filtroEstado" class="filter-select">
+                            <option value="">Todos los Estados</option>
+                            <option value="CONFIRMADA">Confirmada</option>
+                            <option value="PENDIENTE">Pendiente</option>
+                            <option value="LLEGADA">Llegada</option>
+                            <option value="COMPLETADA">Completada</option>
+                            <option value="CANCELADA">Cancelada</option>
+                        </select>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="reservas-table-all manuscript-table">
+                            <thead>
+                                <tr>
+                                    <th>HUÉSPED</th>
+                                    <th>FECHA Y HORA</th>
+                                    <th>PERSONAS</th>
+                                    <th>MESA</th>
+                                    <th>ESTADO</th>
+                                    <th>EXPERIENCIA</th>
+                                    <th>ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservasAllTableBody">
+                                <!-- Se inyecta dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- PAGINACIÓN -->
+                    <div class="pagination pagination-controls">
+                        <button type="button" class="btn-pagination" onclick="paginaAnteriorTodas()">Anterior</button>
+                        <span class="page-info">
+                            Mostrando <span id="paginaActualTodas">1</span> de <span id="totalPaginasTodas">1</span> páginas
+                        </span>
+                        <button type="button" class="btn-pagination" onclick="paginaSiguienteTodas()">Siguiente</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Editar Estado de Reserva -->
+    <div id="modalEditarReserva" class="modal-manuscript" style="display:none;">
+        <div class="modal-content">
+            <h2>Actualizar Estado</h2>
+            <p>Modificar reserva de: <strong id="modalHuespedNombre" style="color:#fff;"></strong></p>
+            <input type="hidden" id="modalReservaId">
+            <div class="form-group" style="margin-top:15px;">
+                <label style="color:#888; font-size:11px; font-weight:700; text-transform:uppercase;">NUEVO ESTADO</label>
+                <select id="modalSelectEstado" class="filter-select" style="width:100%; margin-top:5px;">
+                    <option value="CONFIRMADA">CONFIRMADA</option>
+                    <option value="PENDIENTE">PENDIENTE</option>
+                    <option value="LLEGADA">LLEGADA</option>
+                    <option value="COMPLETADA">COMPLETADA</option>
+                    <option value="CANCELADA">CANCELADA</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn-modal-cancel" onclick="cerrarModalReserva()">Cancelar</button>
+                <button type="button" class="btn-modal-save" onclick="guardarEdicionReserva()">Actualizar</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/admin/adminNav.js}"></script>
+    <script th:src="@{/js/admin/reservas.js}"></script>
+</body>
+</html>

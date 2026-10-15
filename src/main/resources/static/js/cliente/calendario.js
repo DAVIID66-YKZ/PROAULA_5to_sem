@@ -14,12 +14,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const calendarEl = document.getElementById('calendar');
 
+    const isMobile = window.innerWidth <= 768;
+
     // Inicialización de FullCalendar en español
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'es',
         firstDay: 1, // Lunes como primer día de la semana
-        headerToolbar: {
+        headerToolbar: isMobile ? {
+            left: 'prev,next',
+            center: 'title',
+            right: 'today'
+        } : {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek'
@@ -29,6 +35,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             month: 'Mes',
             week: 'Semana'
         },
+        contentHeight: isMobile ? 650 : 'auto',
+        expandRows: true,
+        handleWindowResize: true,
         // Evento gatillado al hacer clic en una reserva del calendario
         eventClick: function(info) {
             const extProps = info.event.extendedProps;
@@ -50,6 +59,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.open(googleCalendarUrl, '_blank');
         }
     });
+
+    // Renderizado inmediato para que el calendario esté disponible sin demora
+    calendar.render();
 
     // 2. Fetch asíncrono pasándole el token por cabecera de seguridad
     try {
@@ -76,9 +88,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 };
             });
 
-            // Inyección y renderizado atómico de eventos
+            // Inyección atómica de eventos
             calendar.addEventSource(eventosMapeados);
-            calendar.render();
 
         } else if (response.status === 403) {
             console.error("No autorizado para descargar el payload del calendario.");

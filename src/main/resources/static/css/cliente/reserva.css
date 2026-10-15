@@ -200,18 +200,68 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* Responsivo */
-@media (max-width: 1000px) {
+@media (max-width: 1024px) {
     .reserva-card-full {
         flex-direction: column;
+        max-width: 720px;
     }
 
     .reserva-visual {
-        min-height: 300px;
+        min-height: 280px;
         flex: none;
         width: 100%;
     }
 
     .reserva-experiencia-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
     }
 }
+
+@media (max-width: 768px) {
+    .reserva-hero-container {
+        padding: 15px 10px;
+        margin-top: 50px;
+    }
+
+    .reserva-card-full {
+        border-radius: 12px;
+    }
+
+    .reserva-form-section {
+        padding: 30px 18px;
+    }
+
+    .reserva-titulo-form {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .reserva-grid-inputs {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .reserva-experiencia-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .reserva-visual {
+        min-height: 220px;
+    }
+
+    .reserva-visual-overlay {
+        padding: 20px;
+    }
+
+    .reserva-visual-overlay .serif-gold {
+        font-size: 1.6rem;
+    }
+
+    .reserva-btn-confirmar {
+        padding: 15px;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+}

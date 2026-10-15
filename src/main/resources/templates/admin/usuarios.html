@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - The Culinary Manuscript</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboardAdmin.css}">
+    <link rel="stylesheet" th:href="@{/css/reservaAdmin.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- ===== SIDEBAR ADMIN ===== -->
+        <div th:replace="~{fragmentos/sidebarAdmin :: sidebarAdmin}"></div>
+
+        <!-- ===== MOBILE BACKDROP ===== -->
+        <div id="adminSidebarBackdrop" class="admin-sidebar-backdrop"></div>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+            <!-- ===== TOP NAVBAR (IDÉNTICO AL CLIENTE) ===== -->
+            <header th:replace="~{fragmentos/navAdmin :: navbarAdmin}"></header>
+            
+            <section id="usuarios" class="content-section active">
+                <header class="section-header">
+                    <div>
+                        <h1>Gestión de Usuarios</h1>
+                        <p>Administra cuentas de usuario del sistema, visualiza roles y permisos.</p>
+                    </div>
+                </header>
+
+                <div class="reservas-all-section">
+                    <!-- CONTROLES DE BÚSQUEDA Y FILTRO -->
+                    <div class="reservas-filters">
+                        <input 
+                            type="text" 
+                            id="buscarUsuario" 
+                            class="search-input" 
+                            placeholder="Buscar por nombre, correo o teléfono..."
+                        >
+                        <select id="filtroRol" class="filter-select">
+                            <option value="">Todos los roles</option>
+                            <option value="CLIENTE">Cliente</option>
+                            <option value="MESERO">Mesero</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+
+                    <!-- TABLA DE USUARIOS -->
+                    <div class="table-wrapper">
+                        <table class="reservas-table-all manuscript-table">
+                            <thead>
+                                <tr>
+                                    <th>NOMBRE COMPLETO</th>
+                                    <th>CORREO ELECTRÓNICO</th>
+                                    <th>ROL</th>
+                                    <th>TELÉFONO</th>
+                                    <th>DIRECCIÓN</th>
+                                    <th>ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usuariosTableBody">
+                                <!-- Se inyecta dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- PAGINACIÓN -->
+                    <div class="pagination pagination-controls">
+                        <button type="button" class="btn-pagination" id="btnPagAnteriorUsuarios" onclick="paginaAnteriorUsuarios()">Anterior</button>
+                        <span class="page-info">
+                            Mostrando <span id="paginaActualUsuarios">1</span> de <span id="totalPaginasUsuarios">1</span> páginas
+                        </span>
+                        <button type="button" class="btn-pagination" id="btnPagSiguienteUsuarios" onclick="paginaSiguienteUsuarios()">Siguiente</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script th:src="@{/js/admin/adminNav.js}"></script>
+    <script th:src="@{/js/admin/usuarios.js}"></script>
+</body>
+</html>

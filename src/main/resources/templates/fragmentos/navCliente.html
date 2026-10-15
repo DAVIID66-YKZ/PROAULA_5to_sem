@@ -4,9 +4,14 @@
 
     <header th:fragment="navbarLogueado" class="header efecto-blur">
         
-        <nav class="nav-contenedor">
+        <div class="nav-left-group">
+            <button id="mobileSidebarToggle" class="mobile-sidebar-toggle" aria-label="Abrir menú" title="Abrir Menú">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
             <h2 style="cursor: pointer;" onclick="location.href='/cliente/dashboard'">The Culinary Manuscript</h2>
-            
+        </div>
+
+        <nav class="nav-contenedor">
             <ul class="nav-links">
                 <li class="nav-item">
                     <a th:href="@{/index}">Inicio</a>
