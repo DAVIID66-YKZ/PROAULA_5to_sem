@@ -4,6 +4,7 @@ import com.restaurante.reservasapp.Auth.DashboardAdminResponse;
 import com.restaurante.reservasapp.Auth.ReservaParaDashboardAdminResponse;
 import com.restaurante.reservasapp.Entity.MesaEntity;
 import com.restaurante.reservasapp.Entity.ReservaEntity;
+import com.restaurante.reservasapp.Entity.UsuarioEntity;
 import com.restaurante.reservasapp.repository.MesaRepository;
 import com.restaurante.reservasapp.repository.ReservaRepository;
 import com.restaurante.reservasapp.services.DashboardAminService;
@@ -31,9 +32,13 @@ private UsuarioRepository usuarioRepository;
         List<MesaEntity> todasLasMesas = mesaRepository.findAll();
 
         // Contar reservas por estado
-        // Nota: Tu entidad ReservaEntity no tiene campo 'estado', usaremos lógica alternativa
-        long reservasConfirmadas = todasLasReservas.size() > 0 ? todasLasReservas.size() / 2 : 0;
-        long reservasPendientes = todasLasReservas.size() - reservasConfirmadas;
+        long reservasConfirmadas = todasLasReservas.stream()
+            .filter(r -> "CONFIRMADA".equalsIgnoreCase(r.getEstado()) || 
+                (r.getEstado() == null && "CONFIRMADA".equals(determinarEstado(r.getFecha(), r.getHora()))))
+            .count();
+        long reservasPendientes = todasLasReservas.stream()
+            .filter(r -> "PENDIENTE".equalsIgnoreCase(r.getEstado()))
+            .count();
 
         // Calcular ocupancia
         long mesasDisponibles = todasLasMesas.stream()
@@ -41,7 +46,7 @@ private UsuarioRepository usuarioRepository;
             .count();
 
         int ocupancia = todasLasMesas.isEmpty() ? 0 :
-            (int) Math.round((100 * (todasLasMesas.size() - mesasDisponibles)) / (double) todasLasMesas.size());
+            (int) Math.round((100.0 * (todasLasMesas.size() - mesasDisponibles)) / (double) todasLasMesas.size());
 
         // Total de huéspedes
         int totalHuespedes = todasLasReservas.stream()
@@ -137,15 +142,35 @@ private ReservaParaDashboardAdminResponse mapearReservaADashboard(ReservaEntity 
         ? reserva.getExperiencia().replace("Mesa-", "")
         : "Regular";
 
+    // ── Correo del usuario ──
+    String correoHuesped = "Sin correo";
+    try {
+        if (reserva.getUsuarioId() != null) {
+            correoHuesped = usuarioRepository.findById(reserva.getUsuarioId())
+                .map(UsuarioEntity::getCorreo)
+                .orElse("Sin correo");
+        }
+    } catch (Exception e) {
+        correoHuesped = "Sin correo";
+    }
+
+    // ── Estado ──
+    String estadoFinal = reserva.getEstado() != null && !reserva.getEstado().isBlank()
+        ? reserva.getEstado()
+        : determinarEstado(reserva.getFecha(), reserva.getHora());
+
     return ReservaParaDashboardAdminResponse.builder()
         .id(reserva.getId())
         .nombreHuesped(nombreHuesped)
         .iniciales(iniciales)
         .fechaHora(fechaHora)
+        .fecha(reserva.getFecha())
+        .hora(reserva.getHora())
         .cantidadPersonas(reserva.getNumeroPersonas())
         .numeroMesa(numeroMesa)
-        .estado(determinarEstado(reserva.getFecha(), reserva.getHora()))
+        .estado(estadoFinal)
         .tipoEvento(experiencia)
+        .correoHuesped(correoHuesped)
         .build();
 }
 

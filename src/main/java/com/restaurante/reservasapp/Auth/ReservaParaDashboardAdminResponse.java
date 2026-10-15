@@ -14,8 +14,11 @@ public class ReservaParaDashboardAdminResponse {
     private String nombreHuesped;
     private String iniciales;
     private String fechaHora;
+    private String fecha;
+    private String hora;
     private int cantidadPersonas;
     private String numeroMesa;
     private String estado;
     private String tipoEvento;
+    private String correoHuesped;
 }

@@ -3,9 +3,11 @@ package com.restaurante.reservasapp.controller;
 import com.restaurante.reservasapp.Auth.DashboardAdminResponse;
 import com.restaurante.reservasapp.Auth.ReservaParaDashboardAdminResponse;
 import com.restaurante.reservasapp.Entity.MesaEntity;
+import com.restaurante.reservasapp.Entity.ReservaEntity;
 import com.restaurante.reservasapp.Entity.UsuarioEntity;
 import com.restaurante.reservasapp.services.DashboardAminService;
 import com.restaurante.reservasapp.services.MesaService;
+import com.restaurante.reservasapp.services.ReservaService;
 import com.restaurante.reservasapp.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +30,10 @@ public class DashboardAdminController {
     private MesaService mesaService;
     
     @Autowired
-    private UsuarioService usuarioService; // 🔥 AGREGAR ESTO
+    private UsuarioService usuarioService;
+
+    @Autowired
+    private ReservaService reservaService;
 
     // ===== ENDPOINTS DE ESTADÍSTICAS =====
 
@@ -124,6 +129,32 @@ public class DashboardAdminController {
             return ResponseEntity.notFound().build();
         }
         usuarioService.eliminarUsuario(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ===== ENDPOINTS DE GESTIÓN DE RESERVAS =====
+
+    @PatchMapping("/reservas/{id}/estado")
+    public ResponseEntity<?> actualizarEstadoReserva(
+            @PathVariable String id,
+            @RequestBody java.util.Map<String, String> body) {
+        String nuevoEstado = body.get("estado");
+        ReservaEntity reserva = reservaService.obtenerReserva(id);
+        if (reserva == null) {
+            return ResponseEntity.notFound().build();
+        }
+        reserva.setEstado(nuevoEstado);
+        reservaService.guardarReservaDirecta(reserva);
+        return ResponseEntity.ok(reserva);
+    }
+
+    @DeleteMapping("/reservas/{id}")
+    public ResponseEntity<Void> eliminarReserva(@PathVariable String id) {
+        ReservaEntity reserva = reservaService.obtenerReserva(id);
+        if (reserva == null) {
+            return ResponseEntity.notFound().build();
+        }
+        reservaService.eliminarReserva(id);
         return ResponseEntity.noContent().build();
     }
 }

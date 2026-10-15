@@ -1,7 +1,13 @@
+/* ================================================================
+   PRIVACIDAD - THE CULINARY MANUSCRIPT
+   Responsive design and luxury manuscript aesthetics
+   ================================================================ */
+
 .contenedor {
     max-width: 1200px;
     margin: 0 auto;
     padding: 120px 40px 60px;
+    box-sizing: border-box;
 }
 
 /******** TITULO ********/
@@ -9,19 +15,23 @@
 .titulo-principal {
     font-size: 3.5rem;
     margin-bottom: 20px;
-    color: var(--color-secondary);
-    line-height: 1.1;
+    color: var(--color-secondary, #ffffff);
+    font-family: 'Noto Serif', serif;
+    font-weight: 500;
+    line-height: 1.15;
     padding: 0;
 }
 
 .titulo-principal strong {
-    color: var(--color-primary);
+    color: var(--color-primary, #d4af37);
+    font-style: italic;
 }
 
 .priv-descripcion {
-    color: var(--color-text-secondary);
+    color: #a0a0a0;
     max-width: 700px;
     line-height: 1.7;
+    font-size: 1.05rem;
 }
 
 /******** SECCIONES ********/
@@ -32,69 +42,98 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 60px;
-    margin-top: 120px;
+    margin-top: 90px;
 }
 
 .titulos {
-    min-width: 300px;
+    width: 320px;
+    flex-shrink: 0;
 }
 
 .titulos h2 {
-    font-size: 1rem;
-    color: var(--color-primary);
+    font-size: 0.85rem;
+    color: var(--color-primary, #d4af37);
     margin-bottom: 10px;
     padding: 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
 }
 
 .titulos h3 {
-    font-size: 2.5rem;
-    color: var(--color-secondary);
-    font-family: var(--font-family-title);
+    font-size: 2.2rem;
+    color: #ffffff;
+    font-family: 'Noto Serif', serif;
     line-height: 1.2;
+    margin: 0;
+    font-weight: 500;
 }
 
 .introduccion .descripcion {
     flex: 1;
-    background-color: var(--color-gray);
-    padding: 30px;
-    border-radius: 12px;
+    background-color: #171717;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    padding: 35px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
 .descripcion p {
-    color: var(--color-secondary);
+    color: #e0e0e0;
     line-height: 1.8;
+    margin-top: 0;
 }
 
 .descripcion .txt-resaltado {
-    color: var(--color-text-secondary);
+    color: var(--color-primary, #d4af37);
     margin-top: 20px;
+    margin-bottom: 0;
+    font-weight: 500;
 }
 
 /******** ITEMS ********/
 
+.recopilacion .descripcion {
+    flex: 1;
+}
+
 .recopilacion .descripcion-item {
-    border-left: 1px solid var(--color-primary);
-    padding-left: 20px;
+    border-left: 2px solid var(--color-primary, #d4af37);
+    padding-left: 24px;
     margin-bottom: 30px;
 }
 
+.recopilacion .descripcion-item:last-child {
+    margin-bottom: 0;
+}
+
 .recopilacion .descripcion-item h4 {
-    font-size: 1.3rem;
-    color: var(--color-primary);
-    margin-bottom: 10px;
+    font-size: 1.25rem;
+    color: #ffffff;
+    font-family: 'Noto Serif', serif;
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-weight: 600;
 }
 
 .recopilacion .descripcion-item p {
-    color: var(--color-text-secondary);
+    color: #a0a0a0;
     line-height: 1.7;
+    margin: 0;
+    font-size: 0.95rem;
 }
 
-/********uso********/
+/******** USO ********/
+
 .uso-contenedor {
     display: flex;
-    margin-top: 100px;
-    padding-bottom: 100px;
+    margin-top: 90px;
+    padding-bottom: 80px;
     position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(212, 175, 55, 0.15);
 }
 
 .uso-contenedor::before {
@@ -102,46 +141,49 @@
     position: absolute;
     left: 0;
     bottom: 0;
-
     width: 100%;
     height: 1px;
-
     background: linear-gradient(to right,
             transparent,
-            var(--color-primary-transparent),
+            rgba(212, 175, 55, 0.4),
             transparent);
 }
 
 .uso-contenedor .uso-txt {
     flex: 1;
-    background-color: var(--color-gray-light);
-    padding: 30px;
-    border-radius: 10px 0 0 10px;
+    background-color: #171717;
+    padding: 40px;
 }
 
 .uso-contenedor .uso-txt h2 {
-    font-size: 1rem;
-    color: var(--color-primary);
+    font-size: 0.85rem;
+    color: var(--color-primary, #d4af37);
     margin-bottom: 10px;
     padding: 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
 }
 
 .uso-contenedor .uso-txt h3 {
-    font-size: 2.5rem;
-    color: var(--color-secondary);
-    font-family: var(--font-family-title);
+    font-size: 2.2rem;
+    color: #ffffff;
+    font-family: 'Noto Serif', serif;
     line-height: 1.2;
+    margin: 0 0 15px 0;
+    font-weight: 500;
 }
 
 .uso-contenedor .uso-txt p {
-    color: var(--color-text-secondary);
+    color: #a0a0a0;
     line-height: 1.8;
 }
 
 .uso-contenedor .item {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    margin-top: 15px;
 }
 
 .uso-contenedor .uso-img {
@@ -149,37 +191,107 @@
     position: relative;
     background:
         linear-gradient(to left,
-            rgba(0, 0, 0, 0),
-            rgba(42, 42, 42, 1)),
+            rgba(0, 0, 0, 0.1),
+            rgba(23, 23, 23, 0.95)),
         url(../imagenes/mesero.webp);
-
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
-    border-radius: 0 10px 10px 0;
+    min-height: 300px;
 }
 
 .expediente {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
     justify-content: center;
     align-items: center;
-    margin-top: 100px;
+    margin-top: 80px;
+    text-align: center;
 }
 
 .expediente h3 {
-    font-size: 2.5rem;
-    color: var(--color-secondary);
-    font-family: var(--font-family-title);
+    font-size: 2.2rem;
+    color: #ffffff;
+    font-family: 'Noto Serif', serif;
     line-height: 1.2;
     padding: 0;
     margin: 0;
+    font-weight: 500;
 }
 
 .expediente p {
-    color: var(--color-text-secondary);
+    color: #a0a0a0;
     line-height: 1.8;
     max-width: 600px;
-    text-align: center;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* ================================================================
+   RESPONSIVE DESIGN
+   ================================================================ */
+
+@media (max-width: 992px) {
+    .contenedor {
+        padding: 100px 25px 40px;
+    }
+
+    .titulo-principal {
+        font-size: 2.8rem;
+    }
+
+    .introduccion,
+    .recopilacion {
+        flex-direction: column;
+        gap: 25px;
+        margin-top: 60px;
+    }
+
+    .titulos {
+        width: 100%;
+    }
+
+    .titulos h3 {
+        font-size: 1.8rem;
+    }
+
+    .uso-contenedor {
+        flex-direction: column;
+        margin-top: 60px;
+        padding-bottom: 0;
+    }
+
+    .uso-contenedor .uso-img {
+        min-height: 240px;
+        background:
+            linear-gradient(to top,
+                rgba(0, 0, 0, 0.1),
+                rgba(23, 23, 23, 0.95)),
+            url(../imagenes/mesero.webp);
+        background-position: center;
+        background-size: cover;
+    }
+}
+
+@media (max-width: 600px) {
+    .titulo-principal {
+        font-size: 2.1rem;
+    }
+
+    .introduccion .descripcion {
+        padding: 24px;
+    }
+
+    .uso-contenedor .uso-txt {
+        padding: 24px;
+    }
+
+    .uso-contenedor .uso-txt h3 {
+        font-size: 1.7rem;
+    }
+
+    .expediente h3 {
+        font-size: 1.7rem;
+    }
 }

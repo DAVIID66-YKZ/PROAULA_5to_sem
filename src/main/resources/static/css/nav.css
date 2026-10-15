@@ -1,41 +1,78 @@
-h2 {
-    font-family: "Noto Serif", sans-serif, Arial;
-    color: var(--color-primary);
-    font-weight: 500;
-    padding: 0 20px;
+/* ================================================================
+   NAVBAR & FOOTER - THE CULINARY MANUSCRIPT
+   Diseño Responsive sin desbordamiento horizontal y botón visible
+   ================================================================ */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    margin: 0;
+    padding: 0;
 }
 
 .header {
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     display: flex;
     justify-content: space-between;
     align-items: center;
-
-    background-color: #000;
-
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    opacity: 0.95;
-
+    background-color: rgba(7, 7, 7, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 1000;
+    padding: 14px 30px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    overflow-x: hidden;
 }
 
 .efecto-blur {
-    background-color: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(50px);
+    background-color: rgba(7, 7, 7, 0.95);
+    backdrop-filter: blur(20px);
 }
 
+/* Brand */
+.nav-brand {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.nav-brand h2 {
+    font-family: "Noto Serif", serif;
+    color: var(--color-primary, #d4af37);
+    font-weight: 500;
+    font-size: 1.35rem;
+    margin: 0;
+    padding: 0;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.nav-brand h2:hover {
+    color: #f0c64d;
+}
+
+/* Navegación central (Escritorio / Tablet) */
 .nav-contenedor {
     display: flex;
     align-items: center;
-    gap: 20px;
 }
 
 .nav-links {
     display: flex;
-    gap: 20px;
+    gap: 25px;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -43,44 +80,179 @@ h2 {
 
 .nav-item a {
     text-decoration: none;
-    font-weight: 500;
-    color: var(--color-text);
-    border-bottom: 2px solid transparent;
-    transition: color 0.3s ease;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: #e0e0e0;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    position: relative;
+    padding: 4px 0;
 }
 
 .nav-item a:hover {
-    color: var(--color-primary);
-    text-decoration: underline;
+    color: var(--color-primary, #d4af37);
+}
+
+.nav-item a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background-color: var(--color-primary, #d4af37);
+    transition: width 0.3s ease;
+}
+
+.nav-item a:hover::after {
+    width: 100%;
+}
+
+/* Acciones / Botón de Sesión */
+.nav-acciones {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .sesion-btn {
-    color: var(--color-primary);
-    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--color-primary, #d4af37) !important;
+    border: 1px solid var(--color-primary, #d4af37);
+    border-radius: 20px;
+    padding: 8px 18px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
     text-decoration: none;
-    padding: 0 16px;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
 }
 
 .sesion-btn:hover {
-    text-decoration: underline;
+    background: var(--color-primary, #d4af37);
+    color: #000000 !important;
+    box-shadow: 0 0 18px rgba(212, 175, 55, 0.4);
+    transform: translateY(-1px);
+    text-decoration: none;
 }
-/******************* footer ***************/
+
+/* ================================================================
+   RESPONSIVE DESIGN (Garantiza visibilidad completa en celular)
+   ================================================================ */
+
+@media (max-width: 900px) {
+    .header {
+        padding: 12px 20px;
+    }
+
+    .nav-brand h2 {
+        font-size: 1.2rem;
+    }
+
+    .nav-links {
+        gap: 18px;
+    }
+}
+
+/* En teléfonos y tablets verticales:
+   Ocultamos la navegación central para evitar crowding horizontal.
+   La marca a la izquierda y el botón "Iniciar Sesión" a la derecha
+   tienen el 100% del espacio, sin desborde ni cortes. */
+@media (max-width: 768px) {
+    .header {
+        padding: 10px 14px !important;
+        gap: 12px;
+    }
+
+    .nav-contenedor {
+        display: none !important;
+    }
+
+    .nav-brand {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .nav-brand h2 {
+        font-size: 1.15rem;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .nav-acciones {
+        flex-shrink: 0;
+    }
+
+    .sesion-btn {
+        padding: 8px 16px !important;
+        font-size: 0.85rem !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .header {
+        padding: 8px 12px !important;
+        gap: 8px;
+    }
+
+    .nav-brand h2 {
+        font-size: 1.05rem;
+    }
+
+    .sesion-btn {
+        padding: 7px 13px !important;
+        font-size: 0.8rem !important;
+        border-radius: 16px;
+    }
+}
+
+@media (max-width: 360px) {
+    .nav-brand h2 {
+        font-size: 0.95rem;
+    }
+
+    .sesion-btn {
+        padding: 6px 10px !important;
+        font-size: 0.75rem !important;
+    }
+}
+
+/******************* FOOTER ***************/
 
 .footer {
     margin-top: 150px;
-    border-top: 1px solid var(--color-primary-transparent);
+    border-top: 1px solid var(--color-primary-transparent, rgba(212, 175, 55, 0.2));
     background-color: #000;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
 }
 
 .footer-contenedor {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 25px 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .footer-contenedor h2 {
+    font-family: "Noto Serif", serif;
+    color: var(--color-primary, #d4af37);
     font-style: italic;
+    margin: 0;
+    font-size: 1.3rem;
 }
 
 .footer-contenedor ul {
@@ -88,28 +260,35 @@ h2 {
     display: flex;
     gap: 20px;
     margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
 }
 
 .footer-contenedor ul li a {
     text-decoration: none;
-    color: var(--color-text);
+    color: var(--color-text, #e0e0e0);
     transition: all 0.3s ease;
+    font-size: 0.9rem;
 }
 
 .footer-contenedor ul li a:hover {
-    color: var(--color-primary);
-}
-/* //////// Side bar //////// */
-.sidebar {
-    width: 260px;
-    height: 100vh;
-    background-color: #111; /* Negro profundo */
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    padding: 30px 20px;
-    position: fixed;
-    left: 0;
-    top: 0;
+    color: var(--color-primary, #d4af37);
 }
 
+@media (max-width: 768px) {
+    .footer {
+        margin-top: 80px;
+    }
+
+    .footer-contenedor {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+        padding: 30px 20px;
+    }
+
+    .footer-contenedor ul {
+        justify-content: center;
+        gap: 15px;
+    }
+}

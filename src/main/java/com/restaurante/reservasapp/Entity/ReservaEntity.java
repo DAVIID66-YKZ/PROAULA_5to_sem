@@ -21,4 +21,5 @@ public class ReservaEntity {
     private String mesaId; 
     private String experiencia; 
     private String comentario; // 🔥 NUEVO: Almacenará la reseña del manuscrito
+    private String estado;     // 🔥 NUEVO: Almacena el estado (CONFIRMADA, PENDIENTE, LLEGADA, etc.)
 }

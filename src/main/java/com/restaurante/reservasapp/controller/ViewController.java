@@ -76,8 +76,28 @@ public class ViewController {
     }
 
     // Vistas de Administrador
-    @GetMapping({"/dashboardAdmin", "/admin/dashboardAdmin", "/admin/dashboard"})
-    public String dashboardAdmin() {
-        return "admin/dashboardAdmin";
+    @GetMapping({"/admin/dashboard", "/dashboardAdmin", "/admin/dashboardAdmin"})
+    public String adminDashboard() {
+        return "admin/dashboard";
+    }
+
+    @GetMapping("/admin/mesas")
+    public String adminMesas() {
+        return "admin/mesas";
+    }
+
+    @GetMapping("/admin/reservas")
+    public String adminReservas() {
+        return "admin/reservas";
+    }
+
+    @GetMapping("/admin/usuarios")
+    public String adminUsuarios() {
+        return "admin/usuarios";
+    }
+
+    @GetMapping({"/admin/perfil", "/admin/PerfilAdmin"})
+    public String adminPerfil() {
+        return "admin/PerfilAdmin";
     }
 }

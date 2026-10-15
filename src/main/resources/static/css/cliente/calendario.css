@@ -1,91 +1,275 @@
 /* ================================================================
    ESTILOS DEL CALENDARIO - THE CULINARY MANUSCRIPT
+   Optimizado para vista grande, clara y táctil en celulares
    ================================================================ */
+
+.calendario-card-wrapper {
+    padding: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #121212;
+    border: 1px solid rgba(212, 175, 55, 0.18);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
 
 /* Personalización de los botones de FullCalendar */
 .fc .fc-button-primary {
     background-color: #1a1a1a !important;
-    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
     color: #d4af37 !important;
     font-family: 'Manrope', sans-serif;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     letter-spacing: 1px;
-    transition: 0.3s ease;
+    padding: 10px 18px !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .fc .fc-button-primary:hover {
     background-color: #d4af37 !important;
     color: #000000 !important;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+    transform: translateY(-1px);
 }
 
 .fc .fc-button-primary:disabled {
     background-color: #0f0f0f !important;
-    color: #444 !important;
-    border-color: #222 !important;
+    color: #555555 !important;
+    border-color: #222222 !important;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
-/* Título del mes (Serif Blanco) */
+.fc .fc-button-active {
+    background-color: #d4af37 !important;
+    color: #000000 !important;
+    border-color: #d4af37 !important;
+}
+
+/* Título del mes */
 .fc .fc-toolbar-title {
     font-family: 'Noto Serif', serif;
     color: #ffffff !important;
-    font-size: 1.6rem !important;
+    font-size: 1.8rem !important;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 /* Estructura de celdas y bordes */
 .fc th {
-    background-color: #1a1a1a !important;
+    background-color: #181818 !important;
     color: #d4af37 !important;
     font-family: 'Manrope', sans-serif;
-    font-size: 11px;
-    letter-spacing: 1px;
-    padding: 12px 0 !important;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 14px 0 !important;
     border: 1px solid #2a2a2a !important;
 }
 
 .fc td {
-    border: 1px solid #1f1f1f !important;
+    border: 1px solid #222222 !important;
     background-color: #121212;
+}
+
+.fc .fc-daygrid-day-frame {
+    min-height: 110px;
+    padding: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.fc .fc-daygrid-day-frame:hover {
+    background-color: rgba(255, 255, 255, 0.02);
 }
 
 /* Día actual destacado */
 .fc .fc-day-today {
-    background-color: rgba(212, 175, 55, 0.03) !important;
+    background-color: rgba(212, 175, 55, 0.06) !important;
+    border: 1px solid rgba(212, 175, 55, 0.4) !important;
+}
+
+.fc .fc-day-today .fc-daygrid-day-number {
+    color: #d4af37 !important;
+    font-weight: 800 !important;
 }
 
 /* Números de los días */
 .fc .fc-daygrid-day-number {
-    color: #888;
+    color: #aaaaaa;
     font-family: 'Manrope', sans-serif;
-    font-size: 0.85rem;
-    padding: 8px !important;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 8px 10px !important;
+    display: inline-block;
 }
 
 /* Eventos / Reservas agendadas */
 .fc-v-event, .fc-h-event {
-    background-color: rgba(212, 175, 55, 0.1) !important;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(212, 175, 55, 0.12)) !important;
     border: 1px solid #d4af37 !important;
-    border-radius: 6px !important;
-    padding: 4px 8px !important;
+    border-radius: 8px !important;
+    padding: 6px 10px !important;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    margin: 3px 0 !important;
 }
 
 .fc-v-event:hover, .fc-h-event:hover {
-    transform: scale(1.02);
-    background-color: rgba(212, 175, 55, 0.18) !important;
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), rgba(212, 175, 55, 0.25)) !important;
+    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.35);
 }
 
 .fc-event-title {
     color: #ffffff !important;
     font-weight: 700 !important;
-    font-size: 0.8rem !important;
+    font-size: 0.85rem !important;
     font-family: 'Manrope', sans-serif;
+    letter-spacing: 0.3px;
 }
 
 .fc-event-time {
     color: #d4af37 !important;
-    font-weight: 600 !important;
-    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    margin-bottom: 2px;
+}
+
+/* ================================================================
+   RESPONSIVE DESIGN PARA CELULAR (CALENDARIO GRANDE Y CÓMODO)
+   ================================================================ */
+
+@media (max-width: 768px) {
+    .calendario-card-wrapper {
+        padding: 12px 6px !important;
+        border-radius: 12px !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Toolbar ordenado verticalmente pero con botones grandes */
+    .fc .fc-toolbar {
+        flex-direction: column;
+        gap: 14px;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 20px !important;
+    }
+
+    .fc .fc-toolbar-chunk {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1.55rem !important;
+        font-weight: 700 !important;
+    }
+
+    .fc .fc-button-primary {
+        padding: 10px 16px !important;
+        font-size: 0.82rem !important;
+        letter-spacing: 0.8px;
+        border-radius: 8px !important;
+        min-height: 42px; /* Altura táctil cómoda para el pulgar */
+    }
+
+    /* Cabecera de días de la semana */
+    .fc th {
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.5px;
+        padding: 10px 0 !important;
+    }
+
+    /* ¡CELDA DEL DÍA GRANDE EN CELULAR! (Evita que se vea enano) */
+    .fc .fc-daygrid-day-frame {
+        min-height: 95px !important;
+        padding: 4px 3px !important;
+    }
+
+    /* Números de los días grandes y legibles */
+    .fc .fc-daygrid-day-number {
+        font-size: 1rem !important;
+        font-weight: 800 !important;
+        color: #f5f5f5 !important;
+        padding: 4px 6px !important;
+    }
+
+    /* Tarjetas de eventos en celular: grandes, legibles y claras */
+    .fc-v-event, .fc-h-event {
+        padding: 6px 8px !important;
+        border-radius: 6px !important;
+        margin: 3px 0 !important;
+    }
+
+    .fc-event-title {
+        font-size: 0.82rem !important;
+        font-weight: 700 !important;
+        white-space: normal !important;
+        line-height: 1.25 !important;
+    }
+
+    .fc-event-time {
+        font-size: 0.78rem !important;
+        font-weight: 800 !important;
+        display: block !important;
+        color: #d4af37 !important;
+        margin-bottom: 2px !important;
+    }
+
+    .fc-daygrid-more-link {
+        font-size: 0.78rem !important;
+        color: #d4af37 !important;
+        font-weight: 800 !important;
+        display: block !important;
+        padding: 2px 4px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendario-card-wrapper {
+        padding: 8px 3px !important;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1.35rem !important;
+    }
+
+    .fc .fc-button-primary {
+        padding: 8px 12px !important;
+        font-size: 0.78rem !important;
+    }
+
+    .fc th {
+        font-size: 10px !important;
+        padding: 8px 0 !important;
+    }
+
+    .fc .fc-daygrid-day-frame {
+        min-height: 85px !important;
+        padding: 2px !important;
+    }
+
+    .fc .fc-daygrid-day-number {
+        font-size: 0.92rem !important;
+        padding: 2px 4px !important;
+    }
+
+    .fc-event-title {
+        font-size: 0.76rem !important;
+    }
+
+    .fc-event-time {
+        font-size: 0.72rem !important;
+    }
 }

@@ -269,4 +269,67 @@ body {
     width: 100%;
 }
 
-.sidebar.closed ~ .main-content { margin-left: 80px; }
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+    .dashboard-container {
+        padding: 90px 20px 40px 20px;
+    }
+
+    .welcome-block {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .welcome-text h1 {
+        font-size: 2.2rem;
+    }
+
+    .btn-new-reservation {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .featured-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .booking-image-wrapper {
+        width: 100%;
+        height: 200px;
+    }
+
+    .booking-meta-info {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .booking-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .item-meta {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-container {
+        padding: 80px 14px 30px 14px;
+    }
+
+    .welcome-text h1 {
+        font-size: 1.8rem;
+    }
+
+    .booking-meta-info {
+        grid-template-columns: 1fr;
+    }
+}

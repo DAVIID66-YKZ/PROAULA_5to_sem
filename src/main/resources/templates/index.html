@@ -147,22 +147,6 @@
                 window.location.href = "/register";
             }
         }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            // Verificar si el usuario ya tiene sesión iniciada para adaptar el botón de login en el nav
-            const token = localStorage.getItem("token");
-            const navBtnSesion = document.getElementById("navBtnSesion");
-            if (navBtnSesion && token) {
-                const rol = (localStorage.getItem("rol") || "").trim().toUpperCase();
-                if (rol === "ADMIN") {
-                    navBtnSesion.textContent = "Panel Admin";
-                    navBtnSesion.href = "/dashboardAdmin";
-                } else {
-                    navBtnSesion.textContent = "Mi Panel";
-                    navBtnSesion.href = "/cliente/dashboard";
-                }
-            }
-        });
     </script>
 </body>
 

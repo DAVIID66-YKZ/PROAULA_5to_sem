@@ -1,30 +1,38 @@
-/**************** REGISTER PAGE ****************/
+/* ================================================================
+   REGISTER PAGE - THE CULINARY MANUSCRIPT
+   Responsive design and luxury manuscript aesthetics
+   ================================================================ */
+
 body {
     background:
-        radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.2), transparent 55%),
-        radial-gradient(circle at 75% 75%, rgba(212, 175, 55, 0.1), transparent 60%),
-        radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.6), transparent 70%),
+        radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.15), transparent 55%),
+        radial-gradient(circle at 75% 75%, rgba(212, 175, 55, 0.08), transparent 60%),
+        radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.7), transparent 70%),
         #121212;
     min-height: 100vh;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--color-text, #e0e0e0);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .register-page {
-    min-height: 100vh;
+    flex: 1;
+    min-height: calc(100vh - 160px);
     display: flex;
     justify-content: center;
     align-items: center;
-
-    /* El mismo fondo exacto que proporcionaste */
-    /* Ajuste de padding para evitar que el nav tape el contenido */
-    padding: 100px 20px;
+    padding: 120px 20px 60px;
+    box-sizing: border-box;
 }
 
 /**************** CONTAINER ****************/
 
 .register-container {
     width: 100%;
-    max-width: 600px;
-    /* Un poco más ancho para el grid de nombre/apellido */
+    max-width: 620px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -33,31 +41,39 @@ body {
 /**************** FORM ****************/
 
 .register-form {
-    background-color: var(--color-neutral);
-    /* Color oscuro del login */
-    padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background-color: #171717;
+    padding: 2.8rem 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
     width: 100%;
-    border: 1px solid rgba(212, 175, 55, 0.1);
-    /* Toque dorado sutil en el borde */
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.register-form:hover {
+    border-color: rgba(212, 175, 55, 0.35);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75);
 }
 
 /**************** TITLES ****************/
 
 .register-title {
+    margin-top: 0;
     margin-bottom: 0.5rem;
     text-align: center;
-    color: var(--color-secondary);
+    color: #ffffff;
     font-family: "Noto Serif", serif;
-    font-size: 2rem;
+    font-size: 2.2rem;
+    font-weight: 500;
 }
 
 .register-subtitle {
     text-align: center;
-    margin-bottom: 2.5rem;
-    color: var(--color-text);
-    opacity: 0.7;
+    margin-bottom: 2.2rem;
+    color: #888888;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
 }
 
 /**************** GRID ****************/
@@ -65,89 +81,128 @@ body {
 .register-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 16px;
 }
 
 /**************** INPUTS ****************/
 
 .input-group {
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.3rem;
+    width: 100%;
 }
 
 .login-label {
     display: block;
     margin-bottom: 0.5rem;
-    color: var(--color-text);
-    font-size: 0.9rem;
+    font-size: 11px;
+    font-weight: 700;
+    color: #aaaaaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .login-input {
     width: 100%;
-    padding: 0.7rem;
-    border: none;
-    border-bottom: 2px solid var(--color-primary);
-    background-color: #2a2a2a;
-    /* Gris oscuro coherente con el estilo */
-    color: white;
-    height: 2.5rem;
-    border-radius: 4px 4px 0 0;
-    transition: background-color 0.3s ease;
+    padding: 13px 16px;
+    border: 1px solid #2a2a2a;
+    border-bottom: 2px solid var(--color-primary, #d4af37);
+    background-color: #121212;
+    color: #ffffff;
+    border-radius: 8px 8px 0 0;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
     box-sizing: border-box;
 }
 
 .login-input:focus {
     outline: none;
-    background-color: #333;
+    background-color: #1c1c1c;
+    border-color: var(--color-primary, #d4af37);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.15);
 }
 
 /**************** BUTTON ****************/
 
 .login-button {
     width: 100%;
-    padding: 0.75rem;
-    background-color: var(--color-primary);
-    color: var(--color-neutral);
+    padding: 14px 20px;
+    background-color: var(--color-primary, #d4af37);
+    color: #000000;
     border: none;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
     margin-top: 1.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
     transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
 .login-button:hover {
-    scale: 1.05;
-    box-shadow: 0 0 12px var(--color-primary-transparent);
+    background-color: #f0c64d;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.35);
 }
 
 /**************** LINKS ****************/
 
 .register-login {
     text-align: center;
-    color: var(--color-text);
+    color: #888888;
     font-size: 0.9rem;
+    margin: 0;
 }
 
 .login-links {
-    color: var(--color-primary);
+    color: var(--color-primary, #d4af37);
     text-decoration: none;
-    font-weight: bold;
-    margin-left: 0.5rem;
+    font-weight: 700;
+    margin-left: 0.4rem;
+    transition: color 0.2s ease;
 }
 
 .login-links:hover {
     text-decoration: underline;
+    color: #f0c64d;
 }
 
 /**************** RESPONSIVE ****************/
 
 @media (max-width: 600px) {
+    .register-page {
+        padding: 90px 15px 40px;
+    }
+
     .register-grid {
         grid-template-columns: 1fr;
+        gap: 0;
     }
 
     .register-form {
-        padding: 1.5rem;
+        padding: 2rem 1.4rem;
+        border-radius: 12px;
+    }
+
+    .register-title {
+        font-size: 1.8rem;
+    }
+
+    .register-subtitle {
+        font-size: 0.85rem;
+        margin-bottom: 1.8rem;
+    }
+
+    .login-input {
+        padding: 12px 14px;
+        font-size: 0.9rem;
+    }
+
+    .login-button {
+        padding: 13px 16px;
+        font-size: 0.85rem;
     }
 }
