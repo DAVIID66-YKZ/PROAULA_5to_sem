@@ -208,6 +208,54 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     min-height: 18px;
 }
 
+/* Tarjeta de Resumen de Anticipo y Precios */
+.reserva-anticipo-card {
+    margin-top: 14px;
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.anticipo-linea {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #cccccc;
+}
+
+.anticipo-linea.destacado {
+    border-top: 1px dashed rgba(212, 175, 55, 0.3);
+    padding-top: 8px;
+    margin-top: 2px;
+}
+
+.anticipo-label {
+    font-weight: 600;
+}
+
+.anticipo-val {
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.anticipo-val-oro {
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--color-primary, #d4af37);
+}
+
+.anticipo-subtexto {
+    font-size: 11px;
+    color: #999999;
+    line-height: 1.35;
+    margin-top: 2px;
+}
+
 .reserva-modal-backdrop {
     position: fixed;
     inset: 0;

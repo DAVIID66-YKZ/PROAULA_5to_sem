@@ -142,6 +142,55 @@ html, body {
     text-decoration: none;
 }
 
+/* Botón Carrito en Navbar */
+.nav-carrito-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    color: var(--color-primary, #d4af37);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.nav-carrito-btn:hover {
+    background: var(--color-primary, #d4af37);
+    color: #0b0b0b;
+    border-color: var(--color-primary, #d4af37);
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.45);
+    transform: translateY(-1px);
+}
+
+.nav-carrito-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-carrito-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #e0aa3e;
+    color: #000;
+    font-size: 10px;
+    font-weight: 800;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 8px rgba(224, 170, 62, 0.6);
+}
+
 /* Botón Icono de Perfil cuando la sesión está iniciada */
 .nav-perfil-btn {
     display: inline-flex;

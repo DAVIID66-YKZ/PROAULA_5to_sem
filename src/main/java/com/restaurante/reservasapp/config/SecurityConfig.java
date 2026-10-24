@@ -48,6 +48,8 @@ public class SecurityConfig {
                                 "/calendario",
                                 "/perfil"
                         ).permitAll()
+                        // Consulta pública de disponibilidad para reservas desde index y carrito
+                        .requestMatchers("/reservas/ocupadas").permitAll()
                         // Endpoints REST de Administración
                         .requestMatchers("/api/admin/**", "/mesas/**").hasRole("ADMIN")
                         // Endpoints REST compartidos

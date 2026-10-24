@@ -30,4 +30,10 @@ public class MenuController {
         return "cliente/ver-menu";
     }
 
+    @GetMapping("/api/listar")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.List<com.restaurante.reservasapp.Entity.PlatoEntity>> listarPlatosApi() {
+        return org.springframework.http.ResponseEntity.ok(platoService.listarPlatos());
+    }
+
 }
