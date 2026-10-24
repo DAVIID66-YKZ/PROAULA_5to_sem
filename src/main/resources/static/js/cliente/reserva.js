@@ -47,6 +47,19 @@ document.addEventListener("DOMContentLoaded", () => {
 /**
  * Consulta las horas completamente colapsadas del sector y deshabilita las opciones
  */
+function obtenerFechaYHoraLocal() {
+    const ahora = new Date();
+    const anio = ahora.getFullYear();
+    const mes = String(ahora.getMonth() + 1).padStart(2, "0");
+    const dia = String(ahora.getDate()).padStart(2, "0");
+    const horas = String(ahora.getHours()).padStart(2, "0");
+    const minutos = String(ahora.getMinutes()).padStart(2, "0");
+    return {
+        fechaHoy: `${anio}-${mes}-${dia}`,
+        horaActual: `${horas}:${minutos}`
+    };
+}
+
 async function comprobarHorariosDisponibles() {
     const fecha = document.getElementById("fecha").value;
     const experienciaRadio = document.querySelector('input[name="experiencia"]:checked');
@@ -56,6 +69,10 @@ async function comprobarHorariosDisponibles() {
 
     // Detener la ejecución si el formulario no tiene datos mínimos seleccionados
     if (!fecha || !experienciaRadio) return;
+
+    const { fechaHoy, horaActual } = obtenerFechaYHoraLocal();
+    const esMismoDia = (fecha === fechaHoy);
+    const esPasado = (fecha < fechaHoy);
 
     try {
         // Consultamos al nuevo endpoint que evalúa la ocupación total real por capacidad
@@ -68,26 +85,33 @@ async function comprobarHorariosDisponibles() {
         });
 
         if (response.ok) {
-            // El backend retorna un array de strings directo con las horas muertas, ej: ["12:00", "19:00"]
             const horasColapsadas = await response.json();
 
-            // Resetear y habilitar todas las opciones inicialmente
             Array.from(horaSelect.options).forEach(option => {
-                option.disabled = false;
-                option.style.color = "#fff";
-                option.text = option.text.replace(" (Ocupado)", "");
+                const estaOcupada = horasColapsadas.includes(option.value);
+                const esHoraPasada = esMismoDia && (option.value <= horaActual);
+                const noDisponible = estaOcupada || esHoraPasada || esPasado;
+
+                option.disabled = noDisponible;
+
+                let etiqueta = option.value;
+                if (esPasado) {
+                    etiqueta += " (Fecha pasada)";
+                } else if (esHoraPasada) {
+                    etiqueta += " (Hora pasada)";
+                } else if (estaOcupada) {
+                    etiqueta += " (Ocupado)";
+                }
+
+                option.text = etiqueta;
+                option.style.color = noDisponible ? "#555" : "#fff";
             });
 
-            // Deshabilitar únicamente las horas que el backend confirmó que no tienen mesas libres
-            Array.from(horaSelect.options).forEach(option => {
-                if (horasColapsadas.includes(option.value)) {
-                    option.disabled = true;
-                    option.style.color = "#444"; // Tono gris opaco
-                    if (!option.text.includes("(Ocupado)")) {
-                        option.text += " (Ocupado)";
-                    }
-                }
-            });
+            // Si la opción seleccionada quedó deshabilitada, seleccionar la primera libre
+            if (horaSelect.selectedOptions[0] && horaSelect.selectedOptions[0].disabled) {
+                const primeraLibre = Array.from(horaSelect.options).find(o => !o.disabled);
+                if (primeraLibre) horaSelect.value = primeraLibre.value;
+            }
         }
     } catch (error) {
         console.error("Error al procesar la grilla de disponibilidad horaria:", error);
@@ -120,6 +144,20 @@ async function guardarReserva(event) {
         return;
     }
 
+    const { fechaHoy, horaActual } = obtenerFechaYHoraLocal();
+
+    // Validación 1: Fecha no inferior a hoy
+    if (fecha < fechaHoy) {
+        alert("No se pueden realizar reservas para fechas pasadas.");
+        return;
+    }
+
+    // Validación 2: Si es el mismo día, hora no inferior a la actual
+    if (fecha === fechaHoy && hora <= horaActual) {
+        alert("La hora seleccionada para el día de hoy ya ha pasado. Por favor selecciona una hora posterior.");
+        return;
+    }
+
     if (personas > 12 || personas < 1) {
         alert("Nuestras mesas están diseñadas para un rango de 1 a 12 invitados.");
         return;
@@ -149,8 +187,22 @@ async function guardarReserva(event) {
         });
 
         if (response.ok) {
-            alert("¡Reserva exitosa! Su mesa ha sido preparada en nuestros registros.");
-            window.location.href = "/dashboard";
+            let totalPlatos = 0;
+            document.querySelectorAll(".reserva-plato-checkbox:checked").forEach(cb => {
+                totalPlatos += parseFloat(cb.dataset.precio || 0);
+            });
+            const anticipo = Math.max(10000, Math.round(totalPlatos * 0.05));
+            const formatoCOP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
+
+            const aviso =
+                `✨ ¡SOLICITUD DE RESERVA REGISTRADA! ✨\n\n` +
+                `• Estado: PENDIENTE\n` +
+                `• Total en productos: ${formatoCOP.format(totalPlatos)}\n` +
+                `• Anticipo para apartar mesa: ${formatoCOP.format(anticipo)} (5% con tarifa base mínima de $10.000 COP)\n\n` +
+                `Tu reserva ha quedado guardada en estado PENDIENTE. En "Mis Reservas" podrás ver tus platos y confirmarla.`;
+
+            alert(aviso);
+            window.location.href = "/cliente/mis-reservas";
         } else {
             const errorMsg = await response.text();
 

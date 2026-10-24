@@ -12,6 +12,17 @@
     </nav>
 
     <div class="nav-acciones" id="navAcciones">
+        <button type="button" id="navBtnCarrito" class="nav-carrito-btn" onclick="if(typeof window.abrirCarrito==='function'){window.abrirCarrito();}else{window.location.href='/index?abrirCarrito=true';}" title="Mi Carrito de Reserva" aria-label="Carrito de Reserva">
+            <span class="nav-carrito-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+            </span>
+            <span id="navCarritoBadge" class="nav-carrito-badge" style="display: none;">1</span>
+        </button>
+
         <a th:href="@{/login}" id="navBtnSesion" class="sesion-btn">Iniciar Sesión</a>
 
         <a href="#" id="navBtnPerfil" class="nav-perfil-btn" style="display: none;" title="Mi Panel" aria-label="Ir al Panel">
@@ -30,6 +41,12 @@
                 const rol = (localStorage.getItem("rol") || "").trim().toUpperCase();
                 const btnSesion = document.getElementById("navBtnSesion");
                 const btnPerfil = document.getElementById("navBtnPerfil");
+                const badge = document.getElementById("navCarritoBadge");
+
+                if (badge) {
+                    const tieneCarrito = localStorage.getItem("reservaCarrito");
+                    badge.style.display = tieneCarrito ? "flex" : "none";
+                }
 
                 if (!btnSesion || !btnPerfil) return;
 

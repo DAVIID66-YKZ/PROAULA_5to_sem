@@ -59,8 +59,15 @@ async function register(event) {
 
         if (response.ok) {
             const data = await response.json();
-            localStorage.setItem("token", data.token);
-            alert("¡Registro exitoso! Ya puedes iniciar sesión.");
+            if (data && data.token) {
+                localStorage.setItem("token", data.token);
+            }
+            const tieneCarrito = localStorage.getItem("reservaCarrito");
+            if (tieneCarrito) {
+                alert("¡Registro exitoso! Inicia sesión para confirmar la reserva apartada en tu carrito.");
+            } else {
+                alert("¡Registro exitoso! Ya puedes iniciar sesión.");
+            }
             window.location.href = "/login";
         } else {
             const errorMsg = await response.text();
@@ -82,3 +89,19 @@ async function register(event) {
         }
     }
 }
+
+// Mostrar aviso en la pantalla de registro si el usuario viene con una reserva en el carrito
+document.addEventListener("DOMContentLoaded", () => {
+    const tieneCarrito = localStorage.getItem("reservaCarrito");
+    if (tieneCarrito) {
+        const form = document.querySelector(".register-form");
+        const subtitle = document.querySelector(".register-subtitle");
+        if (form && subtitle) {
+            const aviso = document.createElement("div");
+            aviso.className = "aviso-reserva-pendiente";
+            aviso.style.cssText = "background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.4); color: #f5d77f; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 18px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;";
+            aviso.innerHTML = `<span>🛒</span><span>Tienes una reserva en tu carrito. Completa tu registro para confirmarla.</span>`;
+            subtitle.insertAdjacentElement("afterend", aviso);
+        }
+    }
+});

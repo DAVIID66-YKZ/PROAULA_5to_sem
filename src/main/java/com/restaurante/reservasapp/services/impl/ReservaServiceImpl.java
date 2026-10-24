@@ -175,6 +175,20 @@ public class ReservaServiceImpl implements ReservaService {
 
     @Override
     public List<String> obtenerHorasCompletamenteOcupadas(String fecha, String sector, int invitados) {
+        String[] todosLosTurnos = {
+                "10:00", "11:00", "12:00", "13:00", "14:00",
+                "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"
+        };
+
+        LocalDate hoy = LocalDate.now();
+        LocalDate fechaConsultada = parsearFecha(fecha);
+        boolean esPasado = (fechaConsultada != null && fechaConsultada.isBefore(hoy));
+        boolean esHoy = (fechaConsultada != null && fechaConsultada.isEqual(hoy));
+
+        if (esPasado) {
+            return java.util.Arrays.asList(todosLosTurnos);
+        }
+
         List<String> horasBloqueadas = new java.util.ArrayList<>();
 
         List<MesaEntity> mesasAptas = mesaRepo.findAll().stream()
@@ -183,23 +197,25 @@ public class ReservaServiceImpl implements ReservaService {
                 .collect(Collectors.toList());
 
         if (mesasAptas.isEmpty()) {
-            return java.util.Arrays.asList(
-                    "10:00", "11:00", "12:00", "13:00", "14:00",
-                    "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00");
+            return java.util.Arrays.asList(todosLosTurnos);
         }
-
-        String[] todosLosTurnos = {
-                "10:00", "11:00", "12:00", "13:00", "14:00",
-                "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"
-        };
 
         List<ReservaEntity> reservasDelDia = reservaRepo.findAll().stream()
                 .filter(r -> r.getFecha() != null && r.getFecha().equals(fecha))
                 .filter(r -> r.getEstado() == null || !"CANCELADA".equalsIgnoreCase(r.getEstado()))
                 .collect(Collectors.toList());
 
+        LocalTime horaActual = LocalTime.now();
+
         for (String turno : todosLosTurnos) {
             LocalTime horaEvaluar = LocalTime.parse(turno);
+
+            // Si es el mismo día y la hora ya ha transcurrido, bloquear el turno inmediatamente
+            if (esHoy && horaEvaluar.isBefore(horaActual)) {
+                horasBloqueadas.add(turno);
+                continue;
+            }
+
             LocalTime limiteInferior = horaEvaluar.minusHours(2).plusMinutes(1);
             LocalTime limiteSuperior = horaEvaluar.plusHours(2).minusMinutes(1);
 

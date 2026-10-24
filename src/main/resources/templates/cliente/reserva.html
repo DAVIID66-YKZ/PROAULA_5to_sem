@@ -133,12 +133,27 @@
                                 Elegir platos del menú
                             </button>
                             <div class="reserva-menu-resumen" id="reservaMenuResumen">Ningún plato seleccionado</div>
+
+                            <!-- Desglose de precios y anticipo (5% o mín 10k) -->
+                            <div class="reserva-anticipo-card" id="reservaAnticipoCard" style="display: none;">
+                                <div class="anticipo-linea">
+                                    <span class="anticipo-label">Total en productos:</span>
+                                    <span class="anticipo-val" id="reservaTotalPlatos">$ 0</span>
+                                </div>
+                                <div class="anticipo-linea destacado">
+                                    <span class="anticipo-label">Anticipo para apartar mesa:</span>
+                                    <span class="anticipo-val-oro" id="reservaAnticipo">$ 10.000</span>
+                                </div>
+                                <small class="anticipo-subtexto">
+                                    * Se anticipa el 5% del valor de los platos seleccionados (tarifa mínima de $10.000 COP para reservar).
+                                </small>
+                            </div>
                         </div>
 
                         <button type="submit" class="reserva-btn-confirmar">CONFIRMAR RESERVA</button>
 
                         <p class="reserva-nota">
-                            Se recomienda vestimenta formal. Recibirá un correo electrónico de confirmación.
+                            Se recomienda vestimenta formal. Tu reserva iniciará en estado Pendiente para su confirmación.
                         </p>
                     </form>
                 </section>
@@ -162,13 +177,14 @@
                            class="reserva-plato-checkbox"
                            th:value="${plato.id}"
                            th:data-name="${plato.nombre}"
+                           th:data-precio="${plato.precio}"
                            th:disabled="${!plato.disponible}">
                     <span class="reserva-plato-info">
                         <span>
                             <span th:text="${plato.nombre}"></span>
                             <small th:if="${!plato.disponible}">No disponible</small>
                         </span>
-                        <strong th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 2)}"></strong>
+                        <strong th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 0)}"></strong>
                     </span>
                 </label>
                 <p class="reserva-menu-vacio" th:if="${#lists.isEmpty(platos)}">
@@ -190,17 +206,36 @@
         const cancelarMenu = document.getElementById('cancelarMenu');
         const guardarMenuSeleccionado = document.getElementById('guardarMenuSeleccionado');
         const resumenMenu = document.getElementById('reservaMenuResumen');
+        const anticipoCard = document.getElementById('reservaAnticipoCard');
+        const totalPlatosEl = document.getElementById('reservaTotalPlatos');
+        const anticipoEl = document.getElementById('reservaAnticipo');
         let platosConfirmados = [];
 
+        const formatoCOP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
+
         function actualizarResumenMenu() {
-            const nombres = Array.from(document.querySelectorAll('.reserva-plato-checkbox:checked'))
-                .map(item => item.dataset.name);
+            const checks = Array.from(document.querySelectorAll('.reserva-plato-checkbox:checked'));
+            const nombres = checks.map(item => item.dataset.name);
+
             if (!nombres.length) {
                 resumenMenu.textContent = 'Ningún plato seleccionado';
+                if (anticipoCard) anticipoCard.style.display = 'none';
                 return;
             }
 
             resumenMenu.textContent = nombres.length > 2 ? `${nombres.slice(0, 2).join(', ')} +${nombres.length - 2}` : nombres.join(', ');
+
+            let sumaPlatos = 0;
+            checks.forEach(item => {
+                sumaPlatos += parseFloat(item.dataset.precio || 0);
+            });
+
+            // Regla: 5% del consumo, mínimo 10k
+            const anticipoCalculado = Math.max(10000, Math.round(sumaPlatos * 0.05));
+
+            if (totalPlatosEl) totalPlatosEl.textContent = formatoCOP.format(sumaPlatos);
+            if (anticipoEl) anticipoEl.textContent = formatoCOP.format(anticipoCalculado);
+            if (anticipoCard) anticipoCard.style.display = 'block';
         }
 
         function abrirModalMenu() {

@@ -248,6 +248,156 @@ body {
     background: #f0c64d;
 }
 
+/* Botón / Chip de platos en tabla */
+.btn-ver-platos {
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    color: #f5f0df;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-ver-platos:hover {
+    background: rgba(212, 175, 55, 0.22);
+    border-color: #d4af37;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.btn-ver-platos .platos-precio-tag {
+    color: #d4af37;
+    font-weight: 700;
+}
+
+.sin-platos-tag {
+    color: #777777;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+/* Botón Confirmar Reserva en tabla */
+.btn-confirmar-tabla {
+    background: #d4af37;
+    color: #0b0b0b;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 0.78rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-right: 8px;
+    transition: all 0.25s ease;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+    white-space: nowrap;
+}
+
+.btn-confirmar-tabla:hover {
+    background: #f0c64d;
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.5);
+    transform: translateY(-1px);
+}
+
+.btn-confirmar-tabla .material-symbols-outlined {
+    font-size: 16px;
+}
+
+/* Modal Detalle Platos */
+.modal-platos-content {
+    max-width: 540px !important;
+}
+
+.modal-platos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+}
+
+.modal-close-icon {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 26px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.modal-close-icon:hover {
+    color: #fff;
+}
+
+.modal-platos-lista {
+    max-height: 280px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+    padding-right: 4px;
+}
+
+.modal-plato-fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #181818;
+    border: 1px solid #282828;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+}
+
+.modal-plato-fila .plato-nombre {
+    color: #f0f0f0;
+    font-weight: 500;
+}
+
+.modal-plato-fila .plato-precio {
+    color: #d4af37;
+    font-weight: 700;
+}
+
+.modal-platos-totales {
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.linea-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+    color: #ccc;
+}
+
+.linea-total.destacado {
+    border-top: 1px dashed rgba(212, 175, 55, 0.35);
+    padding-top: 8px;
+    margin-top: 2px;
+    font-size: 0.95rem;
+}
+
 @media (max-width: 900px) {
     .mis-reservas-container {
         padding: 25px 15px;

@@ -8,8 +8,11 @@
     <link rel="stylesheet" th:href="@{/css/variables.css}">
     <link rel="stylesheet" th:href="@{/css/inicio.css}">
     <link rel="stylesheet" th:href="@{/css/nav.css}">
+    <link rel="stylesheet" th:href="@{/css/cliente/reserva.css}">
+    <link rel="stylesheet" th:href="@{/css/carrito.css}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link
         href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
@@ -23,7 +26,7 @@
             <h1>El Manuscrito <br> Culinario</h1>
             <p class="hero-texto">Disfruta de la Mejor Comida en un Ambiente Acogedor.</p>
 
-            <a th:href="@{/reserva}" id="btnReserva" onclick="irAReservar(event)" class="reserva-link">Reserva Ahora</a>
+            <a th:href="@{/reserva}" id="btnReserva" onclick="manejarClickBotonReserva(event)" class="reserva-link">Reserva Ahora</a>
             <a th:href="@{/menu/listar}" class="menu-link">Ver el Menú</a>
         </div>
     </section>
@@ -133,37 +136,138 @@
 
     <footer th:replace="~{fragmentos/footer :: footer}"></footer>
 
-    <script>
-        function irAReservar(event) {
-            if (event) {
-                event.preventDefault();
-            }
-            const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
-            const rol = (localStorage.getItem("rol") || "").trim().toUpperCase();
+    <!-- ===== MODAL DE RESERVA DESDE EL INDEX (IDÉNTICO AL PANEL DE CLIENTE) ===== -->
+    <div id="modalReservaIndexBackdrop" class="modal-reserva-index-backdrop" onclick="if(event.target === this) cerrarModalReservaIndex();">
+        <div class="modal-reserva-index-container">
+            <button type="button" class="modal-reserva-close-btn" onclick="cerrarModalReservaIndex();" aria-label="Cerrar modal">&times;</button>
+            
+            <div class="reserva-card-full">
+                <!-- SECCIÓN VISUAL IZQUIERDA -->
+                <section class="reserva-visual">
+                    <div class="reserva-visual-overlay">
+                        <h2 class="serif-gold">Reserva tu mesa <br> en la historia</h2>
+                        <p class="reserva-visual-texto">
+                            Disfruta de una sinfonía de sabores creada por nuestros chefs expertos.
+                            Cada reserva es la promesa de una velada inolvidable.
+                        </p>
+                    </div>
+                </section>
 
-            if (token && (rol === "ADMIN" || rol === "ROLE_ADMIN")) {
-                window.location.href = "/admin/reservas";
-            } else if (token && (rol === "CLIENTE" || rol === "ROLE_CLIENTE")) {
-                window.location.href = "/cliente/reserva";
-            } else {
-                window.location.href = "/register";
-            }
-        }
+                <!-- SECCIÓN FORMULARIO DERECHA -->
+                <section class="reserva-form-section">
+                    <div class="reserva-form-header">
+                        <span class="reserva-badge">Solicitud de reserva</span>
+                        <h1 class="reserva-titulo-form">Reservar</h1>
+                    </div>
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
-            const rol = (localStorage.getItem("rol") || "").trim().toUpperCase();
-            const btnReserva = document.getElementById("btnReserva");
+                    <form id="formReservaIndex" class="reserva-form-actual" onsubmit="agregarReservaAlCarrito(event)">
 
-            if (btnReserva && token) {
-                if (rol === "ADMIN" || rol === "ROLE_ADMIN") {
-                    btnReserva.setAttribute("href", "/admin/reservas");
-                } else if (rol === "CLIENTE" || rol === "ROLE_CLIENTE") {
-                    btnReserva.setAttribute("href", "/cliente/reserva");
-                }
-            }
-        });
-    </script>
+                        <div class="reserva-grid-inputs">
+                            <div class="input-grupo-reserva">
+                                <label for="modalIndexFecha">Fecha de llegada</label>
+                                <input type="date" id="modalIndexFecha" required>
+                            </div>
+                            <div class="input-grupo-reserva">
+                                <label for="modalIndexHora">Hora preferida</label>
+                                <select id="modalIndexHora" required>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="13:00">01:00 PM</option>
+                                    <option value="14:00">02:00 PM</option>
+                                    <option value="15:00">03:00 PM</option>
+                                    <option value="16:00">04:00 PM</option>
+                                    <option value="17:00">05:00 PM</option>
+                                    <option value="18:00">06:00 PM</option>
+                                    <option value="19:00">07:00 PM</option>
+                                    <option value="20:00" selected>08:00 PM</option>
+                                    <option value="21:00">09:00 PM</option>
+                                    <option value="22:00">10:00 PM</option>
+                                </select>
+                            </div>
+                            <div class="input-grupo-reserva">
+                                <label for="modalIndexPersonas">Invitados</label>
+                                <input type="number" id="modalIndexPersonas" min="1" max="12" value="2" required>
+                            </div>
+                        </div>
+
+                        <div class="reserva-experiencia">
+                            <label class="reserva-label-seccion">Selecciona tu Experiencia</label>
+                            <div class="reserva-experiencia-grid">
+
+                                <label class="exp-card">
+                                    <input type="radio" name="modalIndexExp" value="Mesa-Estandar" checked>
+                                    <div class="exp-ui">
+                                        <span class="material-symbols-outlined">restaurant</span>
+                                        <div class="exp-content">
+                                            <span class="exp-nombre">Estándar</span>
+                                            <span class="exp-detalle">Salón Principal</span>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="exp-card">
+                                    <input type="radio" name="modalIndexExp" value="Mesa-Ventana">
+                                    <div class="exp-ui">
+                                        <span class="material-symbols-outlined">window</span>
+                                        <div class="exp-content">
+                                            <span class="exp-nombre">Ventana</span>
+                                            <span class="exp-detalle">Vista a la Ciudad</span>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="exp-card">
+                                    <input type="radio" name="modalIndexExp" value="Mesa-Alcoba">
+                                    <div class="exp-ui">
+                                        <span class="material-symbols-outlined">meeting_room</span>
+                                        <div class="exp-content">
+                                            <span class="exp-nombre">Alcoba</span>
+                                            <span class="exp-detalle">Privado</span>
+                                        </div>
+                                    </div>
+                                </label>
+
+                            </div>
+                        </div>
+
+                        <button type="submit" class="reserva-btn-confirmar">GUARDAR EN EL CARRITO</button>
+
+                        <p class="reserva-nota">
+                            Tu reserva se guardará temporalmente en tu dispositivo. Podrás confirmarla cuando gustes.
+                        </p>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== DRAWER LATERAL DEL CARRITO ===== -->
+    <div id="carritoBackdrop" class="carrito-backdrop" onclick="cerrarCarrito();"></div>
+    <aside id="carritoDrawer" class="carrito-drawer" aria-label="Carrito de Reserva">
+        <div class="carrito-header">
+            <div>
+                <h3>Tu Carrito</h3>
+                <p>Reserva local en este dispositivo</p>
+            </div>
+            <button type="button" class="carrito-close-btn" onclick="cerrarCarrito();" aria-label="Cerrar">&times;</button>
+        </div>
+
+        <div id="carritoBody" class="carrito-body">
+            <!-- Se inyecta dinámicamente desde carritoReserva.js -->
+        </div>
+
+        <div id="carritoFooter" class="carrito-footer">
+            <button type="button" id="btnConfirmarCarrito" class="btn-confirmar-carrito" onclick="confirmarReservaCarrito();">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Confirmar Reserva</span>
+            </button>
+        </div>
+    </aside>
+
+    <script th:src="@{/js/carritoReserva.js}"></script>
 </body>
 
 </html>

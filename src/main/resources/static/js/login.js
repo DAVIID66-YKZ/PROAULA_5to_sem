@@ -68,6 +68,11 @@ async function login(event) {
         // Verificación de rol para redirección
         const rolUpper = String(data.rol || "").trim().toUpperCase();
         if (rolUpper === "CLIENTE" || rolUpper === "ROLE_CLIENTE") {
+            const tieneCarrito = localStorage.getItem("reservaCarrito");
+            if (tieneCarrito) {
+                window.location.href = "/index?abrirCarrito=true";
+                return;
+            }
             window.location.href = "/cliente/dashboard";
         } else if (rolUpper === "ADMIN" || rolUpper === "ROLE_ADMIN") {
             window.location.href = "/dashboardAdmin";
@@ -85,3 +90,19 @@ async function login(event) {
         }
     }
 }
+
+// Mostrar aviso en la pantalla de login si el usuario viene con una reserva en el carrito
+document.addEventListener("DOMContentLoaded", () => {
+    const tieneCarrito = localStorage.getItem("reservaCarrito");
+    if (tieneCarrito) {
+        const form = document.querySelector(".login-form");
+        const subtitle = document.querySelector(".login-subtitle");
+        if (form && subtitle) {
+            const aviso = document.createElement("div");
+            aviso.className = "aviso-reserva-pendiente";
+            aviso.style.cssText = "background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.4); color: #f5d77f; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 18px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;";
+            aviso.innerHTML = `<span>🛒</span><span>Tienes una reserva en tu carrito. Inicia sesión para confirmarla.</span>`;
+            subtitle.insertAdjacentElement("afterend", aviso);
+        }
+    }
+});

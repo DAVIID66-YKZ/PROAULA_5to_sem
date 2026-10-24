@@ -44,13 +44,14 @@
                             <th>HORA</th>
                             <th>INVITADOS</th>
                             <th>EXPERIENCIA</th>
+                            <th>PLATOS PREORDENADOS</th>
                             <th>ESTADO</th>
                             <th>ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody id="listaReservasBody">
                         <tr>
-                            <td colspan="6" class="reserva-visual-texto">
+                            <td colspan="7" class="reserva-visual-texto">
                                 Consultando los archivos del manuscrito...
                             </td>
                         </tr>
@@ -58,6 +59,38 @@
                 </table>
             </div>
         </main>
+    </div>
+
+    <!-- MODAL DETALLE DE PLATOS PREORDENADOS -->
+    <div id="modalDetallePlatos" class="modal-manuscript" style="display: none;">
+        <div class="modal-content modal-platos-content">
+            <div class="modal-platos-header">
+                <div>
+                    <span class="reserva-badge">Menú Seleccionado</span>
+                    <h2 class="serif-title" style="color: #d4af37; margin: 4px 0 0; font-size: 1.5rem;">Platos de tu Reserva</h2>
+                </div>
+                <button type="button" class="modal-close-icon" onclick="cerrarModalPlatos()">&times;</button>
+            </div>
+
+            <div class="modal-platos-lista" id="modalPlatosLista">
+                <!-- Se llena dinámicamente con los platos de la reserva -->
+            </div>
+
+            <div class="modal-platos-totales">
+                <div class="linea-total">
+                    <span>Total en productos:</span>
+                    <strong id="modalPlatosTotalProductos">$ 0</strong>
+                </div>
+                <div class="linea-total destacado">
+                    <span>Anticipo de reserva (5%, mín $10k):</span>
+                    <strong class="gold-text" id="modalPlatosAnticipo">$ 10.000</strong>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn-modal-cancel" onclick="cerrarModalPlatos()">Cerrar</button>
+            </div>
+        </div>
     </div>
 
     <div id="modalComentario" class="modal-manuscript" style="display: none;">
