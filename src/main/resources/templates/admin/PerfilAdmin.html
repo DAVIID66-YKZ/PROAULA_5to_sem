@@ -97,12 +97,28 @@
                             <form id="formPassword" class="perfil-form">
                                 <div class="perfil-form-group">
                                     <label class="perfil-label">Contraseña Actual</label>
-                                    <input type="password" id="passwordActual" class="perfil-input">
+                                    <div class="password-wrapper">
+                                        <input type="password" id="passwordActual" class="perfil-input" placeholder="••••••••">
+                                        <button type="button" class="toggle-password-btn" onclick="togglePasswordPerfil('passwordActual', this)" title="Mostrar contraseña" aria-label="Mostrar contraseña">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div class="perfil-form-group">
-                                    <label class="perfil-label">Nueva Contraseña</label>
-                                    <input type="password" id="passwordNueva" class="perfil-input">
+                                    <label class="perfil-label">Nueva Contraseña (mínimo 8 caracteres)</label>
+                                    <div class="password-wrapper">
+                                        <input type="password" id="passwordNueva" class="perfil-input" minlength="8" placeholder="••••••••">
+                                        <button type="button" class="toggle-password-btn" onclick="togglePasswordPerfil('passwordNueva', this)" title="Mostrar contraseña" aria-label="Mostrar contraseña">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                    </div>
                                     <div class="perfil-strength-container">
                                         <div class="perfil-strength-bar-wrapper">
                                             <div class="perfil-strength-bar"></div>
@@ -113,7 +129,15 @@
 
                                 <div class="perfil-form-group">
                                     <label class="perfil-label">Confirmar Contraseña</label>
-                                    <input type="password" id="passwordConfirmar" class="perfil-input">
+                                    <div class="password-wrapper">
+                                        <input type="password" id="passwordConfirmar" class="perfil-input" minlength="8" placeholder="••••••••">
+                                        <button type="button" class="toggle-password-btn" onclick="togglePasswordPerfil('passwordConfirmar', this)" title="Mostrar contraseña" aria-label="Mostrar contraseña">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div id="mensajeError" class="perfil-error-container">

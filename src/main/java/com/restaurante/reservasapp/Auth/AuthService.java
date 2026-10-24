@@ -38,6 +38,10 @@ public class AuthService {
 
     // Registro público normal desde tu página web (asigna CLIENTE por defecto)
     public AuthResponse register(RegisterRequest request) {
+        if (request.getContrasena() == null || request.getContrasena().length() < 8) {
+            throw new RuntimeException("La contraseña debe tener al menos 8 caracteres");
+        }
+
         if (userRepository.findByCorreo(request.getCorreo()).isPresent()) {
             throw new RuntimeException("El correo ya está registrado");
         }

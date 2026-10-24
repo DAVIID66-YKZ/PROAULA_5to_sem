@@ -1,5 +1,6 @@
 package com.restaurante.reservasapp.services.impl;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
@@ -50,39 +51,62 @@ public class ReservaServiceImpl implements ReservaService {
             }
         }
 
+        LocalDate hoy = LocalDate.now();
+        LocalDate fechaNueva = parsearFecha(reserva.getFecha());
+
+        if (fechaNueva != null) {
+            if (fechaNueva.isBefore(hoy)) {
+                throw new RuntimeException("No se pueden realizar reservas para fechas pasadas.");
+            }
+            if (fechaNueva.isEqual(hoy)) {
+                LocalTime horaNueva = parsearHora(reserva.getHora());
+                if (horaNueva != null && horaNueva.isBefore(LocalTime.now())) {
+                    throw new RuntimeException("La hora seleccionada para el día de hoy ya ha pasado.");
+                }
+            }
+        }
+
         String sectorBuscado = reserva.getMesaId();
         int cantidadInvitados = reserva.getNumeroPersonas();
 
-        // ── REGLA 1: Un usuario solo puede tener UNA reserva por sector ──
-        List<ReservaEntity> reservasEnEsteSector = reservaRepo
-                .findByUsuarioIdAndExperiencia(reserva.getUsuarioId(), sectorBuscado);
+        // ── REGLA 1: Un usuario solo puede tener UNA reserva activa por sector ──
+        List<ReservaEntity> reservasActivasEnEsteSector = reservaRepo
+                .findByUsuarioIdAndExperiencia(reserva.getUsuarioId(), sectorBuscado)
+                .stream()
+                .filter(this::esReservaActiva)
+                .collect(Collectors.toList());
 
-        if (!reservasEnEsteSector.isEmpty()) {
+        if (!reservasActivasEnEsteSector.isEmpty()) {
             throw new RuntimeException(
-                    "Ya tienes una reserva en el sector " + sectorBuscado +
+                    "Ya tienes una reserva activa en el sector " + sectorBuscado +
                             ". Solo se permite una reserva por sector.");
         }
 
-        // ── REGLA 2: Un usuario máximo 3 reservas en total ──
+        // ── REGLA 2: Límite de máximo 3 reservas cuando sea después del día de hoy ──
         List<ReservaEntity> todasLasReservasDelUsuario = reservaRepo
                 .findByUsuarioId(reserva.getUsuarioId());
 
-        // ── REGLA 2: Un usuario máximo 3 reservas en total ──
-        if (todasLasReservasDelUsuario.size() >= 3) {
-            throw new RuntimeException(
-                    "Has alcanzado el límite de 3 reservas. " +
-                            "Cancela una reserva existente para hacer una nueva.");
+        if (fechaNueva != null && fechaNueva.isAfter(hoy)) {
+            long reservasDespuesDeHoy = todasLasReservasDelUsuario.stream()
+                    .filter(this::esReservaDespuesDeHoy)
+                    .count();
+
+            if (reservasDespuesDeHoy >= 3) {
+                throw new RuntimeException(
+                        "Has alcanzado el límite de 3 reservas a futuro. " +
+                                "Cancela una reserva existente para hacer una nueva.");
+            }
         }
 
-        // ── REGLA 2B: El mismo usuario no puede tener dos reservas en la misma fecha y
-        // hora ──
+        // ── REGLA 2B: El mismo usuario no puede tener dos reservas activas en la misma fecha y hora ──
         boolean mismaFechaHora = todasLasReservasDelUsuario.stream()
+                .filter(this::esReservaActiva)
                 .anyMatch(r -> reserva.getFecha().equals(r.getFecha()) &&
                         reserva.getHora().equals(r.getHora()));
 
         if (mismaFechaHora) {
             throw new RuntimeException(
-                    "Ya tienes una reserva el " + reserva.getFecha() +
+                    "Ya tienes una reserva activa el " + reserva.getFecha() +
                             " a las " + reserva.getHora() +
                             ". Elige otra fecha u hora.");
         }
@@ -107,6 +131,7 @@ public class ReservaServiceImpl implements ReservaService {
 
         List<ReservaEntity> reservasDelDia = reservaRepo.findAll().stream()
                 .filter(r -> r.getFecha() != null && r.getFecha().equals(reserva.getFecha()))
+                .filter(r -> r.getEstado() == null || !"CANCELADA".equalsIgnoreCase(r.getEstado()))
                 .collect(Collectors.toList());
 
         MesaEntity mesaAsignada = null;
@@ -170,6 +195,7 @@ public class ReservaServiceImpl implements ReservaService {
 
         List<ReservaEntity> reservasDelDia = reservaRepo.findAll().stream()
                 .filter(r -> r.getFecha() != null && r.getFecha().equals(fecha))
+                .filter(r -> r.getEstado() == null || !"CANCELADA".equalsIgnoreCase(r.getEstado()))
                 .collect(Collectors.toList());
 
         for (String turno : todosLosTurnos) {
@@ -230,5 +256,64 @@ public class ReservaServiceImpl implements ReservaService {
     @Transactional
     public ReservaEntity guardarReservaDirecta(ReservaEntity reserva) {
         return reservaRepo.save(reserva);
+    }
+
+    private LocalDate parsearFecha(String fechaStr) {
+        if (fechaStr == null || fechaStr.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(fechaStr.trim());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private LocalTime parsearHora(String horaStr) {
+        if (horaStr == null || horaStr.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalTime.parse(horaStr.trim());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private boolean esReservaActiva(ReservaEntity r) {
+        if (r == null) return false;
+
+        String estado = r.getEstado();
+        if (estado != null) {
+            String est = estado.trim().toUpperCase();
+            if ("CANCELADA".equals(est) || "COMPLETADA".equals(est)) {
+                return false;
+            }
+        }
+
+        LocalDate fecha = parsearFecha(r.getFecha());
+        if (fecha == null) return false;
+
+        LocalDate hoy = LocalDate.now();
+        if (fecha.isBefore(hoy)) {
+            return false;
+        }
+
+        if (fecha.isEqual(hoy)) {
+            LocalTime hora = parsearHora(r.getHora());
+            if (hora != null && hora.isBefore(LocalTime.now())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean esReservaDespuesDeHoy(ReservaEntity r) {
+        if (!esReservaActiva(r)) {
+            return false;
+        }
+        LocalDate fecha = parsearFecha(r.getFecha());
+        return fecha != null && fecha.isAfter(LocalDate.now());
     }
 }

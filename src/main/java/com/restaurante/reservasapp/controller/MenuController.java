@@ -18,7 +18,7 @@ public class MenuController {
         this.platoService = platoService;
     }
 
-    @GetMapping("/listar")
+    @GetMapping({"", "/", "/listar"})
     public String mostrarMenu(Model model) {
         model.addAttribute("platos", platoService.listarPlatos());
         return "menu";

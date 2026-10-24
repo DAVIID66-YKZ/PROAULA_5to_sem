@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - GestRest</title>
+    <title>Panel de Control - GestRest</title>
 
     <link
         href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap"
@@ -32,26 +32,25 @@
 
                 <section class="welcome-block">
                     <div class="welcome-text">
-                        <h1>Welcome back, <span id="userName" class="user-name serif-italic">Guest</span></h1>
-                        <p>Your curated table awaits. Browse your upcoming evenings or manuscript a new chapter at our
-                            hearth.</p>
+                        <h1>Bienvenido de nuevo, <span id="userName" class="user-name serif-italic">Invitado</span></h1>
+                        <p>Tu mesa te espera. Revisa tus próximas veladas o reserva un nuevo momento especial con nosotros.</p>
                     </div>
                     <button class="btn-new-reservation" onclick="location.href='/reserva'">
                         <span class="material-symbols-outlined icon-small">menu_book</span>
-                        New Reservation
+                        Nueva Reserva
                     </button>
                 </section>
 
                 <div class="booking-grid-functional">
                     <div id="featuredBookingContainer" class="w-100">
-                        <div class="card-loading">Consulting the manuscript archives...</div>
+                        <div class="card-loading">Consultando reservas...</div>
                     </div>
                 </div>
 
                 <section class="future-bookings-section">
                     <div class="section-header">
-                        <h3 class="section-title">FUTURE BOOKINGS</h3>
-                        <a href="/mis-reservas" class="link-view-history">VIEW FULL LIST</a>
+                        <h3 class="section-title">PRÓXIMAS RESERVAS</h3>
+                        <a href="/mis-reservas" class="link-view-history">VER LISTA COMPLETA</a>
                     </div>
 
                     <div id="futureBookingsContainer">

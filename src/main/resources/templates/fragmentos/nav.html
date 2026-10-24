@@ -11,7 +11,51 @@
         </ul>
     </nav>
 
-    <div class="nav-acciones">
+    <div class="nav-acciones" id="navAcciones">
         <a th:href="@{/login}" id="navBtnSesion" class="sesion-btn">Iniciar Sesión</a>
+
+        <a href="#" id="navBtnPerfil" class="nav-perfil-btn" style="display: none;" title="Mi Panel" aria-label="Ir al Panel">
+            <span class="nav-perfil-avatar">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </span>
+        </a>
     </div>
+
+    <script>
+        (function () {
+            function sincronizarBotonSesionNav() {
+                const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
+                const rol = (localStorage.getItem("rol") || "").trim().toUpperCase();
+                const btnSesion = document.getElementById("navBtnSesion");
+                const btnPerfil = document.getElementById("navBtnPerfil");
+
+                if (!btnSesion || !btnPerfil) return;
+
+                if (token && (rol === "ADMIN" || rol === "ROLE_ADMIN")) {
+                    btnSesion.style.display = "none";
+                    btnPerfil.style.display = "inline-flex";
+                    btnPerfil.href = "/admin/dashboard";
+                    btnPerfil.title = "Panel de Administrador";
+                    btnPerfil.setAttribute("aria-label", "Panel de Administrador");
+                } else if (token && (rol === "CLIENTE" || rol === "ROLE_CLIENTE")) {
+                    btnSesion.style.display = "none";
+                    btnPerfil.style.display = "inline-flex";
+                    btnPerfil.href = "/cliente/dashboard";
+                    btnPerfil.title = "Panel de Cliente";
+                    btnPerfil.setAttribute("aria-label", "Panel de Cliente");
+                } else {
+                    btnSesion.style.display = "inline-flex";
+                    btnPerfil.style.display = "none";
+                }
+            }
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", sincronizarBotonSesionNav);
+            } else {
+                sincronizarBotonSesionNav();
+            }
+        })();
+    </script>
 </header>

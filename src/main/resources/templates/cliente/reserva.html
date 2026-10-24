@@ -7,10 +7,12 @@
     <title>Reservar - GestRest</title>
     <script>
         (function () {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
             const rol = (localStorage.getItem("rol") || "").trim().toUpperCase();
-            if (!token || (rol !== "CLIENTE" && rol !== "ADMIN")) {
+            if (!token || (rol !== "CLIENTE" && rol !== "ROLE_CLIENTE" && rol !== "ADMIN" && rol !== "ROLE_ADMIN")) {
                 window.location.replace("/register");
+            } else if (rol === "ADMIN" || rol === "ROLE_ADMIN") {
+                window.location.replace("/admin/reservas");
             }
         })();
     </script>
@@ -86,7 +88,7 @@
                         </div>
 
                         <div class="reserva-experiencia">
-                            <label class="reserva-label-seccion">Select Your Experience</label>
+                            <label class="reserva-label-seccion">Selecciona tu Experiencia</label>
                             <div class="reserva-experiencia-grid">
 
                                 <label class="exp-card">
@@ -95,7 +97,7 @@
                                         <span class="material-symbols-outlined">restaurant</span>
                                         <div class="exp-content">
                                             <span class="exp-nombre">Estándar</span>
-                                            <span class="exp-detalle">Main Hall</span>
+                                            <span class="exp-detalle">Salón Principal</span>
                                         </div>
                                     </div>
                                 </label>
@@ -106,7 +108,7 @@
                                         <span class="material-symbols-outlined">window</span>
                                         <div class="exp-content">
                                             <span class="exp-nombre">Ventana</span>
-                                            <span class="exp-detalle">City Views</span>
+                                            <span class="exp-detalle">Vista a la Ciudad</span>
                                         </div>
                                     </div>
                                 </label>
@@ -133,7 +135,7 @@
                             <div class="reserva-menu-resumen" id="reservaMenuResumen">Ningún plato seleccionado</div>
                         </div>
 
-                        <button type="submit" class="reserva-btn-confirmar">CONFIRM RESERVATION</button>
+                        <button type="submit" class="reserva-btn-confirmar">CONFIRMAR RESERVA</button>
 
                         <p class="reserva-nota">
                             Se recomienda vestimenta formal. Recibirá un correo electrónico de confirmación.

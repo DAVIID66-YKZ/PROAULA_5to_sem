@@ -72,6 +72,10 @@ public void cambiarPassword(String id, String passwordActual, String passwordNue
         throw new RuntimeException("La contraseña actual es incorrecta.");
     }
 
+    if (passwordNueva == null || passwordNueva.length() < 8) {
+        throw new RuntimeException("La nueva contraseña debe tener al menos 8 caracteres.");
+    }
+
     // Guardar la nueva contraseña encriptada
     usuario.setContrasena(passwordEncoder.encode(passwordNueva));
     repo.save(usuario);

@@ -42,8 +42,8 @@ async function cargarEstructuraDashboard(token, idUsuario) {
             const reservas = await response.json();
 
             if (!reservas || reservas.length === 0) {
-                featuredContainer.innerHTML = `<div class="card-empty">You have no scheduled experiences yet. Modernize your evening by creating a new reservation.</div>`;
-                futureContainer.innerHTML = `<div class="card-empty">No upcoming mappings discovered.</div>`;
+                featuredContainer.innerHTML = `<div class="card-empty">Aún no tienes reservas programadas. Reserva tu mesa creando una nueva experiencia.</div>`;
+                futureContainer.innerHTML = `<div class="card-empty">No se encontraron próximas reservas.</div>`;
                 return;
             }
 
@@ -57,19 +57,19 @@ async function cargarEstructuraDashboard(token, idUsuario) {
             // 2. Renderizar el resto en la lista inferior (A partir del índice 1)
             const futuras = reservas.slice(1);
             if (futuras.length === 0) {
-                futureContainer.innerHTML = `<div class="card-empty">No other subsequent entries recorded.</div>`;
+                futureContainer.innerHTML = `<div class="card-empty">No tienes más reservas programadas.</div>`;
             } else {
                 futureContainer.innerHTML = futuras.map(res => generateListItemHtml(res)).join('');
             }
 
         } else if (response.status === 403) {
-            console.error("Subsystem Authorization Error. Checking lifecycle token.");
+            console.error("Error de autorización. Verificando token.");
             localStorage.clear();
             window.location.href = "/login";
         }
     } catch (error) {
-        console.error("Critical Connection Error:", error);
-        featuredContainer.innerHTML = `<div class="card-empty" style="color: #ff4444;">Failed to sync with the manuscript vault.</div>`;
+        console.error("Error de conexión:", error);
+        featuredContainer.innerHTML = `<div class="card-empty" style="color: #ff4444;">Error al cargar tus reservas.</div>`;
     }
 }
 
@@ -85,31 +85,31 @@ function generateFeaturedCardHtml(reserva) {
         <article class="card featured-booking">
             <div class="card-status-bar">
                 <span class="status-dot"></span>
-                YOUR NEXT EXPERTLY CURATED EVENING
+                TU PRÓXIMA VELADA
             </div>
             <div class="featured-content">
                 <div class="booking-image-wrapper">
-                    <img src="${imgSrc}" alt="${experiencia} viewpoint">
+                    <img src="${imgSrc}" alt="${experiencia}">
                 </div>
                 <div class="booking-details-wrapper">
-                    <h2 class="serif-title">Experience: ${experiencia}</h2>
-                    <p class="booking-description">Your table is secure. Prepare your palate for a symphony of historical flavors.</p>
+                    <h2 class="serif-title">Experiencia: ${experiencia}</h2>
+                    <p class="booking-description">Tu mesa está confirmada. Prepárate para disfrutar de una velada gastronómica inolvidable.</p>
                     
                     <div class="booking-meta-info">
                         <div class="meta-item">
-                            <span class="meta-label">DATE</span>
+                            <span class="meta-label">FECHA</span>
                             <span class="meta-value">${reserva.fecha}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">TIME</span>
+                            <span class="meta-label">HORA</span>
                             <span class="meta-value">${reserva.hora}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">GUESTS</span>
-                            <span class="meta-value">${reserva.invitados || 2} People</span>
+                            <span class="meta-label">PERSONAS</span>
+                            <span class="meta-value">${reserva.invitados || 2} personas</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">STATUS</span>
+                            <span class="meta-label">ESTADO</span>
                             <span class="meta-value" style="color: #d4af37; font-weight:700;">${(reserva.estado || "CONFIRMADA").toUpperCase()}</span>
                         </div>
                     </div>
@@ -127,20 +127,20 @@ function generateListItemHtml(reserva) {
                 <span class="material-symbols-outlined">calendar_today</span>
             </div>
             <div class="item-description">
-                <h4 class="serif-sub-title">Experience: ${reserva.experiencia || "Estándar"}</h4>
-                <p>Secured placement in our architectural layout.</p>
+                <h4 class="serif-sub-title">Experiencia: ${reserva.experiencia || "Estándar"}</h4>
+                <p>Mesa confirmada en nuestras instalaciones.</p>
             </div>
             <div class="item-meta">
-                <span class="meta-label">DATE</span>
+                <span class="meta-label">FECHA</span>
                 <span class="meta-value">${reserva.fecha}</span>
             </div>
             <div class="item-meta">
-                <span class="meta-label">TIME</span>
+                <span class="meta-label">HORA</span>
                 <span class="meta-value">${reserva.hora}</span>
             </div>
             <div class="item-meta">
-                <span class="meta-label">GUESTS</span>
-                <span class="meta-value">${reserva.invitados || 2} People</span>
+                <span class="meta-label">PERSONAS</span>
+                <span class="meta-value">${reserva.invitados || 2} personas</span>
             </div>
         </div>
     `;

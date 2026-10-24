@@ -142,6 +142,43 @@ html, body {
     text-decoration: none;
 }
 
+/* Botón Icono de Perfil cuando la sesión está iniciada */
+.nav-perfil-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.12);
+    border: 1.5px solid var(--color-primary, #d4af37);
+    color: var(--color-primary, #d4af37) !important;
+    text-decoration: none;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-perfil-btn:hover {
+    background: var(--color-primary, #d4af37);
+    color: #0b0b0b !important;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+    transform: translateY(-2px) scale(1.06);
+}
+
+.nav-perfil-btn .nav-perfil-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-perfil-btn .nav-perfil-avatar svg {
+    display: block;
+    fill: currentColor;
+    transition: fill 0.3s ease;
+}
+
 /* ================================================================
    RESPONSIVE DESIGN (Garantiza visibilidad completa en celular)
    ================================================================ */
@@ -212,6 +249,16 @@ html, body {
         font-size: 0.8rem !important;
         border-radius: 16px;
     }
+
+    .nav-perfil-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .nav-perfil-btn .nav-perfil-avatar svg {
+        width: 19px;
+        height: 19px;
+    }
 }
 
 @media (max-width: 360px) {
@@ -222,6 +269,16 @@ html, body {
     .sesion-btn {
         padding: 6px 10px !important;
         font-size: 0.75rem !important;
+    }
+
+    .nav-perfil-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    .nav-perfil-btn .nav-perfil-avatar svg {
+        width: 17px;
+        height: 17px;
     }
 }
 

@@ -102,6 +102,52 @@ body {
     box-shadow: 0 0 12px rgba(212, 175, 55, 0.15);
 }
 
+/* Contenedor relativo para campo de contraseña con botón toggle */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper .login-input {
+    padding-right: 48px;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #888888;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 4px;
+    transition: color 0.25s ease, background-color 0.25s ease;
+}
+
+.toggle-password-btn:hover {
+    color: var(--color-primary, #d4af37);
+    background-color: rgba(212, 175, 55, 0.1);
+}
+
+.toggle-password-btn svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+
+.input-hint {
+    display: block;
+    font-size: 11px;
+    color: #888888;
+    margin-top: 6px;
+    letter-spacing: 0.3px;
+}
+
 .login-button {
     width: 100%;
     padding: 14px 20px;
@@ -118,12 +164,40 @@ body {
     margin-bottom: 1.5rem;
     transition: all 0.3s ease;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
-.login-button:hover {
+.login-button:hover:not(:disabled) {
     background-color: #f0c64d;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(212, 175, 55, 0.35);
+}
+
+.login-button:disabled,
+.login-button.is-loading {
+    opacity: 0.75;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.btn-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(0, 0, 0, 0.25);
+    border-top-color: #000000;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .login-links {

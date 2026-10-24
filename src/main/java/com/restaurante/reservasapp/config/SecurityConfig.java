@@ -34,7 +34,7 @@ public class SecurityConfig {
                         // Recursos estáticos
                         .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**", "/favicon.ico").permitAll()
                         // Vistas públicas
-                        .requestMatchers("/", "/index", "/login", "/register", "/menu/**", "/legal/**").permitAll()
+                        .requestMatchers("/", "/index", "/login", "/register", "/menu", "/menu/**", "/legal/**").permitAll()
                         // Endpoints de autenticación públicos
                         .requestMatchers("/auth/**").permitAll()
                         // Vistas HTML de la aplicación (protegen su contenido con token en localStorage vía JS)
