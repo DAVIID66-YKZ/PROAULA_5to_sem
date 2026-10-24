@@ -1,12 +1,12 @@
 <header th:fragment="navbar" class="header efecto-blur">
     <div class="nav-brand" onclick="location.href='/index'" style="cursor: pointer;">
-        <h2>The Culinary Manuscript</h2>
+        <h2>GestRest</h2>
     </div>
 
     <nav class="nav-contenedor">
         <ul class="nav-links">
             <li class="nav-item"><a th:href="@{/index}">Inicio</a></li>
-            <li class="nav-item"><a th:href="@{/menu}">Menú</a></li>
+            <li class="nav-item"><a th:href="@{/menu/listar}">Menú</a></li>
             <li class="nav-item"><a th:href="@{/index#contacto}">Contacto</a></li>
         </ul>
     </nav>

@@ -1,5 +1,5 @@
 /* ================================================================
-   LÓGICA DE RESERVAS - THE CULINARY MANUSCRIPT
+   LÓGICA DE RESERVAS - GESTREST
    ================================================================ */
 
 // 1. Guardián de navegación inmediato
@@ -131,6 +131,8 @@ async function guardarReserva(event) {
         usuarioId: idUsuarioActual,
         mesaId: experienciaRadio.value,   // Enviado inicialmente como sector para evaluación
         experiencia: experienciaRadio.value,
+        platos: Array.from(document.querySelectorAll(".reserva-plato-checkbox:checked"))
+            .map(checkbox => checkbox.value),
         estado: "PENDIENTE"
     };
 

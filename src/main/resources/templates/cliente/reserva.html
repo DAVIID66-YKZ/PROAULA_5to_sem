@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservar - The Culinary Manuscript</title>
+    <title>Reservar - GestRest</title>
     <script>
         (function () {
             const token = localStorage.getItem("token");
@@ -125,6 +125,14 @@
                             </div>
                         </div>
 
+                        <div class="reserva-menu-selector">
+                            <button type="button" class="reserva-btn-menu" id="btnMenuReserva">
+                                <span class="material-symbols-outlined">restaurant_menu</span>
+                                Elegir platos del menú
+                            </button>
+                            <div class="reserva-menu-resumen" id="reservaMenuResumen">Ningún plato seleccionado</div>
+                        </div>
+
                         <button type="submit" class="reserva-btn-confirmar">CONFIRM RESERVATION</button>
 
                         <p class="reserva-nota">
@@ -135,6 +143,96 @@
             </div>
         </main>
     </div>
+
+    <div id="modalMenuReserva" class="reserva-modal-backdrop hidden" aria-hidden="true">
+        <div class="reserva-modal" role="dialog" aria-modal="true" aria-labelledby="tituloModalMenu">
+            <div class="reserva-modal-header">
+                <div>
+                    <span class="reserva-modal-badge">GestRest</span>
+                    <h3 id="tituloModalMenu">Agrega platos a tu reserva</h3>
+                </div>
+                <button type="button" class="reserva-modal-close" id="cerrarModalMenu" aria-label="Cerrar modal">×</button>
+            </div>
+
+            <div class="reserva-modal-body">
+                <label class="reserva-plato-item" th:each="plato : ${platos}">
+                    <input type="checkbox"
+                           class="reserva-plato-checkbox"
+                           th:value="${plato.id}"
+                           th:data-name="${plato.nombre}"
+                           th:disabled="${!plato.disponible}">
+                    <span class="reserva-plato-info">
+                        <span>
+                            <span th:text="${plato.nombre}"></span>
+                            <small th:if="${!plato.disponible}">No disponible</small>
+                        </span>
+                        <strong th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 2)}"></strong>
+                    </span>
+                </label>
+                <p class="reserva-menu-vacio" th:if="${#lists.isEmpty(platos)}">
+                    No hay platos disponibles en el menú por el momento.
+                </p>
+            </div>
+
+            <div class="reserva-modal-footer">
+                <button type="button" class="reserva-btn-secondary" id="cancelarMenu">Cancelar</button>
+                <button type="button" class="reserva-btn-primary" id="guardarMenuSeleccionado">Guardar selección</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modalMenuReserva = document.getElementById('modalMenuReserva');
+        const btnMenuReserva = document.getElementById('btnMenuReserva');
+        const cerrarModalMenu = document.getElementById('cerrarModalMenu');
+        const cancelarMenu = document.getElementById('cancelarMenu');
+        const guardarMenuSeleccionado = document.getElementById('guardarMenuSeleccionado');
+        const resumenMenu = document.getElementById('reservaMenuResumen');
+        let platosConfirmados = [];
+
+        function actualizarResumenMenu() {
+            const nombres = Array.from(document.querySelectorAll('.reserva-plato-checkbox:checked'))
+                .map(item => item.dataset.name);
+            if (!nombres.length) {
+                resumenMenu.textContent = 'Ningún plato seleccionado';
+                return;
+            }
+
+            resumenMenu.textContent = nombres.length > 2 ? `${nombres.slice(0, 2).join(', ')} +${nombres.length - 2}` : nombres.join(', ');
+        }
+
+        function abrirModalMenu() {
+            document.querySelectorAll('.reserva-plato-checkbox').forEach(checkbox => {
+                checkbox.checked = platosConfirmados.includes(checkbox.value);
+            });
+            modalMenuReserva.classList.remove('hidden');
+            modalMenuReserva.setAttribute('aria-hidden', 'false');
+        }
+
+        function cerrarModalMenuReserva() {
+            document.querySelectorAll('.reserva-plato-checkbox').forEach(checkbox => {
+                checkbox.checked = platosConfirmados.includes(checkbox.value);
+            });
+            modalMenuReserva.classList.add('hidden');
+            modalMenuReserva.setAttribute('aria-hidden', 'true');
+        }
+
+        btnMenuReserva.addEventListener('click', abrirModalMenu);
+        cerrarModalMenu.addEventListener('click', cerrarModalMenuReserva);
+        cancelarMenu.addEventListener('click', cerrarModalMenuReserva);
+        modalMenuReserva.addEventListener('click', function (event) {
+            if (event.target === modalMenuReserva) cerrarModalMenuReserva();
+        });
+
+        guardarMenuSeleccionado.addEventListener('click', function () {
+            platosConfirmados = Array.from(document.querySelectorAll('.reserva-plato-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+            actualizarResumenMenu();
+            modalMenuReserva.classList.add('hidden');
+            modalMenuReserva.setAttribute('aria-hidden', 'true');
+        });
+
+    </script>
 
     <script th:src="@{/js/cliente/reserva.js}"></script>
     <script th:src="@{/js/cliente/sidebar.js}"></script>

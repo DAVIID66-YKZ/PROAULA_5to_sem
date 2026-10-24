@@ -1,5 +1,5 @@
 /* ================================================================
-   ESTILOS DE RESERVAS & ADMIN - THE CULINARY MANUSCRIPT
+   ESTILOS DE RESERVAS & ADMIN - GESTREST
    Estructura inspirada en la experiencia de cliente (mis-reservas / reserva)
    ================================================================ */
 
@@ -284,6 +284,64 @@
     color: #888888;
 }
 
+#platosTableBody .plato-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+}
+
+#platosTableBody .plato-nombre {
+    display: block;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+#platosTableBody .plato-descripcion {
+    display: -webkit-box;
+    overflow: hidden;
+    color: #888888;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+#platosTableBody .plato-acciones {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.btn-agregar-plato {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid var(--primary, #d4af37);
+    border-radius: 8px;
+    background-color: var(--primary, #d4af37);
+    color: #121212;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-agregar-plato:hover {
+    background-color: #e2c15c;
+    transform: translateY(-1px);
+}
+
+.btn-agregar-plato .material-symbols-outlined {
+    font-size: 20px;
+}
+
 /* ===== BADGES DE ESTADO (PILLS) ===== */
 .status-badge,
 .status-pill {
@@ -481,6 +539,10 @@
     align-items: start;
 }
 
+.menu-container {
+    grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.4fr);
+}
+
 .mesa-form-panel {
     background-color: #121212;
     border: 1px solid rgba(212, 175, 55, 0.15);
@@ -535,6 +597,40 @@
     border-color: var(--primary, #d4af37);
     background-color: #1a1a1a;
     box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+.mesa-form input[type="url"],
+.mesa-form select,
+.mesa-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #181818;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    color: #ffffff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Manrope', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.mesa-form textarea {
+    min-height: 105px;
+    resize: vertical;
+}
+
+.mesa-form input[type="url"]:focus,
+.mesa-form select:focus,
+.mesa-form textarea:focus {
+    outline: none;
+    border-color: var(--primary, #d4af37);
+    background-color: #1a1a1a;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+.mesa-form select option {
+    background-color: #181818;
+    color: #ffffff;
 }
 
 .btn-save {
@@ -636,6 +732,138 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.menu-list-filters {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.menu-list-filters .search-input {
+    min-width: 0;
+}
+
+.menu-list-filters .filter-select {
+    min-width: 175px;
+}
+
+.platos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.plato-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+    padding: 14px 16px;
+    background-color: #181818;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 12px;
+    transition: border-color 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
+}
+
+.plato-item:hover {
+    border-color: rgba(212, 175, 55, 0.4);
+    background-color: #1c1c1c;
+    transform: translateY(-2px);
+}
+
+.plato-imagen,
+.plato-imagen-placeholder {
+    flex: 0 0 76px;
+    width: 76px;
+    height: 68px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.plato-imagen-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, 0.08);
+    color: var(--primary, #d4af37);
+}
+
+.plato-imagen-placeholder .material-symbols-outlined {
+    font-size: 30px;
+}
+
+.plato-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.plato-nombre {
+    overflow: hidden;
+    color: #ffffff;
+    font-family: 'Noto Serif', serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.plato-descripcion {
+    display: -webkit-box;
+    overflow: hidden;
+    color: #888888;
+    font-size: 11px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.plato-metadatos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.plato-categoria {
+    color: var(--primary, #d4af37);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.plato-precio {
+    color: #e0e0e0;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.plato-metadatos .status-badge {
+    padding: 3px 7px;
+    font-size: 8px;
+}
+
+.plato-acciones {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+}
+
+.platos-list-message {
+    margin: 0;
+    padding: 32px 16px;
+    color: #888888;
+    text-align: center;
 }
 
 .mesa-item {
@@ -783,6 +1011,15 @@
         box-sizing: border-box;
     }
 
+    .menu-list-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .menu-list-filters .filter-select {
+        min-width: 100%;
+    }
+
     .sector-options {
         grid-template-columns: 1fr;
     }
@@ -797,6 +1034,23 @@
         flex-direction: column;
         gap: 12px;
         align-items: center;
+    }
+
+    .plato-item {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .plato-imagen,
+    .plato-imagen-placeholder {
+        flex-basis: 58px;
+        width: 58px;
+        height: 58px;
+    }
+
+    .plato-acciones {
+        flex-direction: column;
+        gap: 6px;
     }
 
     .table-wrapper,

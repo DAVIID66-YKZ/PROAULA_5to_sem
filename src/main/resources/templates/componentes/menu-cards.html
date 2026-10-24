@@ -1,0 +1,37 @@
+
+<article th:fragment="menu-cards(nombre, descripcion, precio, categoria, imgUrl, disponible)"
+         class="menu-cards">
+
+    <div class="menu-image-container">
+        <img th:src="${imgUrl}"
+             th:alt="${nombre}"
+             class="menu-image">
+
+        <span class="menu-status"
+              th:classappend="${disponible} ? ' status-available' : ' status-unavailable'"
+              th:text="${disponible} ? 'DISPONIBLE' : 'NO DISPONIBLE'">
+        </span>
+    </div>
+
+    <div class="menu-info">
+        <div class="menu-top">
+            <h2 th:text="${nombre}"></h2>
+        </div>
+
+        <div class="menu-bottom">
+            <span class="menu-price">
+                $<span th:text="${#numbers.formatDecimal(precio, 1, 2)}"></span>
+            </span>
+            <button type="button"
+                    class="menu-link menu-info-button"
+                    th:data-name="${nombre}"
+                    th:data-description="${descripcion}"
+                    th:data-price="${#numbers.formatDecimal(precio, 1, 2)}"
+                    th:data-category="${categoria}"
+                    th:data-image="${imgUrl}"
+                    th:data-available="${disponible}">
+                Más información
+            </button>
+        </div>
+    </div>
+</article>

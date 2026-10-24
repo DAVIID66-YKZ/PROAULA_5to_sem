@@ -1,5 +1,5 @@
 /* ================================================================
-   HISTÓRICO Y GESTIÓN DE RESERVAS - THE CULINARY MANUSCRIPT
+   HISTÓRICO Y GESTIÓN DE RESERVAS - GESTREST
    Lógica completa de visualización y edición conectada a MongoDB
    ================================================================ */
 

@@ -46,184 +46,141 @@
 
     <!-- NAV -->
 
-    <div class="menu-nav">
+    <section class="menu-nav">
         <a href="#entradas">Entradas</a>
-        <a href="#especiales">Especiales</a>
+        <a href="#platos-fuertes">Platos Fuertes</a>
+        <a href="#bebidas">Bebidas</a>
         <a href="#postres">Postres</a>
-    </div>
+
+    </section>
 
     <!-- TITULO -->
 
-    <div class="menu-title" id="entradas">
+    <!-- ENTRADAS -->
+    <section class="menu-title" id="entradas">
 
         <div class="menu-title-left">
-            <h2>The Prologue</h2>
-            <p>Delicados sabores para comenzar la experiencia.</p>
-        </div>
-
-        <span class="menu-number">Section 01</span>
-
-    </div>
-
-    <!-- CARDS -->
-
-    <section class="menu-section">
-
-        <div class="menu-card">
-
-            <img th:src="@{/imagenes/carne.webp}" alt="">
-
-            <div class="menu-info">
-
-                <div class="menu-top">
-                    <h2>Aged Wagyu Prime</h2>
-                    <span>$78k</span>
-                </div>
-
-                <p>
-                    Corte premium madurado por 45 días, acompañado de
-                    ingredientes seleccionados y una preparación exclusiva.
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="menu-card">
-
-            <img th:src="@{/imagenes/pastas.webp}" alt="">
-
-            <div class="menu-info">
-
-                <div class="menu-top">
-                    <h2>Truffle Tagliatelle</h2>
-                    <span>$42k</span>
-                </div>
-
-                <p>
-                    Pasta artesanal preparada a mano con salsa cremosa
-                    y auténtica trufa negra italiana.
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="menu-card">
-
-            <img th:src="@{/imagenes/sushi.webp}" alt="">
-
-            <div class="menu-info">
-
-                <div class="menu-top">
-                    <h2>Imperial Omakase</h2>
-                    <span>$55k</span>
-                </div>
-
-                <p>
-                    Selección premium del chef con ingredientes frescos
-                    y una presentación elegante.
-                </p>
-
-            </div>
-
+            <h2>Entradas</h2>
+            <p>Comienza tu experiencia con sabores que despiertan el apetito.</p>
         </div>
 
     </section>
 
-    <!-- DESTACADO -->
-
-    <section class="featured-section" id="especiales">
-
-        <div class="featured-container">
-
-            <div class="featured-image">
-                <img th:src="@{/imagenes/carne.webp}" alt="">
-            </div>
-
-            <div class="featured-info">
-
-                <small>Chef Selection</small>
-
-                <h2>Midnight Wagyu Experience</h2>
-
-                <p>
-                    Una de nuestras creaciones más exclusivas. Preparado
-                    cuidadosamente con técnicas gourmet y sabores intensos
-                    que convierten cada bocado en una experiencia única.
-                </p>
-
-                <div class="featured-price">
-                    $145k
-                </div>
-
-            </div>
-
-        </div>
-
+    <section class="menu-grid" aria-label="Entradas">
+        <th:block th:each="plato : ${platos}">
+            <th:block th:if="${plato.categoria == 'ENTRADAS'}">
+                <div th:replace="~{componentes/menu-cards :: menu-cards(
+                    ${plato.nombre},
+                    ${plato.descripcion},
+                    ${plato.precio},
+                    ${plato.categoria},
+                    ${plato.imgUrl},
+                    ${plato.disponible}
+                )}"></div>
+            </th:block>
+        </th:block>
     </section>
 
-    <!-- TITULO 2 -->
-
-    <div class="menu-title" id="postres">
+    <!-- Platos Fuertes -->
+    <section class="menu-title" id="platos-fuertes">
 
         <div class="menu-title-left">
-            <h2>The Epilogue</h2>
-            <p>El cierre perfecto para una experiencia inolvidable.</p>
-        </div>
-
-        <span class="menu-number">Section 02</span>
-
-    </div>
-
-    <!-- POSTRES -->
-
-    <section class="menu-section">
-
-        <div class="menu-card">
-
-            <img th:src="@{/imagenes/postre.webp}" alt="">
-
-            <div class="menu-info">
-
-                <div class="menu-top">
-                    <h2>Midnight Gold Ganache</h2>
-                    <span>$22k</span>
-                </div>
-
-                <p>
-                    Chocolate premium acompañado de detalles dorados
-                    y una textura suave irresistible.
-                </p>
-
-            </div>
-
-        </div>
-
-        <div class="menu-card">
-
-            <img th:src="@{/imagenes/postre.webp}" alt="">
-
-            <div class="menu-info">
-
-                <div class="menu-top">
-                    <h2>Golden Velvet Cake</h2>
-                    <span>$18k</span>
-                </div>
-
-                <p>
-                    Bizcocho suave con crema artesanal y un delicado
-                    acabado elegante inspirado en alta cocina.
-                </p>
-
-            </div>
-
+            <h2>Platos Fuertes</h2>
+            <p>Disfruta de nuestra selección de platos principales, preparados con ingredientes de la más alta calidad.</p>
         </div>
 
     </section>
+
+    <section class="menu-grid" aria-label="Platos Fuertes">
+        <th:block th:each="plato : ${platos}">
+            <th:block th:if="${plato.categoria == 'PLATOS_FUERTES'}">
+                <div th:replace="~{componentes/menu-cards :: menu-cards(
+                    ${plato.nombre},
+                    ${plato.descripcion},
+                    ${plato.precio},
+                    ${plato.categoria},
+                    ${plato.imgUrl},
+                    ${plato.disponible}
+                )}"></div>
+            </th:block>
+        </th:block>
+    </section>
+
+       <!--Bebidas -->
+    <section class="menu-title" id="bebidas">
+
+        <div class="menu-title-left">
+            <h2>Bebidas</h2>
+            <p>Refresca tu paladar con nuestra selección de bebidas, desde cócteles clásicos hasta refrescos naturales.</p>
+        </div>
+
+    </section>
+
+    <section class="menu-grid" aria-label="Bebidas">
+        <th:block th:each="plato : ${platos}">
+            <th:block th:if="${plato.categoria == 'BEBIDAS'}">
+                <div th:replace="~{componentes/menu-cards :: menu-cards(
+                    ${plato.nombre},
+                    ${plato.descripcion},
+                    ${plato.precio},
+                    ${plato.categoria},
+                    ${plato.imgUrl},
+                    ${plato.disponible}
+                )}"></div>
+            </th:block>
+        </th:block>
+    </section>
+
+       <!-- Postres -->
+    <section class="menu-title" id="postres">
+
+        <div class="menu-title-left">
+            <h2>Postres</h2>
+            <p>Termina tu comida con nuestros deliciosos postres, elaborados con los mejores ingredientes.</p>
+        </div>
+
+    </section>
+
+    <section class="menu-grid" aria-label="Postres">
+        <th:block th:each="plato : ${platos}">
+            <th:block th:if="${plato.categoria == 'POSTRES'}">
+                <div th:replace="~{componentes/menu-cards :: menu-cards(
+                    ${plato.nombre},
+                    ${plato.descripcion},
+                    ${plato.precio},
+                    ${plato.categoria},
+                    ${plato.imgUrl},
+                    ${plato.disponible}
+                )}"></div>
+            </th:block>
+        </th:block>
+    </section>
+
+
+    <dialog class="menu-dialog" id="menuDialog" aria-labelledby="menuDialogTitle">
+        <div class="menu-dialog-content">
+            <button type="button" class="menu-dialog-close" id="menuDialogClose" aria-label="Cerrar">
+                &times;
+            </button>
+            <div class="menu-dialog-image-wrap">
+                <img class="menu-dialog-image" id="menuDialogImage" src="" alt="">
+            </div>
+            <div class="menu-dialog-info">
+                <span class="menu-dialog-category" id="menuDialogCategory"></span>
+                <h2 id="menuDialogTitle"></h2>
+                <p class="menu-dialog-description" id="menuDialogDescription"></p>
+                <div class="menu-dialog-footer">
+                    <span class="menu-dialog-price" id="menuDialogPrice"></span>
+                    <span class="menu-dialog-status" id="menuDialogStatus"></span>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
 
     <footer th:replace="~{fragmentos/footer :: footer}"></footer>
 
+    <script th:src="@{/js/menu.js}"></script>
 </body>
 
 </html>

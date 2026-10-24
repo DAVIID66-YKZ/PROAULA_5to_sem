@@ -1,5 +1,5 @@
 /* ================================================================
-   GESTIÓN DE MESAS - THE CULINARY MANUSCRIPT
+   GESTIÓN DE MESAS - GESTREST
    Lógica completa de administración de mesas conectada a MongoDB
    ================================================================ */
 
