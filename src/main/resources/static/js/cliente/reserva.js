@@ -4,13 +4,15 @@
 
 // 1. Guardián de navegación inmediato
 (function () {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
     const rol = localStorage.getItem("rol");
     const rolUpper = String(rol || "").trim().toUpperCase();
 
-    if (!token || (rolUpper !== "CLIENTE" && rolUpper !== "ADMIN")) {
+    if (!token || (rolUpper !== "CLIENTE" && rolUpper !== "ROLE_CLIENTE" && rolUpper !== "ADMIN" && rolUpper !== "ROLE_ADMIN")) {
         console.warn("Acceso no autorizado detectado. Redirigiendo a registro...");
         window.location.replace("/register");
+    } else if (rolUpper === "ADMIN" || rolUpper === "ROLE_ADMIN") {
+        window.location.replace("/admin/reservas");
     }
 })();
 

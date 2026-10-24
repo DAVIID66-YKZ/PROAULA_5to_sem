@@ -32,10 +32,20 @@
 
             <div class="input-group">
                 <label for="contrasena" class="login-label">Contraseña</label>
-                <input type="password" id="contrasena" class="login-input" placeholder="••••••••" required>
+                <div class="password-wrapper">
+                    <input type="password" id="contrasena" class="login-input" placeholder="Mínimo 8 caracteres" minlength="8" required>
+                    <button type="button" class="toggle-password-btn" onclick="togglePassword('contrasena', this)" title="Mostrar contraseña" aria-label="Mostrar contraseña">
+                        <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
-            <button type="submit" class="login-button">INGRESAR</button>
+            <button type="submit" id="btnLogin" class="login-button">
+                <span class="btn-text">INGRESAR</span>
+            </button>
 
             <p style="text-align: center; font-size: 0.9rem;">
                 ¿No tienes cuenta?

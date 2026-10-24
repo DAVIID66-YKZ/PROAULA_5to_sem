@@ -109,6 +109,42 @@
     color: var(--text-muted);
 }
 
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper .perfil-input {
+    padding-right: 44px;
+}
+
+.password-wrapper .toggle-password-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-muted, #888888);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s ease;
+}
+
+.password-wrapper .toggle-password-btn:hover {
+    color: var(--primary, #d4af37);
+}
+
+.password-wrapper .toggle-password-btn svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
 /* ===== HINTS / AYUDA BAJO INPUTS ===== */
 
 .perfil-hint {

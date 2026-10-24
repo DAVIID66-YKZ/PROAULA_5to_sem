@@ -11,30 +11,9 @@
             <h2 style="cursor: pointer;" onclick="location.href='/admin/dashboard'">GestRest</h2>
         </div>
 
-        <nav class="nav-contenedor">
-            <ul class="nav-links">
-                <li class="nav-item">
-                    <a th:href="@{/index}">Inicio</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/admin/dashboard}">Panel</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/admin/reservas}">Reservas</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/admin/mesas}">Mesas</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/admin/menu}">Menú</a>
-                </li>
-            </ul>
-        </nav>
-
         <div class="perfil-contenedor">
-            <a th:href="@{/admin/perfil}" class="admin-profile-nav" title="Mi Perfil de Administrador">
-                <span class="profile-name">MAÎTRE D'</span>
-                <div class="profile-avatar">AD</div>
+            <a th:href="@{/admin/perfil}" class="perfil-link" title="Mi Perfil">
+                <span class="material-symbols-outlined">account_circle</span>
             </a>
         </div>
 

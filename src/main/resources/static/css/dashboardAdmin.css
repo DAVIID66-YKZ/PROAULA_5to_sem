@@ -251,6 +251,24 @@ h1, h2, h3 {
     align-items: center;
 }
 
+.perfil-link {
+    color: var(--color-primary, var(--primary, #d4af37));
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.perfil-link .material-symbols-outlined {
+    font-size: 30px;
+    color: var(--color-primary, var(--primary, #d4af37));
+}
+
+.perfil-link:hover {
+    transform: scale(1.1);
+}
+
 .admin-profile-nav {
     display: flex;
     align-items: center;

@@ -20,17 +20,17 @@
 
     <section id="inicio" class="hero">
         <div class="hero-contenido">
-            <h1>The Culinary <br> Manuscript</h1>
+            <h1>El Manuscrito <br> Culinario</h1>
             <p class="hero-texto">Disfruta de la Mejor Comida en un Ambiente Acogedor.</p>
 
             <a th:href="@{/reserva}" id="btnReserva" onclick="irAReservar(event)" class="reserva-link">Reserva Ahora</a>
-            <a th:href="@{/menu}" class="menu-link">Ver el Menú</a>
+            <a th:href="@{/menu/listar}" class="menu-link">Ver el Menú</a>
         </div>
     </section>
 
     <section class="platillos">
         <div class="platillos-header">
-            <h2 class="platillos-titulo">LA COLECCION</h2>
+            <h2 class="platillos-titulo">LA COLECCIÓN</h2>
             <h3 class="platillos-subtitulo">Nuestros Platillos Destacados</h3>
         </div>
         <div class="platillos-contenedor">
@@ -138,15 +138,31 @@
             if (event) {
                 event.preventDefault();
             }
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
             const rol = (localStorage.getItem("rol") || "").trim().toUpperCase();
 
-            if (token && (rol === "CLIENTE" || rol === "ADMIN")) {
+            if (token && (rol === "ADMIN" || rol === "ROLE_ADMIN")) {
+                window.location.href = "/admin/reservas";
+            } else if (token && (rol === "CLIENTE" || rol === "ROLE_CLIENTE")) {
                 window.location.href = "/cliente/reserva";
             } else {
                 window.location.href = "/register";
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
+            const rol = (localStorage.getItem("rol") || "").trim().toUpperCase();
+            const btnReserva = document.getElementById("btnReserva");
+
+            if (btnReserva && token) {
+                if (rol === "ADMIN" || rol === "ROLE_ADMIN") {
+                    btnReserva.setAttribute("href", "/admin/reservas");
+                } else if (rol === "CLIENTE" || rol === "ROLE_CLIENTE") {
+                    btnReserva.setAttribute("href", "/cliente/reserva");
+                }
+            }
+        });
     </script>
 </body>
 
