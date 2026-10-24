@@ -1,7 +1,9 @@
 package com.restaurante.reservasapp.services.impl;
 
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.restaurante.reservasapp.Entity.MesaEntity;
+import com.restaurante.reservasapp.Entity.PlatoEntity;
 import com.restaurante.reservasapp.Entity.ReservaEntity;
 import com.restaurante.reservasapp.repository.MesaRepository;
+import com.restaurante.reservasapp.repository.PlatoRepository;
 import com.restaurante.reservasapp.repository.ReservaRepository;
 import com.restaurante.reservasapp.services.ReservaService;
 
@@ -23,9 +27,28 @@ public class ReservaServiceImpl implements ReservaService {
     @Autowired
     private MesaRepository mesaRepo;
 
+    @Autowired
+    private PlatoRepository platoRepo;
+
     @Override
     @Transactional
     public ReservaEntity guardarReserva(ReservaEntity reserva) {
+
+        if (reserva.getPlatos() == null) {
+            reserva.setPlatos(List.of());
+        }
+
+        Set<String> platosUnicos = new HashSet<>();
+        for (String platoId : reserva.getPlatos()) {
+            if (platoId == null || platoId.isBlank() || !platosUnicos.add(platoId)) {
+                throw new RuntimeException("La selección de platos no es válida.");
+            }
+
+            PlatoEntity plato = platoRepo.findById(platoId).orElse(null);
+            if (plato == null || !plato.isDisponible()) {
+                throw new RuntimeException("Uno de los platos seleccionados ya no está disponible.");
+            }
+        }
 
         String sectorBuscado = reserva.getMesaId();
         int cantidadInvitados = reserva.getNumeroPersonas();

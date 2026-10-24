@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión del Menú - GestRest</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboardAdmin.css}">
+    <link rel="stylesheet" th:href="@{/css/reservaAdmin.css}">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- ===== SIDEBAR ADMIN ===== -->
+        <div th:replace="~{fragmentos/sidebarAdmin :: sidebarAdmin}"></div>
+
+        <!-- ===== MOBILE BACKDROP ===== -->
+        <div id="adminSidebarBackdrop" class="admin-sidebar-backdrop"></div>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+            <!-- ===== TOP NAVBAR (IDÉNTICO AL CLIENTE) ===== -->
+            <header th:replace="~{fragmentos/navAdmin :: navbarAdmin}"></header>
+            <section id="menu" class="content-section active">
+                <header class="section-header">
+                    <div>
+                        <h1>Gestión del Menú</h1>
+                        <p>Administra los platos y bebidas de tu menú.</p>
+                    </div>
+                </header>
+                <div class="mesas-container menu-container">
+                    <div class="mesa-form-panel">
+                        <h3 class="titulo-icono">
+                            <span class="material-symbols-outlined">restaurant_menu</span>
+                            Añadir plato
+                        </h3>
+
+                        <form id="formPlato" class="mesa-form">
+                            <div class="form-group">
+                                <label for="nombrePlato">NOMBRE DEL PLATO</label>
+                                <input type="text" id="nombrePlato" placeholder="Ej. Pasta artesanal" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="descripcionPlato">DESCRIPCIÓN</label>
+                                <textarea id="descripcionPlato" class="menu-form-textarea"
+                                    placeholder="Describe los ingredientes y preparación..." required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="categoriaPlato">CATEGORÍA</label>
+                                <select id="categoriaPlato" class="filter-select" required>
+                                    <option value="" disabled selected>Selecciona una categoría</option>
+                                    <option value="ENTRADAS">Entradas</option>
+                                    <option value="PLATOS_FUERTES">Platos Fuertes</option>
+                                    <option value="BEBIDAS">Bebidas</option>
+                                    <option value="POSTRES">Postres</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="precioPlato">PRECIO (COP)</label>
+                                <input type="number" id="precioPlato" placeholder="25000" min="10000" step="1000" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="imagenPlato">Selecciona un archivo:</label>
+                                <input type="file" id="imagenPlato" name="imagenPlato" accept="image/jpeg, image/png, image/webp">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="disponiblePlato">DISPONIBLE</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="disponiblePlato" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn-save">AÑADIR PLATO</button>
+                            <button type="reset" class="btn-clear">LIMPIAR FORMULARIO</button>
+                        </form>
+                    </div>
+
+                    <div class="mesas-registry">
+                        <div class="registry-header">
+                            <h3>Platos del menú</h3>
+                            <div class="registry-stats">
+                                <span class="badge active-badge">DISPONIBLES: <span id="platosDisponibles">0</span></span>
+                                <span class="badge total-badge">TOTAL: <span id="platosTotales">0</span></span>
+                            </div>
+                        </div>
+
+                        <div class="menu-list-filters">
+                            <input type="text" id="buscarPlato" class="search-input"
+                                placeholder="Buscar por nombre, descripción o precio...">
+                            <select id="filtroCategoria" class="filter-select" aria-label="Filtrar por categoría">
+                                <option value="">Todas las categorías</option>
+                                <option value="ENTRADAS">Entradas</option>
+                                <option value="PLATOS_FUERTES">Platos Fuertes</option>
+                                <option value="BEBIDAS">Bebidas</option>
+                                <option value="POSTRES">Postres</option>
+                            </select>
+                        </div>
+
+                        <div class="platos-list" id="platosListContainer" aria-live="polite">
+                            <p class="platos-list-message">Cargando platos del menú...</p>
+                        </div>
+
+                        <div class="pagination pagination-controls">
+                            <button type="button" class="btn-pagination" id="btnPagAnteriorPlatos"
+                                onclick="paginaAnteriorPlatos()">Anterior</button>
+                            <span class="page-info">
+                                Mostrando <span id="paginaActualPlatos">1</span> de <span
+                                    id="totalPaginasPlatos">1</span> páginas
+                            </span>
+                            <button type="button" class="btn-pagination" id="btnPagSiguientePlatos"
+                                onclick="paginaSiguientePlatos()">Siguiente</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+    <script th:src="@{/js/admin/adminNav.js}"></script>
+    <script th:src="@{/js/admin/menu.js}"></script>
+</body>
+
+</html>

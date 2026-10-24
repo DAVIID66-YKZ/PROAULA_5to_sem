@@ -1,5 +1,5 @@
 /* ================================================================
-   PANEL ADMIN (DASHBOARD) - THE CULINARY MANUSCRIPT
+   PANEL ADMIN (DASHBOARD) - GESTREST
    Lógica para KPIs y reservas recientes conectadas a MongoDB
    ================================================================ */
 

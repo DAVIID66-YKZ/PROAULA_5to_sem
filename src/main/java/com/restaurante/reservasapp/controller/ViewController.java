@@ -1,10 +1,19 @@
 package com.restaurante.reservasapp.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import com.restaurante.reservasapp.services.PlatoService;
 
 @Controller
 public class ViewController {
+
+    private final PlatoService platoService;
+
+    public ViewController(PlatoService platoService) {
+        this.platoService = platoService;
+    }
 
     // Maneja la página principal (localhost:8080/)
     @GetMapping("/")
@@ -31,7 +40,8 @@ public class ViewController {
     }
 
     @GetMapping({"/reserva", "/cliente/reserva"})
-    public String reserva() {
+    public String reserva(Model model) {
+        model.addAttribute("platos", platoService.listarPlatos());
         return "cliente/reserva";
     }
 
@@ -43,11 +53,6 @@ public class ViewController {
     @GetMapping("/legal/terminosYCondiciones")
     public String terminosYCondiciones() {
         return "legal/terminosYCondiciones";
-    }
-
-    @GetMapping({"/menu", "/cliente/menu"})
-    public String menu() {
-        return "menu";
     }
 
     @GetMapping({"/dashboard", "/cliente/dashboard"})
@@ -68,11 +73,6 @@ public class ViewController {
     @GetMapping({"/perfil", "/cliente/perfil"})
     public String perfil() {
         return "cliente/perfil";
-    }
-
-    @GetMapping({"/ver-menu", "/cliente/ver-menu"})
-    public String verMenu() {
-        return "cliente/ver-menu";
     }
 
     // Vistas de Administrador
@@ -100,4 +100,10 @@ public class ViewController {
     public String adminPerfil() {
         return "admin/PerfilAdmin";
     }
+
+    @GetMapping("/admin/menu")
+    public String menuAdmin() {
+        return "admin/menu";
+    }
+    
 }

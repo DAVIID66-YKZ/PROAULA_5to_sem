@@ -1,5 +1,5 @@
 /* ================================================================
-   LÓGICA DEL SIDEBAR CLIENTE - THE CULINARY MANUSCRIPT
+   LÓGICA DEL SIDEBAR CLIENTE - GESTREST
    Soporte Completo Responsive y Móvil
    ================================================================ */
 
@@ -106,7 +106,7 @@ function configurarLogoutSidebar() {
     if (logoutBtn) {
         logoutBtn.addEventListener("click", function (e) {
             e.preventDefault();
-            if (confirm("¿Deseas cerrar tu sesión en The Culinary Manuscript?")) {
+            if (confirm("¿Deseas cerrar tu sesión en GestRest?")) {
                 localStorage.clear();
                 window.location.href = "/login";
             }

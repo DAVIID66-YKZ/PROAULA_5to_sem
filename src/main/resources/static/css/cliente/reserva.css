@@ -1,5 +1,5 @@
 /* ================================================================
-   ESTILOS DE RESERVA - THE CULINARY MANUSCRIPT
+   ESTILOS DE RESERVA - GESTREST
    ================================================================ */
 
 .reserva-hero-container {
@@ -170,6 +170,200 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     color: #555;
 }
 
+.reserva-menu-selector {
+    margin-top: 22px;
+}
+
+.reserva-btn-menu {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 10px;
+    background: rgba(212, 175, 55, 0.08);
+    color: #f5f0df;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reserva-btn-menu:hover {
+    background: rgba(212, 175, 55, 0.15);
+    transform: translateY(-1px);
+}
+
+.reserva-btn-menu .material-symbols-outlined {
+    font-size: 20px;
+    color: #d4af37;
+}
+
+.reserva-menu-resumen {
+    margin-top: 8px;
+    color: #a0a0a0;
+    font-size: 11px;
+    line-height: 1.5;
+    min-height: 18px;
+}
+
+.reserva-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+}
+
+.reserva-modal-backdrop.hidden {
+    display: none;
+}
+
+.reserva-modal {
+    width: min(620px, 100%);
+    background: #111111;
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 18px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+}
+
+.reserva-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 22px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.reserva-modal-badge {
+    display: inline-block;
+    margin-bottom: 6px;
+    color: #d4af37;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.reserva-modal-header h3 {
+    margin: 0;
+    color: #fff;
+    font-family: 'Noto Serif', serif;
+    font-size: 1.6rem;
+}
+
+.reserva-modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    color: #ddd;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.reserva-modal-body {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 20px 22px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.reserva-plato-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.reserva-plato-item input {
+    accent-color: #d4af37;
+}
+
+.reserva-plato-item:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.reserva-plato-item:has(input:checked) {
+    border-color: #d4af37;
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.reserva-plato-info > span > span {
+    display: block;
+}
+
+.reserva-plato-info small {
+    display: block;
+    margin-top: 4px;
+    color: #a8a8a8;
+    font-size: 10px;
+}
+
+.reserva-plato-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    color: #fff;
+    font-size: 11px;
+}
+
+.reserva-plato-info strong {
+    color: #d4af37;
+    font-size: 10px;
+}
+
+.reserva-menu-vacio {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: #bdbdbd;
+    font-size: 13px;
+    text-align: center;
+}
+
+.reserva-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 22px 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.reserva-btn-secondary,
+.reserva-btn-primary {
+    border: none;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.reserva-btn-secondary {
+    background: transparent;
+    color: #ddd;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.reserva-btn-primary {
+    background: #d4af37;
+    color: #111;
+}
+
 /* --- BOTÓN Y NOTA --- */
 .reserva-btn-confirmar {
     width: 100%;
@@ -245,6 +439,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .reserva-experiencia-grid {
         grid-template-columns: 1fr;
         gap: 10px;
+    }
+
+    .reserva-modal-body {
+        grid-template-columns: 1fr;
     }
 
     .reserva-visual {

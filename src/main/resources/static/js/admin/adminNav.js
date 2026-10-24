@@ -1,5 +1,5 @@
 /* ================================================================
-   NAVEGACIÓN Y CONTROL ADMIN - THE CULINARY MANUSCRIPT
+   NAVEGACIÓN Y CONTROL ADMIN - GESTREST
    Manejo de rutas activas, guardián de rol ADMIN y drawer responsive
    ================================================================ */
 
@@ -100,7 +100,7 @@ function mostrarNombreAdmin() {
 
 function cerrarSesionAdmin(event) {
     if (event) event.preventDefault();
-    if (confirm("¿Cerrar sesión de administración en The Culinary Manuscript?")) {
+    if (confirm("¿Cerrar sesión de administración en GestRest?")) {
         localStorage.clear();
         window.location.href = "/login";
     }

@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             // Generación de URL formateada para Google Calendar API
             const baseGoogleUrl = "https://www.google.com/calendar/render?action=TEMPLATE";
-            const titulo = encodeURIComponent(`Cena: Experiencia ${info.event.title} - The Culinary Manuscript`);
+            const titulo = encodeURIComponent(`Cena: Experiencia ${info.event.title} - GestRest`);
             
             // Re-formatear fecha y hora para el estándar de Google Calendar (YYYYMMDDTHHMMSSZ)
             const fechaLimpia = info.event.startStr.replace(/-/g, "").split("T")[0]; // YYYYMMDD

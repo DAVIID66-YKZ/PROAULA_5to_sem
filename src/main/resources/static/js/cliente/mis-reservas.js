@@ -1,5 +1,5 @@
 /* ================================================================
-   LÓGICA DE MIS RESERVAS - THE CULINARY MANUSCRIPT
+   LÓGICA DE MIS RESERVAS - GESTREST
    ================================================================ */
 (function() {
     const token = localStorage.getItem("token");

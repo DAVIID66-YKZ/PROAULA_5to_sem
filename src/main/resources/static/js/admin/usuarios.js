@@ -1,5 +1,5 @@
 /* ================================================================
-   GESTIÓN DE USUARIOS - THE CULINARY MANUSCRIPT
+   GESTIÓN DE USUARIOS - GESTREST
    Lógica de administración de usuarios conectada a MongoDB
    Con paginación de 8 elementos por página y controles Siguiente/Anterior
    ================================================================ */
