@@ -60,10 +60,13 @@ async function login(event) {
 
         const data = await response.json();
 
+        const ahora = Date.now().toString();
         localStorage.setItem("token", data.token);
         localStorage.setItem("usuarioId", data.usuarioId);
         localStorage.setItem("nombreUsuario", data.nombre);
         localStorage.setItem("rol", data.rol);
+        localStorage.setItem("gestrest_last_activity", ahora);
+        localStorage.setItem("gestrest_login_time", ahora);
 
         // Verificación de rol para redirección
         const rolUpper = String(data.rol || "").trim().toUpperCase();
@@ -91,18 +94,26 @@ async function login(event) {
     }
 }
 
-// Mostrar aviso en la pantalla de login si el usuario viene con una reserva en el carrito
+// Mostrar aviso en la pantalla de login si el usuario viene con una reserva en el carrito o por sesión expirada
 document.addEventListener("DOMContentLoaded", () => {
+    const subtitle = document.querySelector(".login-subtitle");
+
+    // Aviso de sesión expirada por inactividad
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("sesionExpirada") === "true" && subtitle) {
+        const avisoInactividad = document.createElement("div");
+        avisoInactividad.className = "aviso-sesion-expirada";
+        avisoInactividad.style.cssText = "background: rgba(255, 85, 85, 0.15); border: 1px solid rgba(255, 85, 85, 0.4); color: #ff9999; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 18px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;";
+        avisoInactividad.innerHTML = `<span>⏳</span><span>Tu sesión ha expirado por inactividad. Por favor ingresa de nuevo.</span>`;
+        subtitle.insertAdjacentElement("afterend", avisoInactividad);
+    }
+
     const tieneCarrito = localStorage.getItem("reservaCarrito");
-    if (tieneCarrito) {
-        const form = document.querySelector(".login-form");
-        const subtitle = document.querySelector(".login-subtitle");
-        if (form && subtitle) {
-            const aviso = document.createElement("div");
-            aviso.className = "aviso-reserva-pendiente";
-            aviso.style.cssText = "background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.4); color: #f5d77f; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 18px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;";
-            aviso.innerHTML = `<span>🛒</span><span>Tienes una reserva en tu carrito. Inicia sesión para confirmarla.</span>`;
-            subtitle.insertAdjacentElement("afterend", aviso);
-        }
+    if (tieneCarrito && subtitle) {
+        const aviso = document.createElement("div");
+        aviso.className = "aviso-reserva-pendiente";
+        aviso.style.cssText = "background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.4); color: #f5d77f; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 18px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;";
+        aviso.innerHTML = `<span>🛒</span><span>Tienes una reserva en tu carrito. Inicia sesión para confirmarla.</span>`;
+        subtitle.insertAdjacentElement("afterend", aviso);
     }
 });

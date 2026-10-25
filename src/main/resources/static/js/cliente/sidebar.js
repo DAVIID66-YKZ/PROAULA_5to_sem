@@ -106,8 +106,16 @@ function configurarLogoutSidebar() {
     if (logoutBtn) {
         logoutBtn.addEventListener("click", function (e) {
             e.preventDefault();
-            if (confirm("¿Deseas cerrar tu sesión en GestRest?")) {
-                localStorage.clear();
+            if (typeof window.cerrarSesionApp === "function") {
+                window.cerrarSesionApp(e);
+            } else if (confirm("¿Deseas cerrar tu sesión en GestRest?")) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("jwtToken");
+                localStorage.removeItem("usuarioId");
+                localStorage.removeItem("nombreUsuario");
+                localStorage.removeItem("rol");
+                localStorage.removeItem("gestrest_last_activity");
+                localStorage.removeItem("gestrest_login_time");
                 window.location.href = "/login";
             }
         });

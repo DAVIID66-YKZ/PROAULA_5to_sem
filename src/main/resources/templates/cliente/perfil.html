@@ -37,46 +37,124 @@
                     </div>
                 </header>
 
-                <div class="tabla-reservas-wrapper form-perfil-wrapper">
-                    <form id="perfilForm" class="perfil-form">
-
-                        <div class="perfil-grid-inputs">
-                            <div class="input-grupo-perfil">
-                                <label for="perfilNombre">Nombre</label>
-                                <input type="text" id="perfilNombre" required>
+                <div class="form-perfil-wrapper">
+                    <div class="perfil-wrapper">
+                        <!-- TARJETA 1: DATOS PERSONALES -->
+                        <div class="perfil-card">
+                            <div class="perfil-card-header">
+                                <div class="perfil-card-icon">
+                                    <span class="material-symbols-outlined">person</span>
+                                </div>
+                                <h2 class="perfil-card-title">Datos Personales</h2>
                             </div>
 
-                            <div class="input-grupo-perfil">
-                                <label for="perfilApellido">Apellido</label>
-                                <input type="text" id="perfilApellido" required>
-                            </div>
+                            <form id="perfilForm" class="perfil-form">
+                                <div class="perfil-form-row">
+                                    <div class="perfil-form-group">
+                                        <label for="perfilNombre" class="perfil-label">Nombre</label>
+                                        <input type="text" id="perfilNombre" class="perfil-input" placeholder="Tu nombre" required>
+                                    </div>
 
-                            <div class="input-grupo-perfil">
-                                <label for="perfilCorreo">Correo Electrónico</label>
-                                <input type="email" id="perfilCorreo" disabled
-                                    style="opacity: 0.5; cursor: not-allowed;">
-                                <small style="color: #555; font-size: 10px; margin-top: 5px; display: block;">El correo
-                                    no puede modificarse por seguridad.</small>
-                            </div>
+                                    <div class="perfil-form-group">
+                                        <label for="perfilApellido" class="perfil-label">Apellido</label>
+                                        <input type="text" id="perfilApellido" class="perfil-input" placeholder="Tu apellido" required>
+                                    </div>
+                                </div>
 
-                            <div class="input-grupo-perfil">
-                                <label for="perfilTelefono">Teléfono</label>
-                                <input type="text" id="perfilTelefono">
-                            </div>
+                                <div class="perfil-form-group">
+                                    <label for="perfilCorreo" class="perfil-label">Correo Electrónico</label>
+                                    <input type="email" id="perfilCorreo" class="perfil-input" disabled>
+                                    <span class="perfil-hint">El correo no puede modificarse por seguridad.</span>
+                                </div>
 
-                            <div class="input-grupo-perfil full-width-input">
-                                <label for="perfilDireccion">Dirección de Residencia</label>
-                                <input type="text" id="perfilDireccion">
-                            </div>
+                                <div class="perfil-form-group">
+                                    <label for="perfilTelefono" class="perfil-label">Teléfono</label>
+                                    <input type="tel" id="perfilTelefono" class="perfil-input" placeholder="+57 300 1234567">
+                                </div>
+
+                                <div class="perfil-form-group">
+                                    <label for="perfilDireccion" class="perfil-label">Dirección de Residencia</label>
+                                    <input type="text" id="perfilDireccion" class="perfil-input" placeholder="Tu dirección completa">
+                                </div>
+
+                                <div class="perfil-actions">
+                                    <button type="submit" id="btnActualizarDatos" class="btn-update-profile">
+                                        <span class="material-symbols-outlined">save</span>
+                                        Actualizar Datos
+                                    </button>
+                                </div>
+                            </form>
                         </div>
 
-                        <div class="perfil-actions">
-                            <button type="submit" class="btn-update-profile">
-                                <span class="material-symbols-outlined icon-small">save</span>
-                                Actualizar Datos
-                            </button>
+                        <!-- TARJETA 2: CAMBIAR CONTRASEÑA -->
+                        <div class="perfil-card">
+                            <div class="perfil-card-header">
+                                <div class="perfil-card-icon">
+                                    <span class="material-symbols-outlined">lock</span>
+                                </div>
+                                <h2 class="perfil-card-title">Cambiar Contraseña</h2>
+                            </div>
+
+                            <form id="formPasswordCliente" class="perfil-form">
+                                <div class="perfil-form-group">
+                                    <label for="passwordActualCliente" class="perfil-label">Contraseña Actual</label>
+                                    <div class="password-wrapper">
+                                        <input type="password" id="passwordActualCliente" class="perfil-input" placeholder="••••••••" required>
+                                        <button type="button" class="toggle-password-btn" onclick="togglePasswordCliente('passwordActualCliente', this)" title="Mostrar contraseña" aria-label="Mostrar contraseña">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="perfil-form-group">
+                                    <label for="passwordNuevaCliente" class="perfil-label">Nueva Contraseña (mínimo 8 caracteres)</label>
+                                    <div class="password-wrapper">
+                                        <input type="password" id="passwordNuevaCliente" class="perfil-input" minlength="8" placeholder="••••••••" required>
+                                        <button type="button" class="toggle-password-btn" onclick="togglePasswordCliente('passwordNuevaCliente', this)" title="Mostrar contraseña" aria-label="Mostrar contraseña">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="perfil-strength-container">
+                                        <div class="perfil-strength-bar-wrapper">
+                                            <div id="barraFortalezaCliente" class="perfil-strength-bar"></div>
+                                        </div>
+                                        <p class="perfil-strength-text" id="textoFortalezaCliente">Muy débil</p>
+                                    </div>
+                                </div>
+
+                                <div class="perfil-form-group">
+                                    <label for="passwordConfirmarCliente" class="perfil-label">Confirmar Nueva Contraseña</label>
+                                    <div class="password-wrapper">
+                                        <input type="password" id="passwordConfirmarCliente" class="perfil-input" minlength="8" placeholder="••••••••" required>
+                                        <button type="button" class="toggle-password-btn" onclick="togglePasswordCliente('passwordConfirmarCliente', this)" title="Mostrar contraseña" aria-label="Mostrar contraseña">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="mensajeErrorCliente" class="perfil-error-container">
+                                    <span class="material-symbols-outlined perfil-error-icon">error</span>
+                                    <span class="perfil-error-text" id="textoErrorCliente"></span>
+                                </div>
+
+                                <div class="perfil-actions">
+                                    <button type="submit" id="btnCambiarPassword" class="btn-update-profile">
+                                        <span class="material-symbols-outlined">lock_reset</span>
+                                        Cambiar Contraseña
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </main>
         </div>

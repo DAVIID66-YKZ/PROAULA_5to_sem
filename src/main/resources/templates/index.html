@@ -231,6 +231,29 @@
                             </div>
                         </div>
 
+                        <div class="reserva-menu-selector">
+                            <button type="button" class="reserva-btn-menu" id="modalIndexBtnMenu" onclick="abrirModalMenuIndex();">
+                                <span class="material-symbols-outlined">restaurant_menu</span>
+                                Elegir platos del menú
+                            </button>
+                            <div class="reserva-menu-resumen" id="modalIndexMenuResumen">Ningún plato seleccionado</div>
+
+                            <!-- Desglose de precios y anticipo (5% o mín 10k) -->
+                            <div class="reserva-anticipo-card" id="modalIndexAnticipoCard" style="display: none;">
+                                <div class="anticipo-linea">
+                                    <span class="anticipo-label">Total en productos:</span>
+                                    <span class="anticipo-val" id="modalIndexTotalPlatos">$ 0</span>
+                                </div>
+                                <div class="anticipo-linea destacado">
+                                    <span class="anticipo-label">Anticipo para apartar mesa:</span>
+                                    <span class="anticipo-val-oro" id="modalIndexAnticipo">$ 10.000</span>
+                                </div>
+                                <small class="anticipo-subtexto">
+                                    * Se anticipa el 5% del valor de los platos seleccionados (tarifa mínima de $10.000 COP para reservar).
+                                </small>
+                            </div>
+                        </div>
+
                         <button type="submit" class="reserva-btn-confirmar">GUARDAR EN EL CARRITO</button>
 
                         <p class="reserva-nota">
@@ -238,6 +261,45 @@
                         </p>
                     </form>
                 </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL DE SELECCIÓN DE PLATOS PARA EL INDEX / CARRITO ===== -->
+    <div id="modalMenuIndex" class="reserva-modal-backdrop hidden" style="z-index: 100002;" aria-hidden="true" onclick="if(event.target === this) cerrarModalMenuIndex();">
+        <div class="reserva-modal" role="dialog" aria-modal="true" aria-labelledby="tituloModalMenuIndex">
+            <div class="reserva-modal-header">
+                <div>
+                    <span class="reserva-modal-badge">GestRest</span>
+                    <h3 id="tituloModalMenuIndex">Agrega platos a tu reserva</h3>
+                </div>
+                <button type="button" class="reserva-modal-close" onclick="cerrarModalMenuIndex();" aria-label="Cerrar modal">×</button>
+            </div>
+
+            <div class="reserva-modal-body" id="modalIndexPlatosBody">
+                <label class="reserva-plato-item" th:each="plato : ${platos}">
+                    <input type="checkbox"
+                           class="modal-index-plato-checkbox"
+                           th:value="${plato.id}"
+                           th:data-name="${plato.nombre}"
+                           th:data-precio="${plato.precio}"
+                           th:disabled="${!plato.disponible}">
+                    <span class="reserva-plato-info">
+                        <span>
+                            <span th:text="${plato.nombre}"></span>
+                            <small th:if="${!plato.disponible}">No disponible</small>
+                        </span>
+                        <strong th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 0)}"></strong>
+                    </span>
+                </label>
+                <p class="reserva-menu-vacio" th:if="${#lists.isEmpty(platos)}" id="modalIndexMenuVacioMsg">
+                    No hay platos disponibles en el menú por el momento.
+                </p>
+            </div>
+
+            <div class="reserva-modal-footer">
+                <button type="button" class="reserva-btn-secondary" onclick="cerrarModalMenuIndex();">Cancelar</button>
+                <button type="button" class="reserva-btn-primary" onclick="guardarPlatosSeleccionadosIndex();">Guardar selección</button>
             </div>
         </div>
     </div>

@@ -1,104 +1,279 @@
 /* ================================================================
-   ESTILOS DE MI PERFIL - GESTREST
+   ESTILOS DE MI PERFIL - CLIENTE - GESTREST
    ================================================================ */
 
 .form-perfil-wrapper {
-    padding: 40px;
     width: 100%;
-    max-width: 1150px;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 0;
 }
 
+/* Container de 2 columnas */
+.perfil-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    align-items: start;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Tarjeta individual */
+.perfil-card {
+    background-color: #141414;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 12px;
+    padding: 26px 28px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.perfil-card:hover {
+    border-color: rgba(212, 175, 55, 0.35);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.55);
+}
+
+/* Header con icono y título */
+.perfil-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.perfil-card-icon {
+    font-size: 26px;
+    color: var(--color-primary, #d4af37);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.perfil-card-icon .material-symbols-outlined {
+    font-size: 28px;
+    color: var(--color-primary, #d4af37);
+}
+
+.perfil-card-title {
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--color-primary, #d4af37);
+    margin: 0;
+}
+
+/* Formulario */
 .perfil-form {
     width: 100%;
-}
-
-.perfil-grid-inputs {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 25px;
-    margin-bottom: 30px;
-}
-
-.input-grupo-perfil {
     display: flex;
     flex-direction: column;
 }
 
-.input-grupo-perfil label {
+.perfil-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.perfil-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.perfil-form-row .perfil-form-group {
+    margin-bottom: 0;
+}
+
+/* Etiquetas */
+.perfil-label {
     font-size: 11px;
-    color: #888;
+    color: #999999;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
     font-weight: 700;
+    display: block;
 }
 
-.input-grupo-perfil input {
+/* Inputs */
+.perfil-input {
     width: 100%;
-    background-color: #1a1a1a; /* Mismo color que los inputs de reserva */
+    background-color: #1a1a1a;
     border: 1px solid #2a2a2a;
-    padding: 14px;
-    color: #ffffff;
     border-radius: 8px;
-    outline: none;
+    padding: 13px 15px;
+    color: #ffffff;
+    font-size: 14px;
     font-family: 'Manrope', sans-serif;
-    font-size: 0.95rem;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    box-sizing: border-box;
+    outline: none;
 }
 
-.input-grupo-perfil input:focus {
-    border-color: #d4af37;
-    box-shadow: 0 0 8px rgba(212, 175, 55, 0.15);
+.perfil-input:focus {
+    border-color: var(--color-primary, #d4af37);
+    background-color: rgba(212, 175, 55, 0.04);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
 }
 
-.full-width-input {
-    grid-column: span 2;
+.perfil-input:disabled {
+    background-color: rgba(0, 0, 0, 0.35);
+    color: #666666;
+    border-color: #222222;
+    cursor: not-allowed;
 }
 
-/* Sección de botón */
+.perfil-input::placeholder {
+    color: #555555;
+}
+
+.perfil-hint {
+    font-size: 11px;
+    color: #666666;
+    margin-top: 4px;
+}
+
+/* Wrapper para contraseñas con toggle eye */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper .perfil-input {
+    padding-right: 44px;
+}
+
+.password-wrapper .toggle-password-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #777777;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s ease;
+}
+
+.password-wrapper .toggle-password-btn:hover {
+    color: var(--color-primary, #d4af37);
+}
+
+.password-wrapper .toggle-password-btn svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+/* Barra de fortaleza de contraseña */
+.perfil-strength-container {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.perfil-strength-bar-wrapper {
+    width: 100%;
+    height: 4px;
+    background: #252525;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.perfil-strength-bar {
+    height: 100%;
+    width: 0%;
+    background: #ff5555;
+    border-radius: 2px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.perfil-strength-text {
+    font-size: 11px;
+    color: #888888;
+    margin: 0;
+    text-align: right;
+}
+
+/* Mensajes de error en tarjeta de contraseña */
+.perfil-error-container {
+    background: rgba(255, 85, 85, 0.12);
+    border: 1px solid rgba(255, 85, 85, 0.35);
+    color: #ff9999;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    margin-bottom: 16px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+}
+
+.perfil-error-container.show {
+    display: flex;
+}
+
+.perfil-error-icon {
+    font-size: 16px;
+    color: #ff5555;
+}
+
+/* Botones de acción */
 .perfil-actions {
     display: flex;
     justify-content: flex-end;
-    border-top: 1px solid #1a1a1a;
-    padding-top: 25px;
+    margin-top: 10px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .btn-update-profile {
-    background-color: #d4af37;
+    background-color: var(--color-primary, #d4af37);
     color: #000000;
     border: none;
-    padding: 14px 35px;
+    padding: 13px 26px;
     border-radius: 8px;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     cursor: pointer;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: background 0.3s ease, transform 0.2s ease;
+    letter-spacing: 0.8px;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn-update-profile:hover {
     background-color: #f0c64d;
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
     transform: translateY(-1px);
 }
 
+.btn-update-profile .material-symbols-outlined {
+    font-size: 18px;
+}
+
 /* Responsivo */
-@media (max-width: 768px) {
-    .perfil-grid-inputs {
+@media (max-width: 900px) {
+    .perfil-wrapper {
         grid-template-columns: 1fr;
     }
-    .full-width-input {
-        grid-column: span 1;
-    }
-    .perfil-actions {
-        justify-content: center;
-    }
-    .btn-update-profile {
-        width: 100%;
-        justify-content: center;
+    .perfil-form-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
 }

@@ -1,10 +1,14 @@
 /* ================================================================
    LÓGICA DEL CARRITO DE RESERVA LOCAL - GESTREST
-   Almacena borradores de reserva en localStorage y verifica
-   disponibilidad en tiempo real antes de confirmar.
+   Almacena borradores de reserva en localStorage (incluyendo platos),
+   verifica disponibilidad en tiempo real antes de confirmar,
+   y redirige al menú a los clientes autenticados.
    ================================================================ */
 
 const CARRITO_STORAGE_KEY = "reservaCarrito";
+let platosConfirmadosIndex = [];
+let catalogoPlatosGlobal = [];
+const formatoCOP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
 
 // 1. Obtener y guardar en LocalStorage
 function obtenerReservaCarrito() {
@@ -24,6 +28,7 @@ function guardarReservaCarrito(reserva) {
 
 function eliminarReservaCarrito() {
     localStorage.removeItem(CARRITO_STORAGE_KEY);
+    platosConfirmadosIndex = [];
     actualizarBadgeCarrito();
     renderizarContenidoCarrito();
 }
@@ -82,7 +87,7 @@ function renderizarContenidoCarrito() {
                 </svg>
                 <h4>Tu carrito está vacío</h4>
                 <p>Configura tu mesa desde el inicio para apartar tu velada.</p>
-                <button type="button" class="btn-guardar-carrito" onclick="cerrarCarrito(); abrirModalReservaIndex();">
+                <button type="button" class="btn-guardar-carrito" onclick="cerrarCarrito(); manejarClickBotonReserva(event);">
                     Crear una Reserva
                 </button>
             </div>
@@ -99,6 +104,67 @@ function renderizarContenidoCarrito() {
         "Mesa-Alcoba": "Zona Privada (Alcoba)"
     };
     const nombreExperiencia = nombresSector[reserva.experiencia] || reserva.experiencia || "Salón Principal";
+
+    // Manejo de platos elegidos
+    const platos = Array.isArray(reserva.platosDetalle) ? reserva.platosDetalle : [];
+    const totalPlatos = reserva.totalPlatos || 0;
+    const anticipo = reserva.anticipo || Math.max(10000, Math.round(totalPlatos * 0.05));
+
+    let platosHtml = "";
+    if (platos.length > 0) {
+        const listaItems = platos.map(p => `
+            <div class="carrito-plato-row">
+                <span class="plato-nombre" title="${p.nombre}">${p.nombre}</span>
+                <span class="plato-precio">${formatoCOP.format(p.precio)}</span>
+            </div>
+        `).join("");
+
+        platosHtml = `
+            <div class="carrito-platos-block">
+                <div class="carrito-platos-header">
+                    <span class="carrito-platos-header-title">
+                        🍽️ Platos Elegidos (${platos.length})
+                    </span>
+                    <button type="button" class="btn-editar-platos" onclick="editarPlatosDesdeCarrito();">
+                        Modificar platos
+                    </button>
+                </div>
+                <div class="carrito-platos-lista">
+                    ${listaItems}
+                </div>
+                <div class="carrito-anticipo-card">
+                    <div class="carrito-anticipo-row">
+                        <span>Total en platos:</span>
+                        <span style="font-weight:700; color:#fff;">${formatoCOP.format(totalPlatos)}</span>
+                    </div>
+                    <div class="carrito-anticipo-row destacado">
+                        <span>Anticipo para apartar mesa:</span>
+                        <span class="carrito-anticipo-oro">${formatoCOP.format(anticipo)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        platosHtml = `
+            <div class="carrito-platos-block">
+                <div class="carrito-platos-header">
+                    <span class="carrito-platos-header-title">
+                        🍽️ Platos del Menú
+                    </span>
+                    <button type="button" class="btn-editar-platos" onclick="editarPlatosDesdeCarrito();">
+                        + Elegir platos
+                    </button>
+                </div>
+                <div class="carrito-sin-platos">Sin platos seleccionados</div>
+                <div class="carrito-anticipo-card">
+                    <div class="carrito-anticipo-row destacado">
+                        <span>Anticipo base para apartar mesa:</span>
+                        <span class="carrito-anticipo-oro">$ 10.000 COP</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 
     body.innerHTML = `
         <div id="carritoAlertaError" class="carrito-alerta alerta-error" style="display: none;">
@@ -133,6 +199,8 @@ function renderizarContenidoCarrito() {
                 </div>
             </div>
 
+            ${platosHtml}
+
             <div class="carrito-item-actions">
                 <button type="button" class="btn-eliminar-carrito" onclick="eliminarReservaCarrito()" title="Eliminar reserva del carrito">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -150,7 +218,7 @@ function renderizarContenidoCarrito() {
                 <circle cx="12" cy="7" r="4"></circle>
             </svg>
             <h4>Identifícate para confirmar</h4>
-            <p>Inicia sesión o crea tu cuenta para guardar tu reserva de forma definitiva. Tu borrador se mantendrá guardado.</p>
+            <p>Inicia sesión o crea tu cuenta para guardar tu reserva de forma definitiva. Tu borrador se mantendrá guardado con tus platos elegidos.</p>
             <div class="modal-auth-buttons">
                 <a href="/login" class="btn-auth-login">Iniciar Sesión</a>
                 <a href="/register" class="btn-auth-register">Crear Cuenta</a>
@@ -187,6 +255,24 @@ function abrirModalReservaIndex() {
             fechaInput.value = fechaHoy;
         }
     }
+
+    // Si ya existe una reserva previa en el carrito, cargar sus valores seleccionados
+    const reservaPrevia = obtenerReservaCarrito();
+    if (reservaPrevia) {
+        if (fechaInput && reservaPrevia.fecha) fechaInput.value = reservaPrevia.fecha;
+        const personasInput = document.getElementById("modalIndexPersonas");
+        if (personasInput && reservaPrevia.personas) personasInput.value = reservaPrevia.personas;
+        if (reservaPrevia.experiencia) {
+            const radioExp = document.querySelector(`input[name="modalIndexExp"][value="${reservaPrevia.experiencia}"]`);
+            if (radioExp) radioExp.checked = true;
+        }
+        if (Array.isArray(reservaPrevia.platos)) {
+            platosConfirmadosIndex = [...reservaPrevia.platos];
+        }
+    }
+
+    sincronizarCheckboxesIndex();
+    actualizarResumenMenuIndex();
 
     backdrop.classList.add("active");
     document.body.style.overflow = "hidden";
@@ -256,6 +342,159 @@ async function comprobarHorariosIndex() {
     }
 }
 
+// ================================================================
+// GESTIÓN DE SELECCIÓN DE PLATOS PARA CLIENTE NO LOGUEADO (INDEX/CARRITO)
+// ================================================================
+async function asegurarCatalogoPlatos() {
+    if (catalogoPlatosGlobal && catalogoPlatosGlobal.length > 0) {
+        return catalogoPlatosGlobal;
+    }
+    try {
+        const res = await fetch("/menu/api/listar");
+        if (res.ok) {
+            catalogoPlatosGlobal = await res.json();
+            renderizarCheckboxesPlatosIndex(catalogoPlatosGlobal);
+        }
+    } catch (e) {
+        console.warn("No se pudo cargar el catálogo de platos vía API:", e);
+    }
+    return catalogoPlatosGlobal;
+}
+
+function renderizarCheckboxesPlatosIndex(platos) {
+    const contenedor = document.getElementById("modalIndexPlatosBody");
+    if (!contenedor || !Array.isArray(platos)) return;
+
+    if (platos.length === 0) {
+        contenedor.innerHTML = '<p class="reserva-menu-vacio">No hay platos disponibles en el menú por el momento.</p>';
+        return;
+    }
+
+    contenedor.innerHTML = platos.map(plato => `
+        <label class="reserva-plato-item">
+            <input type="checkbox"
+                   class="modal-index-plato-checkbox"
+                   value="${plato.id}"
+                   data-name="${plato.nombre}"
+                   data-precio="${plato.precio}"
+                   ${!plato.disponible ? 'disabled' : ''}>
+            <span class="reserva-plato-info">
+                <span>
+                    <span>${plato.nombre}</span>
+                    ${!plato.disponible ? '<small>No disponible</small>' : ''}
+                </span>
+                <strong>${formatoCOP.format(plato.precio || 0)}</strong>
+            </span>
+        </label>
+    `).join("");
+}
+
+function sincronizarCheckboxesIndex() {
+    document.querySelectorAll(".modal-index-plato-checkbox").forEach(cb => {
+        cb.checked = platosConfirmadosIndex.includes(cb.value);
+    });
+}
+
+function abrirModalMenuIndex() {
+    const modal = document.getElementById("modalMenuIndex");
+    if (!modal) return;
+
+    const checkboxes = document.querySelectorAll(".modal-index-plato-checkbox");
+    if (checkboxes.length === 0) {
+        asegurarCatalogoPlatos().then(() => {
+            sincronizarCheckboxesIndex();
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+        });
+        return;
+    }
+
+    sincronizarCheckboxesIndex();
+    modal.classList.remove("hidden");
+    modal.setAttribute("aria-hidden", "false");
+}
+
+function cerrarModalMenuIndex() {
+    const modal = document.getElementById("modalMenuIndex");
+    if (!modal) return;
+    sincronizarCheckboxesIndex();
+    modal.classList.add("hidden");
+    modal.setAttribute("aria-hidden", "true");
+}
+
+function guardarPlatosSeleccionadosIndex() {
+    const checks = Array.from(document.querySelectorAll(".modal-index-plato-checkbox:checked"));
+    platosConfirmadosIndex = checks.map(cb => cb.value);
+    actualizarResumenMenuIndex();
+
+    // Si ya existe una reserva en el carrito, actualizar sus platos inmediatamente
+    const reservaActual = obtenerReservaCarrito();
+    if (reservaActual) {
+        const platosDetalle = checks.map(cb => ({
+            id: cb.value,
+            nombre: cb.dataset.name,
+            precio: parseFloat(cb.dataset.precio || 0)
+        }));
+        const totalPlatos = platosDetalle.reduce((sum, p) => sum + p.precio, 0);
+        const anticipo = Math.max(10000, Math.round(totalPlatos * 0.05));
+
+        reservaActual.platos = platosConfirmadosIndex;
+        reservaActual.platosDetalle = platosDetalle;
+        reservaActual.totalPlatos = totalPlatos;
+        reservaActual.anticipo = anticipo;
+
+        guardarReservaCarrito(reservaActual);
+        renderizarContenidoCarrito();
+    }
+
+    const modal = document.getElementById("modalMenuIndex");
+    if (modal) {
+        modal.classList.add("hidden");
+        modal.setAttribute("aria-hidden", "true");
+    }
+}
+
+function actualizarResumenMenuIndex() {
+    const resumenEl = document.getElementById("modalIndexMenuResumen");
+    const anticipoCard = document.getElementById("modalIndexAnticipoCard");
+    const totalEl = document.getElementById("modalIndexTotalPlatos");
+    const anticipoEl = document.getElementById("modalIndexAnticipo");
+
+    const checks = Array.from(document.querySelectorAll(".modal-index-plato-checkbox:checked"));
+    const nombres = checks.map(item => item.dataset.name);
+
+    if (!nombres.length) {
+        if (resumenEl) resumenEl.textContent = "Ningún plato seleccionado";
+        if (anticipoCard) anticipoCard.style.display = "none";
+        return;
+    }
+
+    if (resumenEl) {
+        resumenEl.textContent = nombres.length > 2
+            ? `${nombres.slice(0, 2).join(", ")} +${nombres.length - 2}`
+            : nombres.join(", ");
+    }
+
+    let sumaPlatos = 0;
+    checks.forEach(item => {
+        sumaPlatos += parseFloat(item.dataset.precio || 0);
+    });
+
+    const anticipoCalculado = Math.max(10000, Math.round(sumaPlatos * 0.05));
+
+    if (totalEl) totalEl.textContent = formatoCOP.format(sumaPlatos);
+    if (anticipoEl) anticipoEl.textContent = formatoCOP.format(anticipoCalculado);
+    if (anticipoCard) anticipoCard.style.display = "block";
+}
+
+function editarPlatosDesdeCarrito() {
+    const reserva = obtenerReservaCarrito();
+    if (reserva && Array.isArray(reserva.platos)) {
+        platosConfirmadosIndex = [...reserva.platos];
+    }
+    abrirModalMenuIndex();
+}
+
 // 7. Guardar borrador en el carrito desde el modal del index
 function agregarReservaAlCarrito(event) {
     if (event) event.preventDefault();
@@ -290,11 +529,26 @@ function agregarReservaAlCarrito(event) {
         return;
     }
 
+    // Capturar platos seleccionados
+    const checks = Array.from(document.querySelectorAll(".modal-index-plato-checkbox:checked"));
+    const platosIds = checks.map(cb => cb.value);
+    const platosDetalle = checks.map(cb => ({
+        id: cb.value,
+        nombre: cb.dataset.name,
+        precio: parseFloat(cb.dataset.precio || 0)
+    }));
+    const totalPlatos = platosDetalle.reduce((sum, p) => sum + p.precio, 0);
+    const anticipo = Math.max(10000, Math.round(totalPlatos * 0.05));
+
     const reserva = {
         fecha,
         hora,
         personas,
         experiencia: expRadio.value,
+        platos: platosIds,
+        platosDetalle: platosDetalle,
+        totalPlatos: totalPlatos,
+        anticipo: anticipo,
         timestamp: new Date().toISOString()
     };
 
@@ -386,7 +640,7 @@ async function confirmarReservaCarrito() {
             }
         }
 
-        // PASO 3: Sigue disponible -> Enviar reserva definitiva a Spring Boot
+        // PASO 3: Sigue disponible -> Enviar reserva definitiva a Spring Boot con los platos seleccionados
         if (btnConfirmar) {
             btnConfirmar.innerHTML = `<span class="btn-spinner" style="width:16px;height:16px;border-width:2px;border-color:rgba(0,0,0,0.3);border-top-color:#000;"></span><span>Confirmando reserva...</span>`;
         }
@@ -398,7 +652,7 @@ async function confirmarReservaCarrito() {
             usuarioId: usuarioId,
             mesaId: reserva.experiencia,
             experiencia: reserva.experiencia,
-            platos: [],
+            platos: Array.isArray(reserva.platos) ? reserva.platos : [],
             estado: "PENDIENTE"
         };
 
@@ -413,12 +667,17 @@ async function confirmarReservaCarrito() {
 
         if (resGuardar.ok) {
             // Reserva guardada con éxito
+            const total = reserva.totalPlatos || 0;
+            const anticipo = reserva.anticipo || Math.max(10000, Math.round(total * 0.05));
+
             eliminarReservaCarrito();
             cerrarCarrito();
+
             alert(
                 "✨ ¡SOLICITUD DE RESERVA REGISTRADA! ✨\n\n" +
                 "• Estado: PENDIENTE\n" +
-                "• Anticipo para apartar mesa: $ 10.000 COP (tarifa base mínima para reserva)\n\n" +
+                (total > 0 ? `• Total en productos: ${formatoCOP.format(total)}\n` : "") +
+                `• Anticipo para apartar mesa: ${formatoCOP.format(anticipo)} (5% con tarifa base mínima de $10.000 COP)\n\n` +
                 "Tu reserva ha quedado guardada en estado PENDIENTE. En 'Mis Reservas' podrás consultar tus detalles y confirmarla."
             );
             window.location.href = "/cliente/mis-reservas";
@@ -448,12 +707,19 @@ function manejarClickBotonReserva(event) {
     const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
     const rol = (localStorage.getItem("rol") || "").trim().toUpperCase();
 
+    // Si es administrador -> Panel de administración de reservas
     if (token && (rol === "ADMIN" || rol === "ROLE_ADMIN")) {
         window.location.href = "/admin/reservas";
         return;
     }
 
-    // Si es cliente o no está registrado: abrir modal de reserva para agregar al carrito
+    // Si ya es un cliente logueado -> MANDAR AL PANEL EN EL APARTADO DE RESERVA
+    if (token) {
+        window.location.href = "/cliente/reserva";
+        return;
+    }
+
+    // Si NO está logueado -> Abrir modal de reserva del index para permitir elegir platos y guardar en el carrito
     abrirModalReservaIndex();
 }
 
@@ -470,10 +736,21 @@ window.comprobarHorariosIndex = comprobarHorariosIndex;
 window.agregarReservaAlCarrito = agregarReservaAlCarrito;
 window.confirmarReservaCarrito = confirmarReservaCarrito;
 window.manejarClickBotonReserva = manejarClickBotonReserva;
+window.abrirModalMenuIndex = abrirModalMenuIndex;
+window.cerrarModalMenuIndex = cerrarModalMenuIndex;
+window.guardarPlatosSeleccionadosIndex = guardarPlatosSeleccionadosIndex;
+window.actualizarResumenMenuIndex = actualizarResumenMenuIndex;
+window.editarPlatosDesdeCarrito = editarPlatosDesdeCarrito;
 
 // Auto-inicialización en carga
 document.addEventListener("DOMContentLoaded", () => {
     actualizarBadgeCarrito();
+
+    // Sincronizar platos si ya hay reserva en localStorage
+    const reserva = obtenerReservaCarrito();
+    if (reserva && Array.isArray(reserva.platos)) {
+        platosConfirmadosIndex = [...reserva.platos];
+    }
 
     // Si la URL contiene el parámetro abrirCarrito=true, abrirlo
     const urlParams = new URLSearchParams(window.location.search);
@@ -489,4 +766,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (fechaInput) fechaInput.addEventListener("change", comprobarHorariosIndex);
     if (personasInput) personasInput.addEventListener("change", comprobarHorariosIndex);
     expRadios.forEach(r => r.addEventListener("change", comprobarHorariosIndex));
+
+    // Precargar catálogo si hace falta
+    const checkboxesExistentes = document.querySelectorAll(".modal-index-plato-checkbox");
+    if (checkboxesExistentes.length === 0) {
+        asegurarCatalogoPlatos();
+    }
 });
