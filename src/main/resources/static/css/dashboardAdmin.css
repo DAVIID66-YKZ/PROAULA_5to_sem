@@ -120,8 +120,29 @@ h1, h2, h3 {
     flex-direction: column;
     gap: 10px;
     margin-top: auto;
+    flex-shrink: 0;
     border-top: 1px solid var(--border);
     padding-top: 20px;
+}
+
+#btnAdminLogout {
+    color: #ff5c5c !important;
+    background: rgba(255, 92, 92, 0.08) !important;
+    border: 1px solid rgba(255, 92, 92, 0.25) !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    padding: 8px 10px !important;
+    transition: all 0.3s ease;
+}
+
+#btnAdminLogout:hover {
+    color: #ffffff !important;
+    background: rgba(255, 92, 92, 0.22) !important;
+    border-color: #ff5c5c !important;
+}
+
+#btnAdminLogout .material-symbols-outlined {
+    color: #ff5c5c !important;
 }
 
 .footer-link {
@@ -172,9 +193,10 @@ h1, h2, h3 {
 }
 
 .efecto-blur {
-    background-color: rgba(10, 10, 10, 0.88);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background-color: transparent !important;
+    background: transparent !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(212, 175, 55, 0.18);
 }
 
@@ -249,6 +271,33 @@ h1, h2, h3 {
 .perfil-contenedor {
     display: flex;
     align-items: center;
+    gap: 12px;
+}
+
+.header-logout-btn {
+    background: rgba(255, 92, 92, 0.1);
+    border: 1px solid rgba(255, 92, 92, 0.35);
+    color: #ff5c5c;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.header-logout-btn:hover {
+    background: rgba(255, 92, 92, 0.25);
+    border-color: #ff5c5c;
+    color: #ffffff;
+    transform: scale(1.08);
+}
+
+.header-logout-btn .material-symbols-outlined {
+    font-size: 20px;
+    color: inherit;
 }
 
 .perfil-link {
@@ -1142,15 +1191,28 @@ input:checked + .slider:before {
     }
 
     .sidebar {
-        width: 260px !important;
+        width: 280px !important;
+        max-width: 85vw !important;
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
         height: 100vh !important;
-        z-index: 1000 !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        z-index: 1001 !important;
         transform: translateX(-100%);
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior-y: contain;
+        padding-bottom: calc(50px + env(safe-area-inset-bottom, 25px)) !important;
+    }
+
+    .sidebar-footer {
+        flex-shrink: 0 !important;
+        margin-top: 20px !important;
+        padding-bottom: 25px !important;
     }
 
     .sidebar.mobile-open {

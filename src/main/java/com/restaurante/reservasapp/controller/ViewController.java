@@ -17,7 +17,8 @@ public class ViewController {
 
     // Maneja la página principal (localhost:8080/)
     @GetMapping("/")
-    public String home() {
+    public String home(Model model) {
+        model.addAttribute("platos", platoService.listarPlatos());
         return "index";
     }
 
@@ -35,7 +36,8 @@ public class ViewController {
 
     // Maneja el index si tienes una ruta específica para él
     @GetMapping("/index")
-    public String index() {
+    public String index(Model model) {
+        model.addAttribute("platos", platoService.listarPlatos());
         return "index";
     }
 

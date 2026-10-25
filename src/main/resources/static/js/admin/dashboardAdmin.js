@@ -893,7 +893,13 @@ function paginaSiguienteTodas() {
 
 function logout() {
   if (confirm("¿Cerrar sesión de administración?")) {
-    localStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("jwtToken");
+    localStorage.removeItem("usuarioId");
+    localStorage.removeItem("nombreUsuario");
+    localStorage.removeItem("rol");
+    localStorage.removeItem("gestrest_last_activity");
+    localStorage.removeItem("gestrest_login_time");
     window.location.href = "/login";
   }
 }
