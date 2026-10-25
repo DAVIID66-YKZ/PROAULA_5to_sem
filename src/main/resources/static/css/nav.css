@@ -231,37 +231,6 @@ html, body {
     transition: fill 0.3s ease;
 }
 
-/* Botón de Cerrar Sesión en Navbar */
-.nav-logout-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(255, 92, 92, 0.1);
-    border: 1.5px solid rgba(255, 92, 92, 0.4);
-    color: #ff5c5c !important;
-    text-decoration: none;
-    box-shadow: 0 0 10px rgba(255, 92, 92, 0.2);
-    cursor: pointer;
-    flex-shrink: 0;
-    margin-left: 10px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-logout-btn:hover {
-    background: rgba(255, 92, 92, 0.3);
-    border-color: #ff5c5c;
-    color: #ffffff !important;
-    box-shadow: 0 0 18px rgba(255, 92, 92, 0.5);
-    transform: translateY(-2px) scale(1.06);
-}
-
-.nav-logout-btn svg {
-    display: block;
-    stroke: currentColor;
-}
 
 /* ================================================================
    RESPONSIVE DESIGN (Garantiza visibilidad completa en celular)
@@ -343,17 +312,6 @@ html, body {
         width: 19px;
         height: 19px;
     }
-
-    .nav-logout-btn {
-        width: 36px;
-        height: 36px;
-        margin-left: 6px;
-    }
-
-    .nav-logout-btn svg {
-        width: 16px;
-        height: 16px;
-    }
 }
 
 @media (max-width: 360px) {
@@ -374,17 +332,6 @@ html, body {
     .nav-perfil-btn .nav-perfil-avatar svg {
         width: 17px;
         height: 17px;
-    }
-
-    .nav-logout-btn {
-        width: 32px;
-        height: 32px;
-        margin-left: 4px;
-    }
-
-    .nav-logout-btn svg {
-        width: 14px;
-        height: 14px;
     }
 }
 

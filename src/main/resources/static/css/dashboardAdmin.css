@@ -271,33 +271,6 @@ h1, h2, h3 {
 .perfil-contenedor {
     display: flex;
     align-items: center;
-    gap: 12px;
-}
-
-.header-logout-btn {
-    background: rgba(255, 92, 92, 0.1);
-    border: 1px solid rgba(255, 92, 92, 0.35);
-    color: #ff5c5c;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.header-logout-btn:hover {
-    background: rgba(255, 92, 92, 0.25);
-    border-color: #ff5c5c;
-    color: #ffffff;
-    transform: scale(1.08);
-}
-
-.header-logout-btn .material-symbols-outlined {
-    font-size: 20px;
-    color: inherit;
 }
 
 .perfil-link {
