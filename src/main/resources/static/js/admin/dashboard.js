@@ -1,4 +1,4 @@
-/* ================================================================
+﻿/* ================================================================
    PANEL ADMIN (DASHBOARD) - GESTREST
    Lógica para KPIs y reservas recientes conectadas a MongoDB
    ================================================================ */
@@ -11,6 +11,7 @@ let reservaEnEdicion = null;
 
 document.addEventListener("DOMContentLoaded", function () {
     cargarEstadisticasDashboard();
+    cargarTotalUsuariosDashboard();
     cargarReservasRecientes();
     configurarBusquedasDashboard();
 });
@@ -19,7 +20,7 @@ function obtenerTokenAdmin() {
     return localStorage.getItem("token") || localStorage.getItem("jwtToken") || "";
 }
 
-// ===== CARGAR ESTADÍSTICAS REALES DE LA BASE DE DATOS =====
+// ===== CARGAR ESTADÃSTICAS REALES DE LA BASE DE DATOS =====
 async function cargarEstadisticasDashboard() {
     let token = obtenerTokenAdmin();
 
@@ -52,7 +53,41 @@ async function cargarEstadisticasDashboard() {
             if (elEsp) elEsp.textContent = String(data.listaEsperaCount !== undefined ? data.listaEsperaCount : 0).padStart(2, "0");
         }
     } catch (e) {
-        console.error("Error al cargar estadísticas:", e);
+        console.error("Error al cargar estadÃ­sticas:", e);
+    }
+}
+
+// ===== CARGAR TOTAL DE USUARIOS (IDÃ‰NTICO A GESTIÃ“N DE USUARIOS) =====
+async function cargarTotalUsuariosDashboard() {
+    let elTotal = document.getElementById("kpiTotalUsuarios") || document.getElementById("totalUsuarios");
+    if (!elTotal) return;
+
+    let token = obtenerTokenAdmin();
+    try {
+        let resp = await fetch("/api/admin/usuarios", {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!resp.ok && resp.status === 404) {
+            resp = await fetch("/usuarios/listar", {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+        }
+
+        if (resp.ok) {
+            let usuarios = await resp.json();
+            if (Array.isArray(usuarios)) {
+                elTotal.textContent = usuarios.length;
+            }
+        }
+    } catch (e) {
+        console.error("Error al cargar total de usuarios:", e);
     }
 }
 

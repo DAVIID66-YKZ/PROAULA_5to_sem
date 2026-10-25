@@ -3,6 +3,15 @@
    Soporte Completo Responsive y Móvil
    ================================================================ */
 
+// Cargar script de traducción si no está presente
+(function () {
+    if (!window.traduccionesAdmin && !document.querySelector('script[src*="translate.js"]')) {
+        let script = document.createElement("script");
+        script.src = "/js/admin/translate.js";
+        document.head.appendChild(script);
+    }
+})();
+
 document.addEventListener("DOMContentLoaded", function () {
     inicializarSidebar();
 });
@@ -121,3 +130,4 @@ function configurarLogoutSidebar() {
         });
     }
 }
+

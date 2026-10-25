@@ -1,6 +1,7 @@
 package com.restaurante.reservasapp.Auth;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,10 @@ public class AuthService {
         UsuarioEntity user = userRepository.findByCorreo(request.getCorreo())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        if (!user.isActivo()) {
+            throw new DisabledException("Esta cuenta ha sido desactivada por el equipo de administración.");
+        }
+
         return AuthResponse.builder()
                 .token(jwtService.getToken(user))
                 .usuarioId(user.getId())
@@ -49,11 +54,12 @@ public class AuthService {
         UsuarioEntity user = UsuarioEntity.builder()
                 .nombre(request.getNombre())
                 .apellido(request.getApellido())
-                .correo(request.getCorreo())
+                .correo(request.getCorreo().trim().toLowerCase())
                 .contrasena(passwordEncoder.encode(request.getContrasena()))
                 .direccion(request.getDireccion())
                 .telefono(request.getTelefono())
                 .rol(Rol.CLIENTE)
+                .activo(true)
                 .build();
 
         UsuarioEntity savedUser = userRepository.save(user);
@@ -66,9 +72,8 @@ public class AuthService {
                 .build();
     }
 
-    // 🔥 NUEVO MÉTODO: Exclusivo para la carga masiva desde tu Thunder Client
+    // Carga masiva
     public void registerBulk(RegisterRequest request) {
-        // Evita duplicados si ejecutas la petición más de una vez por error
         if (userRepository.existsById(request.getId())
                 || userRepository.findByCorreo(request.getCorreo()).isPresent()) {
             System.out.println("El usuario ya existe (ID o Correo): " + request.getCorreo());
@@ -76,14 +81,15 @@ public class AuthService {
         }
 
         UsuarioEntity user = UsuarioEntity.builder()
-                .id(request.getId()) // 👈 CRUCIAL: Asigna tu ID personalizado
+                .id(request.getId())
                 .nombre(request.getNombre())
                 .apellido(request.getApellido())
-                .correo(request.getCorreo())
-                .contrasena(passwordEncoder.encode(request.getContrasena())) // Encripta la contraseña del CSV
+                .correo(request.getCorreo().trim().toLowerCase())
+                .contrasena(passwordEncoder.encode(request.getContrasena()))
                 .direccion(request.getDireccion())
                 .telefono(request.getTelefono())
-                .rol(Rol.valueOf(request.getRol().toUpperCase())) // 👈 Asigna CLIENTE o ADMIN dinámicamente
+                .rol(Rol.valueOf(request.getRol().toUpperCase()))
+                .activo(true)
                 .build();
 
         userRepository.save(user);

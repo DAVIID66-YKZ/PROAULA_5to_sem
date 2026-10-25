@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -11,6 +11,251 @@
     <link rel="stylesheet" th:href="@{/css/variables.css}">
     <link rel="stylesheet" th:href="@{/css/dashboardAdmin.css}">
     <link rel="stylesheet" th:href="@{/css/reservaAdmin.css}">
+
+    <style>
+        .usuarios-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+                .btn-crear-usuario {
+            background: var(--primary, #d4af37);
+            color: #000000 !important;
+            border: none;
+            padding: 11px 22px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
+        }
+        .btn-crear-usuario .material-symbols-outlined {
+            color: #000000 !important;
+            font-size: 19px !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        .btn-crear-usuario:hover {
+            background: #f0c64d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+        .status-badge.status-activo {
+            background: rgba(46, 125, 50, 0.22);
+            color: #81c784;
+            border: 1px solid rgba(129, 199, 132, 0.5);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .status-badge.status-inactivo {
+            background: rgba(211, 47, 47, 0.2);
+            color: #ef9a9a;
+            border: 1px solid rgba(239, 154, 154, 0.45);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .status-badge.role-admin {
+            background: rgba(212, 175, 55, 0.18);
+            color: #f5d77f;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            font-weight: 700;
+        }
+        .status-badge.role-cliente {
+            background: rgba(33, 150, 243, 0.18);
+            color: #90caf9;
+            border: 1px solid rgba(144, 202, 249, 0.4);
+            font-weight: 600;
+        }
+        .status-badge.role-mesero {
+            background: rgba(0, 150, 136, 0.2);
+            color: #80cbc4;
+            border: 1px solid rgba(128, 203, 196, 0.45);
+            font-weight: 600;
+        }
+        .dot-indicator {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot-activo {
+            background: #4caf50;
+            box-shadow: 0 0 6px #4caf50;
+        }
+        .dot-inactivo {
+            background: #f44336;
+            box-shadow: 0 0 6px #f44336;
+        }
+        .user-avatar-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #222;
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            color: var(--primary, #d4af37);
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+        .user-flex-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-name-title {
+            font-weight: 700;
+            color: #fff;
+            display: block;
+            line-height: 1.2;
+        }
+        .user-sub-id {
+            font-size: 11px;
+            color: #888;
+            font-family: monospace;
+            display: block;
+            margin-top: 3px;
+        }
+        .action-btn,
+        .btn-action-icon,
+        .mesa-edit-btn {
+            background-color: transparent;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            color: var(--primary, #d4af37);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            box-sizing: border-box;
+            padding: 0;
+        }
+        .action-btn:hover,
+        .btn-action-icon:hover,
+        .mesa-edit-btn:hover {
+            background-color: rgba(212, 175, 55, 0.15);
+            border-color: var(--primary, #d4af37);
+            transform: translateY(-2px);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+                .action-icon,
+        .action-btn .material-symbols-outlined,
+        .btn-action-icon .material-symbols-outlined {
+            font-size: 18px;
+            color: var(--primary, #d4af37) !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mesa-delete-btn {
+            border-color: rgba(244, 67, 54, 0.3) !important;
+        }
+        .mesa-delete-btn:hover {
+            border-color: #f44336 !important;
+            background-color: rgba(244, 67, 54, 0.12) !important;
+            box-shadow: 0 0 10px rgba(244, 67, 54, 0.2) !important;
+        }
+        .action-btn.btn-success {
+            border-color: rgba(76, 175, 80, 0.3) !important;
+        }
+        .action-btn.btn-success:hover {
+            border-color: #4caf50 !important;
+            background-color: rgba(76, 175, 80, 0.12) !important;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.2) !important;
+        }
+        .actions-cell-flex {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        @media (max-width: 600px) {
+            .modal-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .modal-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+        .modal-form-group label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #aaa;
+        }
+        .modal-form-group input,
+        .modal-form-group select {
+            background: #181818;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+        .modal-form-group input:focus,
+        .modal-form-group select:focus {
+            border-color: var(--primary, #d4af37);
+        }
+        .modal-form-group .form-help {
+            font-size: 11px;
+            color: #777;
+            margin-top: 3px;
+        }
+        .modal-user-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding-bottom: 18px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .soft-delete-banner {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            color: #f5d77f;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-container">
@@ -22,32 +267,95 @@
 
         <!-- ===== MAIN CONTENT ===== -->
         <main class="main-content">
-            <!-- ===== TOP NAVBAR (IDÉNTICO AL CLIENTE) ===== -->
+            <!-- ===== TOP NAVBAR (CON SELECTOR DE IDIOMA) ===== -->
             <header th:replace="~{fragmentos/navAdmin :: navbarAdmin}"></header>
             
             <section id="usuarios" class="content-section active">
-                <header class="section-header">
+                <!-- ENCABEZADO Y BOTÓN CREAR -->
+                <div class="usuarios-header-row">
                     <div>
-                        <h1>Gestión de Usuarios</h1>
-                        <p>Administra cuentas de usuario del sistema, visualiza roles y permisos.</p>
+                        <h1 data-i18n="user.titulo">Gestión de Usuarios</h1>
+                        <p data-i18n="user.subtitulo">Administra cuentas, asigna roles de acceso y activa o desactiva usuarios protegiendo el historial del restaurante.</p>
                     </div>
-                </header>
+                    <button type="button" class="btn-crear-usuario" onclick="abrirModalCrearUsuario()">
+                        <span class="material-symbols-outlined notranslate" style="color: #000000 !important; font-size: 19px !important;">person_add</span>
+                        <span data-i18n="user.btnNuevo">Nuevo Usuario</span>
+                    </button>
+                </div>
 
+                <!-- TARJETAS DE ESTADÍSTICAS (KPIS) -->
+                <div class="stats-container" style="margin-bottom: 25px;">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <span class="material-symbols-outlined">groups</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label" data-i18n="user.kpiTotal">TOTAL USUARIOS</p>
+                            <h2 class="stat-value" id="kpiTotalUsuarios">0</h2>
+                            <span class="stat-subtitle" data-i18n="user.kpiTotalDesc">REGISTRADOS EN SISTEMA</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color: #4caf50;">
+                            <span class="material-symbols-outlined">check_circle</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label" data-i18n="user.kpiActivos">CUENTAS ACTIVAS</p>
+                            <h2 class="stat-value" id="kpiUsuariosActivos" style="color: #81c784;">0</h2>
+                            <span class="stat-subtitle" data-i18n="user.kpiActivosDesc">ACCESO AL SISTEMA HABILITADO</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color: #ef5350;">
+                            <span class="material-symbols-outlined">person_off</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label" data-i18n="user.kpiInactivos">CUENTAS INACTIVAS</p>
+                            <h2 class="stat-value" id="kpiUsuariosInactivos" style="color: #ef9a9a;">0</h2>
+                            <span class="stat-subtitle" data-i18n="user.kpiInactivosDesc">DESACTIVADAS (HISTORIAL PRESERVADO)</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color: var(--primary, #d4af37);">
+                            <span class="material-symbols-outlined">shield_person</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label" data-i18n="user.kpiAdmins">ADMINISTRADORES</p>
+                            <h2 class="stat-value" id="kpiUsuariosAdmin" style="color: var(--primary, #d4af37);">0</h2>
+                            <span class="stat-subtitle" data-i18n="user.kpiAdminsDesc">PERMISOS DE GESTIÓN TOTAL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DE TABLA Y FILTROS -->
                 <div class="reservas-all-section">
                     <!-- CONTROLES DE BÚSQUEDA Y FILTRO -->
-                    <div class="reservas-filters">
+                    <div class="reservas-filters" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                         <input 
                             type="text" 
                             id="buscarUsuario" 
                             class="search-input" 
-                            placeholder="Buscar por nombre, correo o teléfono..."
+                            placeholder="Buscar por nombre, apellido, correo o teléfono..."
+                            data-i18n-placeholder="user.buscarPlaceholder"
+                            style="flex: 1; min-width: 250px;"
                         >
-                        <select id="filtroRol" class="filter-select">
-                            <option value="">Todos los roles</option>
-                            <option value="CLIENTE">Cliente</option>
-                            <option value="MESERO">Mesero</option>
-                            <option value="ADMIN">Admin</option>
+                        <select id="filtroRol" class="filter-select" style="min-width: 160px;">
+                            <option value="" data-i18n="user.todosRoles">Todos los roles</option>
+                            <option value="CLIENTE" data-i18n="user.rolClientes">Clientes</option>
+                            <option value="ADMIN" data-i18n="user.rolAdmins">Administradores</option>
+                            <option value="MESERO" data-i18n="user.rolMeseros">Meseros</option>
                         </select>
+                        <select id="filtroEstado" class="filter-select" style="min-width: 160px;">
+                            <option value="" data-i18n="user.todosEstados">Todos los estados</option>
+                            <option value="ACTIVO" data-i18n="user.soloActivos">Solo Activos</option>
+                            <option value="INACTIVO" data-i18n="user.soloInactivos">Solo Desactivados</option>
+                        </select>
+                        <button type="button" class="btn-action-icon" onclick="limpiarFiltrosUsuarios()" title="Limpiar filtros" data-i18n-title="user.limpiarFiltros" style="padding: 10px 14px;">
+                            <span class="material-symbols-outlined">refresh</span>
+                        </button>
                     </div>
 
                     <!-- TABLA DE USUARIOS -->
@@ -55,33 +363,213 @@
                         <table class="reservas-table-all manuscript-table">
                             <thead>
                                 <tr>
-                                    <th>NOMBRE COMPLETO</th>
-                                    <th>CORREO ELECTRÓNICO</th>
-                                    <th>ROL</th>
-                                    <th>TELÉFONO</th>
-                                    <th>DIRECCIÓN</th>
-                                    <th>ACCIONES</th>
+                                    <th data-i18n="user.thUsuario">USUARIO</th>
+                                    <th data-i18n="user.thCorreo">CORREO ELECTRÓNICO</th>
+                                    <th data-i18n="user.thRol">ROL</th>
+                                    <th data-i18n="user.thTelefono">TELÉFONO</th>
+                                    <th data-i18n="user.thEstado">ESTADO</th>
+                                    <th data-i18n="user.thAcciones">ACCIONES</th>
                                 </tr>
                             </thead>
                             <tbody id="usuariosTableBody">
-                                <!-- Se inyecta dinámicamente -->
+                                <!-- Inyectado dinámicamente -->
                             </tbody>
                         </table>
                     </div>
 
                     <!-- PAGINACIÓN -->
                     <div class="pagination pagination-controls">
-                        <button type="button" class="btn-pagination" id="btnPagAnteriorUsuarios" onclick="paginaAnteriorUsuarios()">Anterior</button>
+                        <button type="button" class="btn-pagination" id="btnPagAnteriorUsuarios" onclick="paginaAnteriorUsuarios()" data-i18n="common.anterior">Anterior</button>
                         <span class="page-info">
-                            Mostrando <span id="paginaActualUsuarios">1</span> de <span id="totalPaginasUsuarios">1</span> páginas
+                            <span data-i18n="common.mostrando">Mostrando</span> <span id="paginaActualUsuarios">1</span> <span data-i18n="common.de">de</span> <span id="totalPaginasUsuarios">1</span> <span data-i18n="common.paginas">páginas</span>
+                            (<span id="totalRegistrosUsuarios">0</span> <span data-i18n="common.usuarios">usuarios</span>)
                         </span>
-                        <button type="button" class="btn-pagination" id="btnPagSiguienteUsuarios" onclick="paginaSiguienteUsuarios()">Siguiente</button>
+                        <button type="button" class="btn-pagination" id="btnPagSiguienteUsuarios" onclick="paginaSiguienteUsuarios()" data-i18n="common.siguiente">Siguiente</button>
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
+    <!-- ===== MODAL CREAR USUARIO ===== -->
+    <div id="modalCrearUsuario" class="modal-manuscript" style="display:none;">
+        <div class="modal-content" style="max-width: 580px;">
+            <div class="modal-user-header">
+                <div class="user-avatar-circle" style="width:44px; height:44px; font-size:18px;">
+                    <span class="material-symbols-outlined">person_add</span>
+                </div>
+                <div>
+                    <h2 style="margin:0;" data-i18n="user.modalCrearTitulo">Registrar Nuevo Usuario</h2>
+                    <p style="margin:0; font-size:12px; color:#888;" data-i18n="user.modalCrearDesc">Crea una cuenta en el sistema con rol y credenciales asignadas.</p>
+                </div>
+            </div>
+
+            <form id="formCrearUsuario" onsubmit="guardarNuevoUsuario(event)">
+                <div class="modal-form-grid">
+                    <div class="modal-form-group">
+                        <label for="crearNombre" data-i18n="user.nombre">Nombre *</label>
+                        <input type="text" id="crearNombre" required placeholder="Ej. Carlos">
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="crearApellido" data-i18n="user.apellido">Apellido *</label>
+                        <input type="text" id="crearApellido" required placeholder="Ej. Gómez">
+                    </div>
+                </div>
+
+                <div class="modal-form-grid">
+                    <div class="modal-form-group">
+                        <label for="crearCorreo" data-i18n="user.correo">Correo Electrónico *</label>
+                        <input type="email" id="crearCorreo" required placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="crearPassword" data-i18n="user.password">Contraseña Inicial *</label>
+                        <input type="password" id="crearPassword" required minlength="8" placeholder="Mínimo 8 caracteres">
+                    </div>
+                </div>
+
+                <div class="modal-form-grid">
+                    <div class="modal-form-group">
+                        <label for="crearTelefono" data-i18n="user.telefono">Teléfono</label>
+                        <input type="tel" id="crearTelefono" placeholder="300 123 4567">
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="crearRol" data-i18n="user.rol">Rol en el Sistema *</label>
+                        <select id="crearRol" required>
+                            <option value="CLIENTE" selected>CLIENTE</option>
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="MESERO">MESERO</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-form-group">
+                    <label for="crearDireccion" data-i18n="user.direccion">Dirección</label>
+                    <input type="text" id="crearDireccion" placeholder="Calle 100 # 15-20">
+                </div>
+
+                <div class="modal-form-group">
+                    <label for="crearActivo" data-i18n="user.estadoInicial">Estado Inicial</label>
+                    <select id="crearActivo">
+                        <option value="true" selected data-i18n="common.activo">Activo</option>
+                        <option value="false" data-i18n="common.inactivo">Inactivo</option>
+                    </select>
+                </div>
+
+                <div class="modal-buttons" style="margin-top:25px;">
+                    <button type="button" class="btn-modal-cancel" onclick="cerrarModalCrearUsuario()" data-i18n="common.cancelar">Cancelar</button>
+                    <button type="submit" class="btn-modal-save" id="btnSubmitCrearUsuario" data-i18n="user.btnCrear">Crear Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== MODAL EDITAR USUARIO ===== -->
+    <div id="modalEditarUsuario" class="modal-manuscript" style="display:none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-user-header">
+                <div class="user-avatar-circle" id="modalEditarAvatar" style="width:46px; height:46px; font-size:18px;">
+                    U
+                </div>
+                <div>
+                    <h2 style="margin:0;" id="modalEditarTitulo" data-i18n="user.modalEditarTitulo">Editar Usuario</h2>
+                    <p style="margin:0; font-size:12px; color:#aaa;" id="modalEditarSubtitulo" data-i18n="user.modalEditarDesc">Modifica la información, rol o estado de la cuenta.</p>
+                </div>
+            </div>
+
+            <div class="soft-delete-banner">
+                <span class="material-symbols-outlined" style="font-size: 20px;">info</span>
+                <span data-i18n="user.bannerProteccion">
+                    <strong>Protección de Historial:</strong> Desactivar una cuenta restringe su inicio de sesión, pero preserva de forma segura todas sus reservas históricas en la base de datos.
+                </span>
+            </div>
+
+            <form id="formEditarUsuario" onsubmit="guardarEdicionUsuario(event)">
+                <input type="hidden" id="editarId">
+
+                <div class="modal-form-grid">
+                    <div class="modal-form-group">
+                        <label for="editarNombre" data-i18n="user.nombre">Nombre</label>
+                        <input type="text" id="editarNombre" required placeholder="Nombre">
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editarApellido" data-i18n="user.apellido">Apellido</label>
+                        <input type="text" id="editarApellido" placeholder="Apellido">
+                    </div>
+                </div>
+
+                <div class="modal-form-grid">
+                    <div class="modal-form-group">
+                        <label for="editarCorreo" data-i18n="user.correo">Correo Electrónico</label>
+                        <input type="email" id="editarCorreo" required placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editarTelefono" data-i18n="user.telefono">Teléfono</label>
+                        <input type="tel" id="editarTelefono" placeholder="300 123 4567">
+                    </div>
+                </div>
+
+                <div class="modal-form-grid">
+                    <div class="modal-form-group">
+                        <label for="editarRol" data-i18n="user.rol">Rol de Usuario</label>
+                        <select id="editarRol">
+                            <option value="CLIENTE">CLIENTE</option>
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="MESERO">MESERO</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-form-group">
+                        <label for="editarEstado" data-i18n="common.estado">Estado de la Cuenta</label>
+                        <select id="editarEstado">
+                            <option value="true" data-i18n="common.activo">Activa</option>
+                            <option value="false" data-i18n="common.inactivo">Desactivada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-form-group">
+                    <label for="editarDireccion" data-i18n="user.direccion">Dirección</label>
+                    <input type="text" id="editarDireccion" placeholder="Dirección de residencia">
+                </div>
+
+                <div class="modal-form-group">
+                    <label for="editarPassword">Nueva Contraseña (Opcional)</label>
+                    <input type="password" id="editarPassword" minlength="8" placeholder="Dejar en blanco para mantener la actual">
+                </div>
+
+                <div class="modal-buttons" style="margin-top:25px;">
+                    <button type="button" class="btn-modal-cancel" onclick="cerrarModalEditarUsuario()" data-i18n="common.cancelar">Cancelar</button>
+                    <button type="submit" class="btn-modal-save" id="btnSubmitEditarUsuario" data-i18n="user.btnGuardar">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== MODAL CONFIRMAR DESACTIVACIÓN ===== -->
+    <div id="modalConfirmarDesactivar" class="modal-manuscript" style="display:none;">
+        <div class="modal-content" style="max-width: 480px; text-align: center;">
+            <div style="width:56px; height:56px; border-radius:50%; background:rgba(239, 83, 80, 0.15); border:1px solid rgba(239,83,80,0.4); display:flex; align-items:center; justify-content:center; margin:0 auto 16px auto; color:#ef5350;">
+                <span class="material-symbols-outlined" style="font-size:32px;">person_off</span>
+            </div>
+            <h2 style="color:#ef5350; margin-bottom:8px;" id="modalConfirmarTitulo" data-i18n="user.desactivarTitulo">¿Desactivar Cuenta?</h2>
+            <p style="color:#ccc; font-size:13px; line-height:1.6; margin-bottom:15px;" id="modalConfirmarMensaje">
+                Al desactivar la cuenta del usuario <strong id="modalConfirmarNombre" style="color:#fff;"></strong>, se le impedirá el inicio de sesión. 
+                <br><br>
+                <span style="color:#f5d77f;">✔ Sus registros históricos y reservas vinculadas permanecerán 100% íntegros en la base de datos.</span>
+            </p>
+            <input type="hidden" id="modalConfirmarId">
+            <input type="hidden" id="modalConfirmarNuevoEstado">
+
+            <div class="modal-buttons" style="justify-content:center; gap:16px;">
+                <button type="button" class="btn-modal-cancel" onclick="cerrarModalConfirmar()" data-i18n="common.cancelar">Cancelar</button>
+                <button type="button" class="btn-modal-save" id="btnConfirmarAccionEstado" style="background:#e53935; color:#fff;" onclick="ejecutarCambioEstadoConfirmado()">
+                    Desactivar Cuenta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/admin/translate.js}"></script>
     <script th:src="@{/js/admin/adminNav.js}"></script>
     <script th:src="@{/js/admin/usuarios.js}"></script>
 </body>

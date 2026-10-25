@@ -35,6 +35,21 @@ public class UsuarioEntity implements UserDetails {
     @Indexed(unique = true)
     private String correo;
 
+    @Builder.Default
+    private Boolean activo = true;
+
+    public Boolean getActivo() {
+        return activo == null ? true : activo;
+    }
+
+    public boolean isActivo() {
+        return activo == null ? true : activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo == null ? true : activo;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (rol == null) {
@@ -70,6 +85,6 @@ public class UsuarioEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isActivo();
     }
 }
