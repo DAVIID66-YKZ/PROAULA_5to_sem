@@ -69,12 +69,33 @@
                 }
             }
 
+            function inicializarScrollHeader() {
+                const header = document.querySelector(".header");
+                if (!header) return;
+                function onScroll() {
+                    const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+                    if (scrollY > 30) {
+                        header.classList.add("header-scrolled");
+                        header.classList.add("scrolled");
+                    } else {
+                        header.classList.remove("header-scrolled");
+                        header.classList.remove("scrolled");
+                    }
+                }
+                window.addEventListener("scroll", onScroll, { passive: true });
+                onScroll();
+            }
+
             window.sincronizarBotonSesionNav = sincronizarBotonSesionNav;
 
             if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", sincronizarBotonSesionNav);
+                document.addEventListener("DOMContentLoaded", function () {
+                    sincronizarBotonSesionNav();
+                    inicializarScrollHeader();
+                });
             } else {
                 sincronizarBotonSesionNav();
+                inicializarScrollHeader();
             }
         })();
     </script>

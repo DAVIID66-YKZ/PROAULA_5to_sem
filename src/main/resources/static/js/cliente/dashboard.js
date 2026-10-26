@@ -92,7 +92,7 @@ async function cargarEstructuraDashboard(token, idUsuario) {
                     <div class="card-empty" style="padding: 45px 20px;">
                         <span class="material-symbols-outlined" style="font-size: 42px; color: #d4af37; display: block; margin-bottom: 12px;">event_available</span>
                         <h3 style="color: #ffffff; font-size: 1.3rem; margin-bottom: 8px; font-family: 'Noto Serif', serif;">No tienes reservas programadas próximamente</h3>
-                        <p style="color: #888888; font-size: 0.95rem; max-width: 520px; margin: 0 auto 22px; line-height: 1.5;">
+                        <p style="color: #ffffff; opacity: 0.95; font-size: 0.95rem; max-width: 520px; margin: 0 auto 22px; line-height: 1.5;">
                             Tu mesa te espera. Puedes reservar tu próxima velada gastronómica o consultar tus visitas anteriores en tu historial.
                         </p>
                         <a href="/reserva" class="btn-new-reservation" style="display: inline-flex; margin: 0 auto; text-decoration: none;">

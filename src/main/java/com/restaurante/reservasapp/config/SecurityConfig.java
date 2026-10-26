@@ -32,7 +32,7 @@ public class SecurityConfig {
                         // Peticiones preflight OPTIONS siempre permitidas
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         // Recursos estáticos
-                        .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**", "/favicon.ico", "/favicon.png", "/favicon*").permitAll()
                         // Vistas públicas
                         .requestMatchers("/", "/index", "/login", "/register", "/menu", "/menu/**", "/legal/**").permitAll()
                         // Endpoints de autenticación públicos

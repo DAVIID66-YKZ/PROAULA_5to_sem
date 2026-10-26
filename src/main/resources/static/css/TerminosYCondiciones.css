@@ -47,7 +47,8 @@
 }
 
 .principal-descripcion p {
-    color: #a0a0a0;
+    color: #ffffff;
+    opacity: 0.95;
     max-width: 700px;
     line-height: 1.7;
     font-size: 1rem;
@@ -114,7 +115,8 @@
 }
 
 .terminos-item p {
-    color: #a0a0a0;
+    color: #ffffff;
+    opacity: 0.95;
     line-height: 1.7;
     font-size: 0.92rem;
     margin: 0;
@@ -167,7 +169,8 @@
 }
 
 .dudas .dudas-descripcion {
-    color: #888888;
+    color: #ffffff;
+    opacity: 0.95;
     margin: 0;
     font-size: 0.95rem;
 }

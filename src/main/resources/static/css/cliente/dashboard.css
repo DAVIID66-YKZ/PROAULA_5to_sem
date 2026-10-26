@@ -9,7 +9,7 @@
 body {
     font-family: 'Manrope', sans-serif;
     background-color: #070707;
-    color: #e0e0e0;
+    color: #ffffff;
     overflow-x: hidden;
     font-weight: 400;
 }
@@ -79,7 +79,8 @@ body {
 }
 
 .welcome-text p {
-    color: #a0a0a0;
+    color: #ffffff;
+    opacity: 0.95;
     font-size: 1.1rem;
     max-width: 600px;
     line-height: 1.6;
@@ -168,6 +169,14 @@ body {
     flex: 1;
 }
 
+.booking-description {
+    color: #ffffff;
+    opacity: 0.95;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-top: 6px;
+}
+
 .booking-meta-info {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -176,7 +185,7 @@ body {
     background: #161616;
     padding: 15px;
     border-radius: 8px;
-    border: 1px solid #222;
+    border: 1px solid rgba(212, 175, 55, 0.2);
 }
 
 .meta-item {
@@ -185,8 +194,8 @@ body {
 }
 
 .meta-label {
-    font-size: 0.7rem;
-    color: #666;
+    font-size: 0.72rem;
+    color: #d4af37;
     font-weight: 700;
     letter-spacing: 1px;
     margin-bottom: 4px;
@@ -253,6 +262,13 @@ body {
     flex: 1;
 }
 
+.item-description p {
+    color: #ffffff;
+    opacity: 0.95;
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
 .item-meta {
     display: flex;
     flex-direction: column;
@@ -263,10 +279,15 @@ body {
     padding: 40px;
     text-align: center;
     background: #111;
-    border: 1px dashed #333;
-    color: #666;
+    border: 1px dashed rgba(212, 175, 55, 0.3);
+    color: #ffffff;
     border-radius: 12px;
     width: 100%;
+}
+
+.card-empty p {
+    color: #ffffff !important;
+    opacity: 0.95;
 }
 
 /* ===== RESPONSIVE ===== */
