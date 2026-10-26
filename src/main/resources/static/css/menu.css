@@ -8,7 +8,7 @@ html {
 }
 
 body {
-    background-color: var(--color-neutral, #0e0e0e);
+    background-color: var(--color-neutral, #121212);
     color: var(--color-text, #ffffff);
     font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
     margin: 0;
@@ -35,10 +35,22 @@ body {
     inset: 0;
     background: radial-gradient(
         circle at 50% 45%,
-        rgba(0, 0, 0, 0.5) 0%,
-        rgba(10, 10, 10, 0.85) 75%,
-        var(--color-neutral, #0e0e0e) 100%
+        rgba(0, 0, 0, 0.45) 0%,
+        rgba(18, 18, 18, 0.8) 70%,
+        var(--color-neutral, #121212) 100%
     );
+}
+
+.menu-hero::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 160px;
+    background: linear-gradient(to bottom, rgba(18, 18, 18, 0) 0%, var(--color-neutral, #121212) 100%);
+    pointer-events: none;
+    z-index: 1;
 }
 
 .menu-content {
@@ -99,37 +111,50 @@ body {
     animation: fadeInUp 1s ease backwards;
 }
 
-/******** NAVEGACIÓN STICKY DE CATEGORÍAS (CÁPSULA CENTRADA) ********/
+/******** OCULTAMIENTO DEL NAVBAR PRINCIPAL (EXCLUSIVO PÁGINA MENÚ) ********/
 
-.menu-nav-wrapper {
-    position: sticky;
-    top: 68px;
-    z-index: 100;
-    display: flex;
-    justify-content: center;
-    padding: 14px 20px;
-    pointer-events: none; /* Permite clicks en la cápsula */
+body.menu-page .header {
+    transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease !important;
 }
 
-.menu-nav {
+body.menu-page .header.header-hidden-menu {
+    transform: translateY(-100%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/******** NAVBAR DE CATEGORÍAS (LÍNEA SUPERIOR E INFERIOR, FONDO OPACO INTEGRADO) ********/
+
+.menu-nav-sticky-bar {
     position: sticky;
-    top: 68px;
-    z-index: 100;
+    top: 0;
+    z-index: 900;
+    width: 100%;
+    margin: 0;
+    padding: 18px 24px;
+    background-color: var(--color-neutral, #121212);
+    background: var(--color-neutral, #121212);
+    border-top: 1px solid rgba(212, 175, 55, 0.22);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+    box-shadow: none;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 12px;
-    max-width: fit-content;
-    margin: 16px auto;
-    padding: 8px 12px;
-    background: rgba(16, 15, 13, 0.88);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    border-radius: 999px;
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.1);
-    pointer-events: auto;
-    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.menu-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .menu-nav a {
@@ -137,9 +162,9 @@ body {
     text-decoration: none;
     text-transform: uppercase;
     letter-spacing: 1.8px;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 700;
-    padding: 9px 20px;
+    padding: 10px 24px;
     border-radius: 999px;
     border: 1px solid transparent;
     transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -149,8 +174,7 @@ body {
     gap: 6px;
 }
 
-.menu-nav a:hover,
-.menu-nav a.active {
+.menu-nav a:hover {
     color: #0e0d0b;
     background: #d4af37;
     border-color: #d4af37;
@@ -158,18 +182,26 @@ body {
     transform: translateY(-1px);
 }
 
+.menu-nav a.active {
+    color: #0e0d0b;
+    background: #d4af37;
+    border-color: #d4af37;
+    box-shadow: 0 4px 18px rgba(212, 175, 55, 0.45);
+    transform: translateY(0);
+}
+
 /******** CABECERAS DE SECCIÓN (TOTALMENTE CENTRADAS) ********/
 
 .menu-title {
     max-width: 900px;
-    margin: 110px auto 0;
+    margin: 80px auto 0;
     padding: 0 24px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    scroll-margin-top: 155px; /* Evita que el navbar fijo tape el título al dar click */
+    scroll-margin-top: 80px; /* Evita que el navbar sticky de categorías tape el título al dar click */
 }
 
 .menu-section-eyebrow {
@@ -553,11 +585,23 @@ body {
     }
 }
 
-/******** RESPONSIVE ********/
-
 @media (max-width: 992px) {
+    .menu-nav-sticky-bar {
+        padding: 14px 20px;
+    }
+
+    .menu-nav {
+        gap: 12px;
+    }
+
+    .menu-nav a {
+        padding: 9px 18px;
+        font-size: 0.78rem;
+        letter-spacing: 1.4px;
+    }
+
     .menu-title {
-        margin-top: 80px;
+        margin-top: 70px;
     }
 
     .menu-grid {
@@ -572,15 +616,21 @@ body {
         min-height: 420px;
     }
 
+    .menu-nav-sticky-bar {
+        padding: 12px 14px;
+    }
+
     .menu-nav {
         gap: 8px;
-        padding: 8px 12px;
-        max-width: calc(100vw - 32px);
+        padding: 4px 0;
+        max-width: 100%;
         overflow-x: auto;
         white-space: nowrap;
         justify-content: flex-start;
         -webkit-overflow-scrolling: touch;
-        border-radius: 12px;
+        border-radius: 0;
+        background: transparent;
+        scrollbar-width: none;
     }
 
     .menu-nav::-webkit-scrollbar {
@@ -588,12 +638,15 @@ body {
     }
 
     .menu-nav a {
-        padding: 7px 14px;
+        padding: 8px 16px;
         font-size: 0.74rem;
+        letter-spacing: 1.2px;
+        flex-shrink: 0;
     }
 
     .menu-title {
-        margin-top: 60px;
+        margin-top: 50px;
+        scroll-margin-top: 70px;
     }
 
     .menu-title-left h2 {

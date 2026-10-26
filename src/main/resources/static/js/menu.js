@@ -51,44 +51,74 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ScrollSpy para destacar la categoría activa en el menú sticky
-    const navLinks = document.querySelectorAll(".menu-nav a");
-    const sections = document.querySelectorAll(".menu-title[id]");
+    // ===== CONTROL EXCLUSIVO DE LA PÁGINA MENÚ =====
+    const isMenuPage = document.body.classList.contains("menu-page") || !!document.getElementById("menuNavStickyBar");
+    if (isMenuPage) {
+        const header = document.querySelector(".header");
+        const navLinks = document.querySelectorAll(".menu-nav a");
+        const sections = document.querySelectorAll(".menu-title[id]");
+        let isClickScrolling = false;
+        let clickTimeout = null;
 
-    if (navLinks.length > 0 && sections.length > 0) {
-        function actualizarCategoriaActiva() {
-            const scrollPos = window.scrollY + 180;
-            let currentId = "";
-
-            sections.forEach(sec => {
-                const top = sec.offsetTop;
-                if (scrollPos >= top) {
-                    currentId = sec.getAttribute("id");
-                }
-            });
-
-            if (!currentId && sections[0]) {
-                currentId = sections[0].getAttribute("id");
+        // 1. Ocultar navbar principal al hacer scroll hacia abajo y restaurarlo al volver arriba
+        function sincronizarNavbarPrincipal() {
+            if (!header) return;
+            const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+            if (scrollY > 40) {
+                header.classList.add("header-hidden-menu");
+            } else {
+                header.classList.remove("header-hidden-menu");
             }
-
-            navLinks.forEach(link => {
-                const href = link.getAttribute("href") || "";
-                if (href === "#" + currentId) {
-                    link.classList.add("active");
-                } else {
-                    link.classList.remove("active");
-                }
-            });
         }
 
-        window.addEventListener("scroll", actualizarCategoriaActiva, { passive: true });
-        actualizarCategoriaActiva();
+        window.addEventListener("scroll", sincronizarNavbarPrincipal, { passive: true });
+        sincronizarNavbarPrincipal();
 
-        navLinks.forEach(link => {
-            link.addEventListener("click", function () {
-                navLinks.forEach(l => l.classList.remove("active"));
-                this.classList.add("active");
+        // 2. Seguimiento de categoría activa (ScrollSpy y clics con resaltado único)
+        if (navLinks.length > 0 && sections.length > 0) {
+            function actualizarCategoriaActiva() {
+                if (isClickScrolling) return;
+                const scrollPos = window.scrollY + 100;
+                let currentId = "";
+
+                sections.forEach(sec => {
+                    const top = sec.offsetTop;
+                    if (scrollPos >= top) {
+                        currentId = sec.getAttribute("id");
+                    }
+                });
+
+                if (!currentId && sections[0]) {
+                    currentId = sections[0].getAttribute("id");
+                }
+
+                navLinks.forEach(link => {
+                    const href = link.getAttribute("href") || "";
+                    if (href === "#" + currentId) {
+                        link.classList.add("active");
+                    } else {
+                        link.classList.remove("active");
+                    }
+                });
+            }
+
+            window.addEventListener("scroll", actualizarCategoriaActiva, { passive: true });
+            actualizarCategoriaActiva();
+
+            navLinks.forEach(link => {
+                link.addEventListener("click", function () {
+                    isClickScrolling = true;
+                    if (clickTimeout) clearTimeout(clickTimeout);
+
+                    navLinks.forEach(l => l.classList.remove("active"));
+                    this.classList.add("active");
+
+                    clickTimeout = setTimeout(function () {
+                        isClickScrolling = false;
+                        actualizarCategoriaActiva();
+                    }, 650);
+                });
             });
-        });
+        }
     }
 });
