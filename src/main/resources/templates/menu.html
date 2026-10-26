@@ -20,7 +20,7 @@
         rel="stylesheet">
 </head>
 
-<body>
+<body class="menu-page">
 
     <header th:replace="~{fragmentos/nav :: navbar}"></header>
 
@@ -48,12 +48,14 @@
 
     <!-- NAV DE CATEGORÍAS -->
 
-    <nav class="menu-nav" aria-label="Categorías del Menú">
-        <a href="#entradas" class="active">Entradas</a>
-        <a href="#platos-fuertes">Platos Fuertes</a>
-        <a href="#bebidas">Bebidas</a>
-        <a href="#postres">Postres</a>
-    </nav>
+    <div class="menu-nav-sticky-bar" id="menuNavStickyBar">
+        <nav class="menu-nav" aria-label="Categorías del Menú">
+            <a href="#entradas" class="active">Entradas</a>
+            <a href="#platos-fuertes">Platos Fuertes</a>
+            <a href="#bebidas">Bebidas</a>
+            <a href="#postres">Postres</a>
+        </nav>
+    </div>
 
     <!-- TITULO -->
 
