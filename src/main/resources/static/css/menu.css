@@ -111,6 +111,48 @@ body {
     animation: fadeInUp 1s ease backwards;
 }
 
+.menu-download-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 26px;
+    padding: 13px 24px;
+    border: 1px solid var(--color-primary, #d4af37);
+    border-radius: 10px;
+    background: var(--color-primary, #d4af37);
+    color: #121212;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.menu-download-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    box-shadow: 0 0 40px var(--color-primary-transparent);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.menu-download-button:hover {
+    transform: translateY(-10px);
+}
+
+.menu-download-button:hover::before {
+    box-shadow: 0 0 60px var(--color-primary-transparent);
+}
+
+.menu-download-button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 4px;
+}
+
 /******** OCULTAMIENTO DEL NAVBAR PRINCIPAL (EXCLUSIVO PÁGINA MENÚ) ********/
 
 body.menu-page .header {
