@@ -6,19 +6,41 @@
         
         <div class="nav-left-group">
             <button id="mobileSidebarToggle" class="mobile-sidebar-toggle" aria-label="Abrir menú" title="Abrir Menú">
-                <span class="material-symbols-outlined">menu</span>
+                <span class="material-symbols-outlined notranslate">menu</span>
             </button>
             <h2 style="cursor: pointer;" onclick="location.href='/cliente/dashboard'">GestRest</h2>
         </div>
 
         <div class="perfil-contenedor">
+            <!-- SELECTOR DE IDIOMA (CLIENTE) -->
+            <div class="lang-selector-dropdown" id="clienteLangSelector">
+                <button type="button" class="lang-btn" id="clienteLangCurrentBtn" aria-expanded="false" title="Cambiar idioma / Change language">
+                    <span class="material-symbols-outlined notranslate" style="font-size: 18px;">translate</span>
+                    <span id="clienteLangCurrentLabel">ES</span>
+                    <span class="material-symbols-outlined lang-arrow notranslate" style="font-size: 14px;">expand_more</span>
+                </button>
+                <div class="lang-menu" id="clienteLangMenu">
+                    <button type="button" class="lang-option" data-lang="es">
+                        <span class="lang-flag notranslate">🇪🇸</span>
+                        <span>Español</span>
+                        <span class="material-symbols-outlined lang-check notranslate" id="cliente-check-es">check</span>
+                    </button>
+                    <button type="button" class="lang-option" data-lang="en">
+                        <span class="lang-flag notranslate">🇺🇸</span>
+                        <span>English</span>
+                        <span class="material-symbols-outlined lang-check notranslate" id="cliente-check-en" style="display:none;">check</span>
+                    </button>
+                </div>
+            </div>
+
             <a th:href="@{/cliente/perfil}" class="perfil-link" title="Mi Perfil" aria-label="Mi Perfil">
-                <span class="material-symbols-outlined">account_circle</span>
+                <span class="material-symbols-outlined notranslate">account_circle</span>
             </a>
         </div>
 
     </header>
 
     <script th:src="@{/js/sessionManager.js}"></script>
+    <script th:src="@{/js/admin/translate.js}"></script>
 </body>
 </html>

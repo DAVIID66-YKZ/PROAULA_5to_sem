@@ -1,4 +1,4 @@
-﻿/* ================================================================
+/* ================================================================
    SISTEMA INTEGRAL DE IDIOMAS (i18n) - GESTREST
    Traductor Unificado para Consola Admin y Portal Cliente
    Archivo único: translate.js
@@ -7,6 +7,14 @@
 
 (function () {
     "use strict";
+
+    if (window._gestrestTranslateScriptLoaded) {
+        if (typeof window.inicializarSelector === "function") {
+            try { window.inicializarSelector(); } catch(e) {}
+        }
+        return;
+    }
+    window._gestrestTranslateScriptLoaded = true;
 
     // ===== 1. DICCIONARIO CLAVE-VALOR (Para data-i18n y scripts) =====
     const I18N_KEYS = {
@@ -654,7 +662,7 @@
             if (tag === "SCRIPT" || tag === "STYLE" || tag === "SVG" || tag === "CODE" || tag === "PRE") {
                 return;
             }
-            if (node.classList && (node.classList.contains("notranslate") || node.classList.contains("lang-menu") || node.classList.contains("material-symbols-outlined") || node.classList.contains("action-icon") || node.id === "adminLangSelector")) {
+            if (node.classList && (node.classList.contains("notranslate") || node.classList.contains("lang-menu") || node.classList.contains("lang-selector-dropdown") || node.classList.contains("lang-btn") || node.classList.contains("material-symbols-outlined") || node.classList.contains("action-icon") || node.id === "adminLangSelector" || node.id === "clienteLangSelector")) {
                 return;
             }
 
@@ -662,17 +670,28 @@
             let key = node.getAttribute("data-i18n");
             if (key) {
                 let dict = I18N_KEYS[idioma] || I18N_KEYS.es;
-                if (dict[key]) node.textContent = dict[key];
+                if (dict[key]) {
+                    node.textContent = dict[key];
+                    return;
+                }
             }
 
             // Traducir atributos
-            let placeholder = node.getAttribute("placeholder");
-            if (placeholder) {
-                if (idioma === "en") {
-                    if (!node._origPlaceholder) node._origPlaceholder = placeholder;
-                    node.setAttribute("placeholder", traducirTexto(placeholder, "en"));
-                } else if (node._origPlaceholder) {
-                    node.setAttribute("placeholder", node._origPlaceholder);
+            let placeholderKey = node.getAttribute("data-i18n-placeholder");
+            if (placeholderKey) {
+                let dict = I18N_KEYS[idioma] || I18N_KEYS.es;
+                if (dict[placeholderKey]) {
+                    node.setAttribute("placeholder", dict[placeholderKey]);
+                }
+            } else {
+                let placeholder = node.getAttribute("placeholder");
+                if (placeholder) {
+                    if (idioma === "en") {
+                        if (!node._origPlaceholder) node._origPlaceholder = placeholder;
+                        node.setAttribute("placeholder", traducirTexto(placeholder, "en"));
+                    } else if (node._origPlaceholder) {
+                        node.setAttribute("placeholder", node._origPlaceholder);
+                    }
                 }
             }
 
@@ -862,27 +881,30 @@
     }
 
     function actualizarSelectorUI(idioma) {
-        let label = document.getElementById("langCurrentLabel");
-        if (label) {
-            label.textContent = idioma.toUpperCase();
-        }
+        let esEs = (idioma === "es");
 
-        let checkEs = document.getElementById("check-es");
-        let checkEn = document.getElementById("check-en");
-
-        if (checkEs) checkEs.style.display = idioma === "es" ? "inline-block" : "none";
-        if (checkEn) checkEn.style.display = idioma === "en" ? "inline-block" : "none";
-
-        document.querySelectorAll(".lang-option").forEach(function (btn) {
-            if (btn.getAttribute("data-lang") === idioma) {
-                btn.classList.add("selected");
-            } else {
-                btn.classList.remove("selected");
+        document.querySelectorAll(".lang-selector-dropdown").forEach(function (dropdown) {
+            let label = dropdown.querySelector("[id*='Label'], [id*='label'], .lang-btn span:not(.material-symbols-outlined)");
+            if (label) {
+                label.textContent = idioma.toUpperCase();
             }
-        });
 
-        let dropdown = document.getElementById("adminLangSelector");
-        if (dropdown) dropdown.classList.remove("open");
+            let checkEs = dropdown.querySelector("#check-es, #cliente-check-es, [id$='-es'], [id$='es']");
+            let checkEn = dropdown.querySelector("#check-en, #cliente-check-en, [id$='-en'], [id$='en']");
+
+            if (checkEs) checkEs.style.display = esEs ? "inline-block" : "none";
+            if (checkEn) checkEn.style.display = !esEs ? "inline-block" : "none";
+
+            dropdown.querySelectorAll(".lang-option").forEach(function (btn) {
+                if (btn.getAttribute("data-lang") === idioma) {
+                    btn.classList.add("selected");
+                } else {
+                    btn.classList.remove("selected");
+                }
+            });
+
+            dropdown.classList.remove("open");
+        });
     }
 
     function inicializarSelector() {
@@ -892,33 +914,50 @@
         actualizarSelectorUI(lang);
         aplicarTraducciones(lang);
 
-        let dropdown = document.getElementById("adminLangSelector");
-        let btnToggle = document.getElementById("langCurrentBtn");
-
-        if (btnToggle && dropdown) {
-            btnToggle.onclick = function (e) {
-                e.stopPropagation();
-                dropdown.classList.toggle("open");
-            };
-        }
-
-        document.addEventListener("click", function (e) {
-            if (dropdown && !dropdown.contains(e.target)) {
-                dropdown.classList.remove("open");
+        // Soporte universal para selectores en Admin y Cliente
+        document.querySelectorAll(".lang-selector-dropdown").forEach(function (dropdown) {
+            let btnToggle = dropdown.querySelector(".lang-btn");
+            if (btnToggle && !btnToggle._hasTranslateToggleBound) {
+                btnToggle._hasTranslateToggleBound = true;
+                btnToggle.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    let wasOpen = dropdown.classList.contains("open");
+                    document.querySelectorAll(".lang-selector-dropdown.open").forEach(function (d) {
+                        d.classList.remove("open");
+                    });
+                    if (!wasOpen) {
+                        dropdown.classList.add("open");
+                    }
+                });
             }
         });
 
-        // Configurar opciones de idioma
+        if (!document._hasTranslateOutsideBound) {
+            document._hasTranslateOutsideBound = true;
+            document.addEventListener("click", function (e) {
+                document.querySelectorAll(".lang-selector-dropdown.open").forEach(function (dropdown) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.remove("open");
+                    }
+                });
+            });
+        }
+
+        // Configurar opciones de cambio de idioma
         document.querySelectorAll(".lang-option").forEach(function (opt) {
-            opt.onclick = function (e) {
-                e.stopPropagation();
-                let nuevo = opt.getAttribute("data-lang");
-                if (nuevo) cambiarIdioma(nuevo);
-            };
+            if (!opt._hasTranslateClickBound) {
+                opt._hasTranslateClickBound = true;
+                opt.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    let nuevo = opt.getAttribute("data-lang");
+                    if (nuevo) cambiarIdioma(nuevo);
+                });
+            }
         });
     }
 
     // ===== 6. EXPOSICIÓN GLOBAL COMPATIBLE =====
+    window.inicializarSelector = inicializarSelector;
     window.traduccionesAdmin = I18N_KEYS;
     window.obtenerIdiomaAdmin = obtenerIdioma;
     window.obtenerIdioma = obtenerIdioma;

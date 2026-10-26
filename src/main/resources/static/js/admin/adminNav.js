@@ -18,22 +18,77 @@
 document.addEventListener("DOMContentLoaded", function () {
     marcarRutaAdminActiva();
     configurarDrawerMobileAdmin();
+    configurarToggleDesktopAdmin();
     mostrarNombreAdmin();
 });
 
 function marcarRutaAdminActiva() {
-    let pathActual = window.location.pathname.toLowerCase();
-    let links = document.querySelectorAll("#sidebarAdminNav .nav-item");
+    let currentPath = window.location.pathname.toLowerCase().trim();
+    let cleanPath = currentPath.replace(/^\/admin\//, "").replace(/^\//, "");
+    let links = document.querySelectorAll("#sidebarAdminNav .nav-item, #sidebarAdminNav a");
 
     links.forEach(function (link) {
-        let targetPath = (link.getAttribute("data-path") || link.getAttribute("href") || "").toLowerCase();
-        
-        if (targetPath && (pathActual === targetPath || pathActual.startsWith(targetPath))) {
-            link.classList.add("active");
-        } else {
-            link.classList.remove("active");
+        let target = (link.getAttribute("data-path") || link.getAttribute("href") || "").toLowerCase().trim();
+        let cleanTarget = target.replace(/^\/admin\//, "").replace(/^\//, "");
+
+        let esActivo = false;
+
+        // Alias para Dashboard
+        let esPathDashboard = (cleanPath === "dashboard" || cleanPath === "dashboardadmin" || cleanPath === "admin" || cleanPath === "");
+        let esTargetDashboard = (cleanTarget === "dashboard" || cleanTarget === "dashboardadmin");
+
+        // Alias para Perfil
+        let esPathPerfil = (cleanPath === "perfil" || cleanPath === "perfiladmin");
+        let esTargetPerfil = (cleanTarget === "perfil" || cleanTarget === "perfiladmin");
+
+        if (esPathDashboard && esTargetDashboard) {
+            esActivo = true;
+        } else if (esPathPerfil && esTargetPerfil) {
+            esActivo = true;
+        } else if (cleanPath && cleanTarget && !esPathDashboard && !esPathPerfil && (cleanPath === cleanTarget || currentPath.includes(cleanTarget))) {
+            esActivo = true;
         }
+
+        link.classList.toggle("active", esActivo);
     });
+}
+
+function configurarToggleDesktopAdmin() {
+    let sidebar = document.getElementById("sidebarAdmin") || document.querySelector(".sidebar");
+    let toggleBtn = document.getElementById("toggleAdminSidebar");
+    let mainContent = document.querySelector(".main-content");
+
+    // Sincronizar estado inicial guardado en localStorage
+    try {
+        if (window.innerWidth > 992 && localStorage.getItem("adminSidebarClosed") === "true") {
+            if (sidebar) sidebar.classList.add("closed");
+            document.documentElement.classList.add("sidebar-collapsed");
+            if (mainContent) mainContent.classList.add("expanded");
+        }
+    } catch (e) {}
+
+    if (toggleBtn && sidebar && !toggleBtn._hasAdminToggleBound) {
+        toggleBtn._hasAdminToggleBound = true;
+        toggleBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (window.innerWidth <= 992) {
+                // Modo móvil: cerrar drawer
+                sidebar.classList.remove("mobile-open");
+                let backdrop = document.getElementById("adminSidebarBackdrop");
+                if (backdrop) backdrop.classList.remove("active");
+            } else {
+                // Modo escritorio: alternar colapso
+                let estaCerrado = sidebar.classList.toggle("closed");
+                document.documentElement.classList.toggle("sidebar-collapsed", estaCerrado);
+                if (mainContent) {
+                    mainContent.classList.toggle("expanded", estaCerrado);
+                }
+                try {
+                    localStorage.setItem("adminSidebarClosed", estaCerrado ? "true" : "false");
+                } catch (err) {}
+            }
+        });
+    }
 }
 
 function configurarDrawerMobileAdmin() {
@@ -58,7 +113,8 @@ function configurarDrawerMobileAdmin() {
         if (backdrop) backdrop.classList.add("active");
     }
 
-    if (toggleBtn && sidebar) {
+    if (toggleBtn && sidebar && !toggleBtn._hasMobileToggleBound) {
+        toggleBtn._hasMobileToggleBound = true;
         toggleBtn.addEventListener("click", function (e) {
             e.stopPropagation();
             if (sidebar.classList.contains("mobile-open")) {
@@ -69,15 +125,19 @@ function configurarDrawerMobileAdmin() {
         });
     }
 
-    if (backdrop) {
+    if (backdrop && !backdrop._hasClickBound) {
+        backdrop._hasClickBound = true;
         backdrop.addEventListener("click", cerrarDrawer);
     }
 
-    window.addEventListener("resize", function () {
-        if (window.innerWidth > 992) {
-            cerrarDrawer();
-        }
-    });
+    if (!window._hasAdminResizeBound) {
+        window._hasAdminResizeBound = true;
+        window.addEventListener("resize", function () {
+            if (window.innerWidth > 992) {
+                cerrarDrawer();
+            }
+        });
+    }
 }
 
 function mostrarNombreAdmin() {

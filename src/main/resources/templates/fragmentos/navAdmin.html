@@ -6,19 +6,41 @@
         
         <div class="nav-left-group">
             <button id="adminSidebarToggle" class="mobile-sidebar-toggle" aria-label="Abrir menú" title="Abrir Menú">
-                <span class="material-symbols-outlined">menu</span>
+                <span class="material-symbols-outlined notranslate">menu</span>
             </button>
             <h2 style="cursor: pointer;" onclick="location.href='/admin/dashboard'">GestRest</h2>
         </div>
 
         <div class="perfil-contenedor">
+            <!-- SELECTOR DE IDIOMA (ADMIN) -->
+            <div class="lang-selector-dropdown" id="adminLangSelector">
+                <button type="button" class="lang-btn" id="langCurrentBtn" aria-expanded="false" title="Cambiar idioma / Change language">
+                    <span class="material-symbols-outlined notranslate" style="font-size: 18px;">translate</span>
+                    <span id="langCurrentLabel">ES</span>
+                    <span class="material-symbols-outlined lang-arrow notranslate" style="font-size: 14px;">expand_more</span>
+                </button>
+                <div class="lang-menu" id="langMenu">
+                    <button type="button" class="lang-option" data-lang="es">
+                        <span class="lang-flag notranslate">🇪🇸</span>
+                        <span>Español</span>
+                        <span class="material-symbols-outlined lang-check notranslate" id="check-es">check</span>
+                    </button>
+                    <button type="button" class="lang-option" data-lang="en">
+                        <span class="lang-flag notranslate">🇺🇸</span>
+                        <span>English</span>
+                        <span class="material-symbols-outlined lang-check notranslate" id="check-en" style="display:none;">check</span>
+                    </button>
+                </div>
+            </div>
+
             <a th:href="@{/admin/perfil}" class="perfil-link" title="Mi Perfil" aria-label="Mi Perfil">
-                <span class="material-symbols-outlined">account_circle</span>
+                <span class="material-symbols-outlined notranslate">account_circle</span>
             </a>
         </div>
 
     </header>
 
     <script th:src="@{/js/sessionManager.js}"></script>
+    <script th:src="@{/js/admin/translate.js}"></script>
 </body>
 </html>
