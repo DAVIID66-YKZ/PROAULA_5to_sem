@@ -33,18 +33,19 @@ function eliminarReservaCarrito() {
     renderizarContenidoCarrito();
 }
 
-// 2. Actualizar el badge visual en el navbar
+// 2. Actualizar el badge visual en el navbar (soporta múltiples navbars)
 function actualizarBadgeCarrito() {
-    const badge = document.getElementById("navCarritoBadge");
-    if (!badge) return;
-
+    const badges = document.querySelectorAll(".nav-carrito-badge, #navCarritoBadge, #clienteNavCarritoBadge");
     const reserva = obtenerReservaCarrito();
-    if (reserva) {
-        badge.style.display = "flex";
-        badge.textContent = "1";
-    } else {
-        badge.style.display = "none";
-    }
+    badges.forEach(badge => {
+        if (!badge) return;
+        if (reserva) {
+            badge.style.display = "flex";
+            badge.textContent = "1";
+        } else {
+            badge.style.display = "none";
+        }
+    });
 }
 
 // 3. Control del Drawer del Carrito
@@ -399,25 +400,27 @@ function abrirModalMenuIndex() {
     const modal = document.getElementById("modalMenuIndex");
     if (!modal) return;
 
+    const mostrarModal = () => {
+        sincronizarCheckboxesIndex();
+        modal.style.display = "flex";
+        modal.classList.remove("hidden");
+        modal.setAttribute("aria-hidden", "false");
+    };
+
     const checkboxes = document.querySelectorAll(".modal-index-plato-checkbox");
     if (checkboxes.length === 0) {
-        asegurarCatalogoPlatos().then(() => {
-            sincronizarCheckboxesIndex();
-            modal.classList.remove("hidden");
-            modal.setAttribute("aria-hidden", "false");
-        });
+        asegurarCatalogoPlatos().then(mostrarModal);
         return;
     }
 
-    sincronizarCheckboxesIndex();
-    modal.classList.remove("hidden");
-    modal.setAttribute("aria-hidden", "false");
+    mostrarModal();
 }
 
 function cerrarModalMenuIndex() {
     const modal = document.getElementById("modalMenuIndex");
     if (!modal) return;
     sincronizarCheckboxesIndex();
+    modal.style.display = "none";
     modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
 }
@@ -719,8 +722,13 @@ function manejarClickBotonReserva(event) {
         return;
     }
 
-    // Si NO está logueado -> Abrir modal de reserva del index para permitir elegir platos y guardar en el carrito
-    abrirModalReservaIndex();
+    // Si NO está logueado:
+    const modalIndex = document.getElementById("modalReservaIndexBackdrop");
+    if (modalIndex && typeof abrirModalReservaIndex === "function") {
+        abrirModalReservaIndex();
+    } else {
+        window.location.href = "/index#reserva";
+    }
 }
 
 // Exponer explícitamente en el objeto window para evitar problemas de ámbito

@@ -12,6 +12,18 @@
         </div>
 
         <div class="perfil-contenedor">
+            <!-- BOTÓN CARRITO (CLIENTE) -->
+            <button type="button" id="clienteNavBtnCarrito" class="nav-carrito-btn" onclick="abrirCarrito();" title="Mi Carrito de Reserva" aria-label="Carrito de Reserva">
+                <span class="nav-carrito-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                </span>
+                <span id="clienteNavCarritoBadge" class="nav-carrito-badge" style="display: none;">1</span>
+            </button>
+
             <!-- SELECTOR DE IDIOMA (CLIENTE) -->
             <div class="lang-selector-dropdown" id="clienteLangSelector">
                 <button type="button" class="lang-btn" id="clienteLangCurrentBtn" aria-expanded="false" title="Cambiar idioma / Change language">
@@ -40,7 +52,11 @@
 
     </header>
 
+    <!-- Drawer del Carrito disponible en vista cliente -->
+    <div th:replace="~{fragmentos/carritoDrawer :: carritoDrawer}"></div>
+
     <script th:src="@{/js/sessionManager.js}"></script>
+    <script th:src="@{/js/carritoReserva.js}"></script>
     <script th:src="@{/js/admin/translate.js}"></script>
 </body>
 </html>

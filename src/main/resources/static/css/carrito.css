@@ -105,6 +105,12 @@
     background: rgba(20, 20, 20, 0.95);
 }
 
+.carrito-header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .carrito-header h3 {
     margin: 0;
     color: #ffffff;
@@ -446,6 +452,31 @@
     cursor: not-allowed;
 }
 
+.btn-vaciar-carrito {
+    width: 100%;
+    margin-top: 10px;
+    background: transparent;
+    border: 1px solid rgba(255, 85, 85, 0.35);
+    color: #ff7777;
+    padding: 11px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-sizing: border-box;
+}
+
+.btn-vaciar-carrito:hover {
+    background: rgba(255, 85, 85, 0.12);
+    border-color: #ff5555;
+    color: #ff9999;
+}
+
 /* ================================================================
    MODAL DE INTENTO DE RESERVA EN EL INDEX (IDÉNTICO A CLIENTE)
    ================================================================ */
@@ -599,5 +630,123 @@
     .carrito-drawer {
         width: 100vw;
         max-width: 100vw;
+    }
+}
+
+/* ================================================================
+   MODAL DE PLATOS DEL CARRITO (AISLADO Y RESPONSIVE)
+   ================================================================ */
+.hidden {
+    display: none !important;
+}
+
+.reserva-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100002;
+    box-sizing: border-box;
+}
+
+.reserva-modal-backdrop.hidden {
+    display: none !important;
+}
+
+.reserva-modal {
+    width: min(620px, 100%);
+    background: #141311;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 18px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 30px rgba(212, 175, 55, 0.1);
+    overflow: hidden;
+    color: #e5ded6;
+}
+
+.reserva-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 24px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.reserva-modal-header h3 {
+    margin: 0;
+    color: #fff;
+    font-family: 'Noto Serif', serif;
+    font-size: 1.4rem;
+}
+
+.reserva-modal-header p {
+    margin: 4px 0 0;
+    color: #999;
+    font-size: 13px;
+}
+
+.reserva-modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    color: #ddd;
+    font-size: 1.5rem;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reserva-modal-close:hover {
+    color: #d4af37;
+    border-color: #d4af37;
+    transform: rotate(90deg);
+}
+
+.reserva-modal-body {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 20px 24px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.reserva-plato-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.reserva-plato-item:hover {
+    border-color: rgba(212, 175, 55, 0.4);
+    background: rgba(212, 175, 55, 0.04);
+}
+
+.reserva-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(15, 14, 12, 0.6);
+}
+
+@media (max-width: 600px) {
+    .reserva-modal-body {
+        grid-template-columns: 1fr;
     }
 }

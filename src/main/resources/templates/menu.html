@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -31,7 +31,7 @@
         <div class="overlay"></div>
 
         <div class="menu-content">
-            <span>EST. 2025</span>
+            <span class="menu-content-badge">✦ EST. 2025 · ALTA COCINA ✦</span>
 
             <h1>
                 El Menú <br>
@@ -40,32 +40,31 @@
 
             <p>
                 Una experiencia gastronómica premium diseñada para sorprender
-                cada uno de tus sentidos.
+                cada uno de tus sentidos con ingredientes seleccionados.
             </p>
         </div>
 
     </section>
 
-    <!-- NAV -->
+    <!-- NAV DE CATEGORÍAS -->
 
-    <section class="menu-nav">
-        <a href="#entradas">Entradas</a>
+    <nav class="menu-nav" aria-label="Categorías del Menú">
+        <a href="#entradas" class="active">Entradas</a>
         <a href="#platos-fuertes">Platos Fuertes</a>
         <a href="#bebidas">Bebidas</a>
         <a href="#postres">Postres</a>
-
-    </section>
+    </nav>
 
     <!-- TITULO -->
 
     <!-- ENTRADAS -->
     <section class="menu-title" id="entradas">
-
+        <span class="menu-section-eyebrow">✦ CAPÍTULO I · APERITIVOS ✦</span>
         <div class="menu-title-left">
             <h2>Entradas</h2>
-            <p>Comienza tu experiencia con sabores que despiertan el apetito.</p>
+            <p>Comienza tu experiencia con sabores artesanales que despiertan el apetito.</p>
         </div>
-
+        <div class="menu-section-divider"><span>✦</span></div>
     </section>
 
     <section class="menu-grid" aria-label="Entradas">
@@ -85,12 +84,12 @@
 
     <!-- Platos Fuertes -->
     <section class="menu-title" id="platos-fuertes">
-
+        <span class="menu-section-eyebrow">✦ CAPÍTULO II · ESPECIALIDADES ✦</span>
         <div class="menu-title-left">
             <h2>Platos Fuertes</h2>
-            <p>Disfruta de nuestra selección de platos principales, preparados con ingredientes de la más alta calidad.</p>
+            <p>Disfruta de nuestra selección de platos principales, preparados con técnicas de autor y la más alta calidad.</p>
         </div>
-
+        <div class="menu-section-divider"><span>✦</span></div>
     </section>
 
     <section class="menu-grid" aria-label="Platos Fuertes">
@@ -110,12 +109,12 @@
 
        <!--Bebidas -->
     <section class="menu-title" id="bebidas">
-
+        <span class="menu-section-eyebrow">✦ CAPÍTULO III · MARIDAJE Y CÓCTELES ✦</span>
         <div class="menu-title-left">
             <h2>Bebidas</h2>
-            <p>Refresca tu paladar con nuestra selección de bebidas, desde cócteles clásicos hasta refrescos naturales.</p>
+            <p>Refresca tu paladar con nuestra selecta coctelería clásica, vinos y refrescos naturales.</p>
         </div>
-
+        <div class="menu-section-divider"><span>✦</span></div>
     </section>
 
     <section class="menu-grid" aria-label="Bebidas">
@@ -135,12 +134,12 @@
 
        <!-- Postres -->
     <section class="menu-title" id="postres">
-
+        <span class="menu-section-eyebrow">✦ CAPÍTULO IV · DULCE FINAL ✦</span>
         <div class="menu-title-left">
             <h2>Postres</h2>
-            <p>Termina tu comida con nuestros deliciosos postres, elaborados con los mejores ingredientes.</p>
+            <p>Culmina tu velada con nuestras exclusivas creaciones dulces elaboradas por nuestros maestros pasteleros.</p>
         </div>
-
+        <div class="menu-section-divider"><span>✦</span></div>
     </section>
 
     <section class="menu-grid" aria-label="Postres">
