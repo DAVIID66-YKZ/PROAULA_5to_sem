@@ -1,4 +1,4 @@
-/* ===== MI PERFIL - CONTAINER PRINCIPAL ===== */
+﻿/* ===== MI PERFIL - CONTAINER PRINCIPAL ===== */
 
 .perfil-wrapper {
     display: grid;
@@ -286,6 +286,7 @@
 
 .perfil-btn-icon {
     font-size: 18px;
+    color: var(--secondary, #121212) !important;
 }
 
 /* ===== RESPONSIVE ===== */

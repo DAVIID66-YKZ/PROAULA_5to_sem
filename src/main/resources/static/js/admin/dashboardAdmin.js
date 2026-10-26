@@ -1,4 +1,4 @@
-// 1. Guardián de Validación Inmediata de Sesión y Rol ADMIN
+﻿// 1. Guardián de Validación Inmediata de Sesión y Rol ADMIN
 (function () {
   let token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
   let rol = localStorage.getItem("rol");
@@ -153,7 +153,8 @@ async function actualizarEstadisticas() {
         let stats = await res.json();
         setEl("ocupancia", (stats.ocupanciaTotal || 0) + "%");
         setEl("totalHuespedes", stats.totalHuespedes || 0);
-        setEl("listaEspera", String(stats.listaEsperaCount || 0).padStart(2, "0"));
+        if (stats.totalUsuarios !== undefined) { setEl("kpiTotalUsuarios", stats.totalUsuarios); setEl("totalUsuarios", stats.totalUsuarios); }
+                setEl("listaEspera", String(stats.listaEsperaCount || 0).padStart(2, "0"));
         setEl("mesasActivas", stats.mesasActivas || 0);
         setEl("mesasTotales", stats.mesasTotales || 0);
         return;
@@ -764,7 +765,7 @@ function configurarBusquedaUsuarios(usuarios) {
 }
 
 async function eliminarUsuario(id) {
-  if (!confirm("¿Eliminar este usuario permanentemente?")) return;
+  if (!confirm("¿Desea desactivar este usuario? Se conservar�n todas sus reservas en la base de datos pero se impedir� su acceso.")) return;
 
   if (conectadoAlBackend && TOKEN) {
     try {
@@ -773,7 +774,7 @@ async function eliminarUsuario(id) {
         headers: { Authorization: `Bearer ${TOKEN}` },
       });
       if (res.ok) {
-        alert("Usuario eliminado correctamente.");
+        alert("Cuenta desactivada correctamente. Las reservas se mantienen intactas.");
         cargarUsuariosSistema();
       } else {
         alert("No se pudo eliminar el usuario.");
@@ -980,3 +981,4 @@ function filtrarMesas() {
     container.appendChild(div);
   });
 }
+

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -22,14 +22,14 @@
 
         <!-- ===== MAIN CONTENT ===== -->
         <main class="main-content">
-            <!-- ===== TOP NAVBAR (IDÉNTICO AL CLIENTE) ===== -->
+            <!-- ===== TOP NAVBAR (CON SELECTOR DE IDIOMA) ===== -->
             <header th:replace="~{fragmentos/navAdmin :: navbarAdmin}"></header>
             
             <section id="dashboard" class="content-section active">
                 <header class="section-header">
                     <div>
-                        <h1>Registro de Reservas</h1>
-                        <p>Supervisa las reservas actuales y la logística de huéspedes en tiempo real.</p>
+                        <h1 data-i18n="dash.titulo">Registro de Reservas</h1>
+                        <p data-i18n="dash.subtitulo">Supervisa las reservas actuales y la logística de huéspedes en tiempo real.</p>
                     </div>
                 </header>
 
@@ -40,19 +40,19 @@
                             <span class="material-symbols-outlined">bar_chart</span>
                         </div>
                         <div class="stat-content">
-                            <p class="stat-label">OCUPACIÓN</p>
+                            <p class="stat-label" data-i18n="dash.ocupacion">OCUPACIÓN</p>
                             <h2 class="stat-value" id="ocupancia">--%</h2>
                         </div>
                     </div>
 
-                    <div class="stat-card">
+                                                                                <div class="stat-card">
                         <div class="stat-icon">
                             <span class="material-symbols-outlined">groups</span>
                         </div>
                         <div class="stat-content">
-                            <p class="stat-label">TOTAL DE HUÉSPEDES</p>
-                            <h2 class="stat-value" id="totalHuespedes">--</h2>
-                            <span class="stat-subtitle">REGISTRADOS EN SISTEMA</span>
+                            <p class="stat-label" data-i18n="user.kpiTotal">TOTAL USUARIOS</p>
+                            <h2 class="stat-value" id="kpiTotalUsuarios">0</h2>
+                            <span class="stat-subtitle" data-i18n="user.kpiTotalDesc">REGISTRADOS EN SISTEMA</span>
                         </div>
                     </div>
 
@@ -61,26 +61,26 @@
                             <span class="material-symbols-outlined">schedule</span>
                         </div>
                         <div class="stat-content">
-                            <p class="stat-label">LISTA DE ESPERA / PENDIENTES</p>
+                            <p class="stat-label" data-i18n="dash.espera">LISTA DE ESPERA / PENDIENTES</p>
                             <h2 class="stat-value" id="listaEspera">--</h2>
-                            <span class="stat-subtitle">EN COLA DE CONFIRMACIÓN</span>
+                            <span class="stat-subtitle" data-i18n="dash.enCola">EN COLA DE CONFIRMACIÓN</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tabla de Reservas Recientes -->
                 <section class="reservas-section">
-                    <h2 class="section-title">Reservas Recientes</h2>
+                    <h2 class="section-title" data-i18n="dash.recientes">Reservas Recientes</h2>
                     
                     <div class="reservas-controls">
-                        <input type="text" id="buscarHuesped" class="search-input" placeholder="BUSCAR UN HUÉSPED...">
+                        <input type="text" id="buscarHuesped" class="search-input" placeholder="BUSCAR UN HUÉSPED..." data-i18n-placeholder="dash.buscarHuesped">
                         <button type="button" class="filter-btn" onclick="toggleFiltroPanel()" title="Filtrar por estado">
                             <span class="material-symbols-outlined">filter_list</span>
                         </button>
 
                         <div id="filtroPanel" style="display:none; width: 100%; margin-top:10px;">
                             <select id="filtroEstadoRecientes" class="filter-select" onchange="filtrarReservasRecientes()">
-                                <option value="">Todos los Estados</option>
+                                <option value="" data-i18n="dash.todosEstados">Todos los Estados</option>
                                 <option value="CONFIRMADA">Confirmada</option>
                                 <option value="COMPLETADA">Completada</option>
                                 <option value="PENDIENTE">Pendiente</option>
@@ -93,12 +93,12 @@
                         <table class="reservas-table manuscript-table">
                             <thead>
                                 <tr>
-                                    <th>NOMBRE DEL HUÉSPED</th>
-                                    <th>FECHA Y HORA</th>
-                                    <th>NÚMERO DE PERSONAS</th>
-                                    <th>MESA</th>
-                                    <th>ESTADO</th>
-                                    <th>ACCIONES</th>
+                                    <th data-i18n="dash.thHuesped">NOMBRE DEL HUÉSPED</th>
+                                    <th data-i18n="dash.thFechaHora">FECHA Y HORA</th>
+                                    <th data-i18n="dash.thPersonas">NÚMERO DE PERSONAS</th>
+                                    <th data-i18n="dash.thMesa">MESA</th>
+                                    <th data-i18n="dash.thEstado">ESTADO</th>
+                                    <th data-i18n="dash.thAcciones">ACCIONES</th>
                                 </tr>
                             </thead>
                             <tbody id="reservasTableBody">
@@ -108,9 +108,9 @@
                     </div>
 
                     <div class="pagination pagination-controls">
-                        <button type="button" class="btn-pagination" onclick="paginaAnterior()">Anterior</button>
+                        <button type="button" class="btn-pagination" onclick="paginaAnterior()" data-i18n="common.anterior">Anterior</button>
                         <span class="page-info">Mostrando <span id="paginaActual">1</span> de <span id="totalPaginas">1</span> páginas</span>
-                        <button type="button" class="btn-pagination" onclick="paginaSiguiente()">Siguiente</button>
+                        <button type="button" class="btn-pagination" onclick="paginaSiguiente()" data-i18n="common.siguiente">Siguiente</button>
                     </div>
                 </section>
             </section>
@@ -134,12 +134,13 @@
                 </select>
             </div>
             <div class="modal-buttons">
-                <button type="button" class="btn-modal-cancel" onclick="cerrarModalReserva()">Cancelar</button>
-                <button type="button" class="btn-modal-save" onclick="guardarEdicionReserva()">Actualizar</button>
+                <button type="button" class="btn-modal-cancel" onclick="cerrarModalReserva()" data-i18n="common.cancelar">Cancelar</button>
+                <button type="button" class="btn-modal-save" onclick="guardarEdicionReserva()" data-i18n="common.guardar">Actualizar</button>
             </div>
         </div>
     </div>
 
+    <script th:src="@{/js/admin/translate.js}"></script>
     <script th:src="@{/js/admin/adminNav.js}"></script>
     <script th:src="@{/js/admin/dashboard.js}"></script>
 </body>
