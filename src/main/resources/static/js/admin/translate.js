@@ -1,4 +1,4 @@
-/* ================================================================
+﻿/* ================================================================
    SISTEMA INTEGRAL DE IDIOMAS (i18n) - GESTREST
    Traductor Unificado para Consola Admin y Portal Cliente
    Archivo único: translate.js
@@ -135,7 +135,10 @@
             "user.todosRoles": "Todos los roles",
             "user.rolClientes": "Clientes",
             "user.rolAdmins": "Administradores",
-            "user.rolMeseros": "Meseros",
+                        "user.rolMeseros": "Meseros",
+            "user.rolCliente": "CLIENTE",
+            "user.rolAdmin": "ADMINISTRADOR",
+            "user.rolMesero": "MESERO",
             "user.todosEstados": "Todos los estados",
             "user.soloActivos": "Solo Activos",
             "user.soloInactivos": "Solo Desactivados",
@@ -281,7 +284,10 @@
             "user.todosRoles": "All roles",
             "user.rolClientes": "Clients",
             "user.rolAdmins": "Administrators",
-            "user.rolMeseros": "Waiters",
+                        "user.rolMeseros": "Waiters",
+            "user.rolCliente": "CLIENT",
+            "user.rolAdmin": "ADMINISTRATOR",
+            "user.rolMesero": "WAITER",
             "user.todosEstados": "All statuses",
             "user.soloActivos": "Active only",
             "user.soloInactivos": "Deactivated only",
@@ -545,7 +551,49 @@
         "personas": "guests",
         "Cargando...": "Loading...",
         "Guardar": "Save",
-        "Cerrar": "Close"
+        "Cerrar": "Close",
+
+        // --- Admin: Reservas & Mesas extra ---
+        "Todas las Reservas": "All Reservations",
+        "Vista completa de todas las reservas y citas del restaurante.": "Complete view of all restaurant reservations and appointments.",
+        "Buscar por huésped, mesa o fecha...": "Search by guest, table or date...",
+        "Editar Estado de la Reserva": "Edit Reservation Status",
+        "Estado de la Reserva": "Reservation Status",
+        "Cena Carta": "A la Carte Dinner",
+        "Mesa asignada": "Assigned Table",
+        "Sin asignar": "Unassigned",
+        "Eliminar Reserva": "Delete Reservation",
+        "Editar Estado": "Edit Status",
+        "Cargando histórico de reservas desde el manuscrito en vivo...": "Loading live reservation history...",
+        "No hay reservas registradas en el sistema.": "No reservations registered in the system.",
+        "No se encontraron reservas con ese criterio.": "No reservations found matching that criteria.",
+
+        // --- Admin: Usuarios extra ---
+        "CLIENTE": "CLIENT",
+        "MESERO": "WAITER",
+        "Sin correo registrado": "No email registered",
+        "No registrado": "Not registered",
+        "No se encontraron usuarios coincidentes con los criterios de búsqueda.": "No matching users found.",
+        "No se encontraron usuarios en la base de datos.": "No users found in database.",
+
+        // --- Admin: Menú extra ---
+        "Cargando platos del menú...": "Loading menu dishes...",
+        "No hay platos para mostrar con los filtros actuales.": "No dishes to display with current filters.",
+        "No hay platos registrados en el menú.": "No dishes registered in the menu.",
+        "Sin descripción": "No description",
+        "Sin categoría": "No category",
+        "No especificado": "Not specified",
+        "Plato sin nombre": "Unnamed dish",
+
+        // --- Admin: Perfil extra ---
+        "MI PERFIL": "MY PROFILE",
+        "Datos Personales": "Personal Information",
+        "Cambiar Contraseña": "Change Password",
+        "Actualizar Datos": "Update Information",
+        "Dirección de Residencia": "Residential Address",
+        "Tu nombre": "Your first name",
+        "Tu apellido": "Your last name",
+        "Tu dirección completa": "Your full address"
     };
 
     // Crear el diccionario inverso (EN -> ES) automáticamente
@@ -614,6 +662,12 @@
         }
         if (typeof window.cargarMesas === "function" && window.todasLasMesas) {
             window.renderizarListaMesas && window.renderizarListaMesas(window.todasLasMesas);
+        }
+        if (typeof window.renderizarTablaReservasTodas === "function") {
+            window.renderizarTablaReservasTodas();
+        }
+        if (typeof window.renderizarPlatos === "function") {
+            window.renderizarPlatos();
         }
     }
 
@@ -850,7 +904,7 @@
                 z-index: 99999;
                 backdrop-filter: blur(8px);
             }
-            .lang-selector-dropdown.open .lang-menu { display: flex; animation: fadeInLang 0.2s ease; }
+            .lang-selector-dropdown.open .lang-menu { display: flex !important; animation: fadeInLang 0.2s ease; }
             @keyframes fadeInLang {
                 from { opacity: 0; transform: translateY(-6px); }
                 to { opacity: 1; transform: translateY(0); }
@@ -917,10 +971,12 @@
         // Soporte universal para selectores en Admin y Cliente
         document.querySelectorAll(".lang-selector-dropdown").forEach(function (dropdown) {
             let btnToggle = dropdown.querySelector(".lang-btn");
-            if (btnToggle && !btnToggle._hasTranslateToggleBound) {
-                btnToggle._hasTranslateToggleBound = true;
-                btnToggle.addEventListener("click", function (e) {
-                    e.stopPropagation();
+            if (btnToggle) {
+                btnToggle.onclick = function (e) {
+                    if (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
                     let wasOpen = dropdown.classList.contains("open");
                     document.querySelectorAll(".lang-selector-dropdown.open").forEach(function (d) {
                         d.classList.remove("open");
@@ -928,32 +984,34 @@
                     if (!wasOpen) {
                         dropdown.classList.add("open");
                     }
-                });
+                };
             }
+
+            dropdown.querySelectorAll(".lang-option").forEach(function (opt) {
+                opt.onclick = function (e) {
+                    if (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    dropdown.classList.remove("open");
+                    let nuevo = opt.getAttribute("data-lang");
+                    if (nuevo) {
+                        cambiarIdioma(nuevo);
+                    }
+                };
+            });
         });
 
         if (!document._hasTranslateOutsideBound) {
             document._hasTranslateOutsideBound = true;
             document.addEventListener("click", function (e) {
-                document.querySelectorAll(".lang-selector-dropdown.open").forEach(function (dropdown) {
-                    if (!dropdown.contains(e.target)) {
+                if (!e.target.closest(".lang-selector-dropdown")) {
+                    document.querySelectorAll(".lang-selector-dropdown.open").forEach(function (dropdown) {
                         dropdown.classList.remove("open");
-                    }
-                });
+                    });
+                }
             });
         }
-
-        // Configurar opciones de cambio de idioma
-        document.querySelectorAll(".lang-option").forEach(function (opt) {
-            if (!opt._hasTranslateClickBound) {
-                opt._hasTranslateClickBound = true;
-                opt.addEventListener("click", function (e) {
-                    e.stopPropagation();
-                    let nuevo = opt.getAttribute("data-lang");
-                    if (nuevo) cambiarIdioma(nuevo);
-                });
-            }
-        });
     }
 
     // ===== 6. EXPOSICIÓN GLOBAL COMPATIBLE =====

@@ -33,12 +33,12 @@
                 </button>
                 <div class="lang-menu" id="clienteLangMenu">
                     <button type="button" class="lang-option" data-lang="es">
-                        <span class="lang-flag notranslate">🇪🇸</span>
+                        <span class="lang-flag notranslate">ES</span>
                         <span>Español</span>
                         <span class="material-symbols-outlined lang-check notranslate" id="cliente-check-es">check</span>
                     </button>
                     <button type="button" class="lang-option" data-lang="en">
-                        <span class="lang-flag notranslate">🇺🇸</span>
+                        <span class="lang-flag notranslate">US</span>
                         <span>English</span>
                         <span class="material-symbols-outlined lang-check notranslate" id="cliente-check-en" style="display:none;">check</span>
                     </button>
@@ -50,6 +50,9 @@
             </a>
         </div>
 
+        <!-- Script translate cargado de forma estándar en el header para estar siempre disponible -->
+        <script th:src="@{/js/sessionManager.js}"></script>
+        <script th:src="@{/js/admin/translate.js}"></script>
     </header>
 
     <!-- Drawer del Carrito disponible en vista cliente -->

@@ -1,4 +1,4 @@
-/* ================================================================
+﻿/* ================================================================
    GESTIÓN DE MESAS - GESTREST
    Lógica completa de administración de mesas conectada a MongoDB
    ================================================================ */
@@ -241,3 +241,12 @@ async function eliminarMesa(id) {
         alert("Error de red al eliminar la mesa.");
     }
 }
+
+// ===== EXPOSICIÓN GLOBAL Y EVENTOS =====
+window.renderizarListaMesas = renderizarListaMesas;
+window.todasLasMesas = todasLasMesas;
+window.addEventListener("idiomaCambiado", function () {
+    if (typeof renderizarListaMesas === "function" && todasLasMesas) {
+        renderizarListaMesas(todasLasMesas);
+    }
+});

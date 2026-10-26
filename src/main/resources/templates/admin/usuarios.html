@@ -257,6 +257,99 @@
             font-size: 12px;
             line-height: 1.5;
         }
+        /* ===== DISENO RESPONSIVO (GESTION DE USUARIOS) ===== */
+        .usuarios-header-row h1 {
+            font-family: 'Noto Serif', serif;
+            font-size: 1.85rem;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+        .usuarios-header-row p {
+            color: #888888;
+            font-size: 13.5px;
+            margin: 0;
+            max-width: 800px;
+            line-height: 1.45;
+        }
+
+        @media (max-width: 992px) {
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 16px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .usuarios-header-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 16px;
+                margin-bottom: 20px;
+            }
+            .usuarios-header-row h1 {
+                font-size: 1.5rem !important;
+                line-height: 1.25;
+            }
+            .usuarios-header-row p {
+                font-size: 12.5px;
+            }
+            .btn-crear-usuario {
+                width: 100%;
+                justify-content: center;
+                padding: 12px 18px;
+            }
+            .stats-container {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+                margin-bottom: 20px !important;
+            }
+            .stat-card {
+                padding: 16px 18px !important;
+            }
+            .reservas-filters {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+            }
+            .reservas-filters .search-input,
+            .reservas-filters .filter-select,
+            .reservas-filters .btn-action-icon {
+                width: 100% !important;
+                min-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .modal-form-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .table-wrapper table {
+                min-width: 750px;
+            }
+            .modal-content {
+                width: 95% !important;
+                max-width: 95% !important;
+                padding: 22px 16px !important;
+                margin: 12px auto !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .usuarios-header-row h1 {
+                font-size: 1.35rem !important;
+            }
+            .pagination-controls {
+                flex-direction: column;
+                gap: 12px;
+                align-items: center;
+            }
+            .pagination-controls .btn-pagination {
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -348,7 +441,7 @@
                             <option value="" data-i18n="user.todosRoles">Todos los roles</option>
                             <option value="CLIENTE" data-i18n="user.rolClientes">Clientes</option>
                             <option value="ADMIN" data-i18n="user.rolAdmins">Administradores</option>
-                            <option value="MESERO" data-i18n="user.rolMeseros">Meseros</option>
+                            
                         </select>
                         <select id="filtroEstado" class="filter-select" style="min-width: 160px;">
                             <option value="" data-i18n="user.todosEstados">Todos los estados</option>
@@ -439,7 +532,7 @@
                         <select id="crearRol" required>
                             <option value="CLIENTE" selected>CLIENTE</option>
                             <option value="ADMIN">ADMIN</option>
-                            <option value="MESERO">MESERO</option>
+                            
                         </select>
                     </div>
                 </div>
@@ -516,7 +609,7 @@
                         <select id="editarRol">
                             <option value="CLIENTE">CLIENTE</option>
                             <option value="ADMIN">ADMIN</option>
-                            <option value="MESERO">MESERO</option>
+                            
                         </select>
                     </div>
 

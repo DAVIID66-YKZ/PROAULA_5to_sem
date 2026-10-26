@@ -203,7 +203,14 @@ function renderizarTablaUsuarios(listaEspecifica) {
         let rolKey = String(u.rol || "CLIENTE").trim().toUpperCase().replace("ROLE_", "");
         let badgeRolCls = "role-cliente";
         if (rolKey === "ADMIN") badgeRolCls = "role-admin";
-        if (rolKey === "MESERO") badgeRolCls = "role-mesero";
+        
+
+        let rolDisplay = rolKey;
+        if (typeof window.t === "function") {
+            if (rolKey === "CLIENTE") rolDisplay = window.t("user.rolCliente", "CLIENTE");
+            else if (rolKey === "ADMIN") rolDisplay = window.t("user.rolAdmin", "ADMINISTRADOR");
+            
+        }
 
         // Estado (Activo / Inactivo)
         let estaActivo = u.activo === undefined || u.activo === null ? true : Boolean(u.activo);
@@ -247,7 +254,7 @@ function renderizarTablaUsuarios(listaEspecifica) {
                 <span style="color:#dcdcdc; font-size:13px;">${correo}</span>
             </td>
             <td>
-                <span class="status-badge ${badgeRolCls}">${rolKey}</span>
+                <span class="status-badge ${badgeRolCls}">${rolDisplay}</span>
             </td>
             <td>
                 <span style="color:#aaa; font-size:13px;">${telefono}</span>
@@ -462,7 +469,7 @@ function abrirModalEditarUsuario(id) {
     let userRol = String(user.rol || "CLIENTE").trim().toUpperCase().replace("ROLE_", "");
     let selectRol = document.getElementById("editarRol");
     if (selectRol) {
-        selectRol.value = (userRol === "ADMIN" || userRol === "MESERO") ? userRol : "CLIENTE";
+        selectRol.value = (userRol === "ADMIN") ? "ADMIN" : "CLIENTE";
     }
 
     // Estado
@@ -685,3 +692,11 @@ async function ejecutarCambioEstadoConfirmado() {
         }
     }
 }
+
+// ===== EXPOSICIÓN GLOBAL Y EVENTOS =====
+window.renderizarTablaUsuarios = renderizarTablaUsuarios;
+window.addEventListener("idiomaCambiado", function () {
+    if (typeof renderizarTablaUsuarios === "function") {
+        renderizarTablaUsuarios();
+    }
+});

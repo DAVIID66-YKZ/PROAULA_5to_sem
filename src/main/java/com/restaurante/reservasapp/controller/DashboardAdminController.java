@@ -250,7 +250,7 @@ public class DashboardAdminController {
                     "rol", modificado.getRol().name()
             ));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Rol no válido. Valores permitidos: ADMIN, CLIENTE, MESERO."));
+            return ResponseEntity.badRequest().body(Map.of("message", "Rol no válido. Valores permitidos: ADMIN, CLIENTE."));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }

@@ -1,4 +1,4 @@
-/* ================================================================
+﻿/* ================================================================
    HISTÓRICO Y GESTIÓN DE RESERVAS - GESTREST
    Lógica completa de visualización y edición conectada a MongoDB
    ================================================================ */
@@ -118,9 +118,14 @@ function renderizarTablaReservasTodas(listaFiltrada) {
                     <span class="fecha">${fechaHora}</span>
                 </div>
             </td>
-            <td>${personas} personas</td>
+            <td>${personas} ${(localStorage.getItem("adminIdioma") === "en") ? "guests" : "personas"}</td>
             <td><strong style="color:var(--gold-light, #e0aa3e);">${mesa}</strong></td>
-            <td><span class="status-badge ${cls}">${estadoKey}</span></td>
+                        <td><span class="status-badge ${cls}">${(function() {
+                var isEn = (localStorage.getItem("adminIdioma") === "en");
+                if (!isEn) return estadoKey;
+                var map = { CONFIRMADA: "CONFIRMED", PENDIENTE: "PENDING", LLEGADA: "ARRIVED", CANCELADA: "CANCELLED", COMPLETADA: "COMPLETED" };
+                return map[estadoKey] || estadoKey;
+            })()}</span></td>
             <td>${experiencia}</td>
             <td>
                 <div style="display:flex; gap:8px;">
@@ -301,3 +306,11 @@ async function eliminarReserva(id) {
         alert("Error de red al eliminar la reserva.");
     }
 }
+
+// ===== EXPOSICIÓN GLOBAL Y EVENTOS =====
+window.renderizarTablaReservasTodas = renderizarTablaReservasTodas;
+window.addEventListener("idiomaCambiado", function () {
+    if (typeof renderizarTablaReservasTodas === "function") {
+        renderizarTablaReservasTodas();
+    }
+});

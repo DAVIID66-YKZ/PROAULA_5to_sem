@@ -1,4 +1,4 @@
-let todosLosPlatos = [];
+﻿let todosLosPlatos = [];
 let paginaActualPlatos = 1;
 const itemsPorPaginaPlatos = 8;
 const formatoPrecioPlato = new Intl.NumberFormat("es-CO", {
@@ -152,7 +152,8 @@ function renderizarListaPlatos(listaFiltrada) {
         let disponible = Boolean(plato.disponible);
         let badge = document.createElement("span");
         badge.className = `status-badge ${disponible ? "status-confirmed" : "status-cancelada"}`;
-        badge.textContent = disponible ? "DISPONIBLE" : "NO DISPONIBLE";
+                let isEn = (localStorage.getItem("adminIdioma") === "en");
+        badge.textContent = disponible ? (isEn ? "AVAILABLE" : "DISPONIBLE") : (isEn ? "UNAVAILABLE" : "NO DISPONIBLE");
 
         let metadatos = document.createElement("div");
         metadatos.className = "plato-metadatos";
@@ -447,3 +448,14 @@ async function editarPlato(id) {
         block: "start"
     });
 }
+// ===== EXPOSICIÓN GLOBAL Y EVENTOS =====
+window.renderizarPlatos = renderizarListaPlatos;
+window.todosLosPlatos = todosLosPlatos;
+window.addEventListener("idiomaCambiado", function () {
+    if (typeof renderizarListaPlatos === "function") {
+        renderizarListaPlatos();
+        if (typeof actualizarContadoresPlatos === "function") {
+            actualizarContadoresPlatos();
+        }
+    }
+});

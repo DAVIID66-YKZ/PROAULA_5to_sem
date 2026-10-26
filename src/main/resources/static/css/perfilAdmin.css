@@ -39,13 +39,13 @@
 }
 
 .perfil-card-title {
-    font-size: 11px;      /* antes 18px — queda igual que tus otros títulos del panel */
-    letter-spacing: 0.13em;
-
+    font-family: 'Noto Serif', serif;
+    font-size: 1.3rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--primary, #d4af37);
     margin: 0;
     padding: 0;
+    letter-spacing: 0.5px;
 }
 
 /* ===== FORM STYLES ===== */
@@ -307,7 +307,8 @@
     }
 
     .perfil-card-title {
-        font-size: 16px;
+        font-family: 'Noto Serif', serif;
+        font-size: 1.15rem;
     }
 
     .perfil-card-header {
