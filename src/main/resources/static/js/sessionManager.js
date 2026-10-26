@@ -150,12 +150,45 @@
     }
     window.cerrarSesionApp = cerrarSesionApp;
 
+    // Efecto de Navbar dinámico: 100% transparente arriba y negro al hacer scroll
+    function inicializarEfectoScrollNavbar() {
+        const headers = document.querySelectorAll(".header");
+        if (!headers.length) return;
+
+        function actualizarScrollNavbar() {
+            const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+            const esScrolled = scrollY > 30;
+            headers.forEach(header => {
+                if (esScrolled) {
+                    header.classList.add("header-scrolled");
+                    header.classList.add("scrolled");
+                } else {
+                    header.classList.remove("header-scrolled");
+                    header.classList.remove("scrolled");
+                }
+            });
+        }
+
+        window.addEventListener("scroll", actualizarScrollNavbar, { passive: true });
+        window.addEventListener("scroll", actualizarScrollNavbar, { passive: true, capture: true });
+        actualizarScrollNavbar();
+    }
+
+    window.inicializarEfectoScrollNavbar = inicializarEfectoScrollNavbar;
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", inicializarEfectoScrollNavbar);
+    } else {
+        inicializarEfectoScrollNavbar();
+    }
+
     // Exportar helpers en window
     window.GestRestSession = {
         renovarActividad,
         comprobarEstadoSesion,
         cerrarSesionPorInactividad,
         cerrarSesionApp,
+        inicializarEfectoScrollNavbar,
         TIEMPO_INACTIVIDAD_MS
     };
 })();

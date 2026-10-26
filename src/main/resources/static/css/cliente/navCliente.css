@@ -13,9 +13,14 @@
     top: 0;
     left: 250px;
     z-index: 990;
-    transition: all 0.3s ease;
+    transition: background-color 0.35s ease, background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease, -webkit-backdrop-filter 0.35s ease, width 0.3s ease, left 0.3s ease, height 0.3s ease;
     padding: 0 35px;
     box-sizing: border-box;
+    background-color: transparent !important;
+    background: transparent !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: 1px solid transparent;
 }
 
 .sidebar.closed ~ .dashboard-main .header,
@@ -79,7 +84,7 @@
 
 .nav-item a {
     text-decoration: none;
-    color: #aaaaaa;
+    color: #ffffff;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.5px;
@@ -114,11 +119,19 @@
 }
 
 .efecto-blur {
-    background-color: transparent !important;
-    background: transparent !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    background-color: transparent;
+    background: transparent;
+}
+
+/* Al hacer scroll hacia abajo: se pone negro elegante */
+.header.header-scrolled,
+.header.scrolled {
+    background-color: rgba(10, 10, 10, 0.96) !important;
+    background: rgba(10, 10, 10, 0.96) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.22) !important;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.8) !important;
 }
 
 /* ===== RESPONSIVE ===== */

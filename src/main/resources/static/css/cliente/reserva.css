@@ -48,7 +48,8 @@
 }
 
 .reserva-visual-texto {
-    color: #888;
+    color: #ffffff;
+    opacity: 0.95;
     font-size: 0.9rem;
     line-height: 1.6;
 }
@@ -118,7 +119,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* --- SELECTOR DE EXPERIENCIAS (3 COLUMNAS) --- */
 .reserva-label-seccion {
     display: block;
-    color: #888;
+    color: #ffffff;
     font-size: 13px;
     margin-bottom: 15px;
 }

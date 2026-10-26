@@ -28,7 +28,8 @@
 }
 
 .priv-descripcion {
-    color: #a0a0a0;
+    color: #ffffff;
+    opacity: 0.95;
     max-width: 700px;
     line-height: 1.7;
     font-size: 1.05rem;
@@ -79,7 +80,8 @@
 }
 
 .descripcion p {
-    color: #e0e0e0;
+    color: #ffffff;
+    opacity: 0.95;
     line-height: 1.8;
     margin-top: 0;
 }
@@ -117,7 +119,8 @@
 }
 
 .recopilacion .descripcion-item p {
-    color: #a0a0a0;
+    color: #ffffff;
+    opacity: 0.95;
     line-height: 1.7;
     margin: 0;
     font-size: 0.95rem;
@@ -175,7 +178,8 @@
 }
 
 .uso-contenedor .uso-txt p {
-    color: #a0a0a0;
+    color: #ffffff;
+    opacity: 0.95;
     line-height: 1.8;
 }
 
@@ -221,11 +225,33 @@
 }
 
 .expediente p {
-    color: #a0a0a0;
+    color: #ffffff;
+    opacity: 0.95;
     line-height: 1.8;
     max-width: 600px;
     margin: 0;
     font-size: 0.95rem;
+}
+
+.expediente .reserva-link {
+    background-color: var(--color-primary, #d4af37);
+    color: #000000;
+    padding: 13px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.expediente .reserva-link:hover {
+    background-color: #f0c64d;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
 }
 
 /* ================================================================

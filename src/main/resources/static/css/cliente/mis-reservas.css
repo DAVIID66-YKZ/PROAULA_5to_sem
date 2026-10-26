@@ -128,9 +128,10 @@ body {
 }
 
 .pill-past {
-    background: rgba(255, 255, 255, 0.04) !important;
-    color: #888888 !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    opacity: 0.9;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 .btn-new-reservation {
@@ -220,8 +221,8 @@ body {
 
 .btn-modal-cancel {
     background: transparent;
-    color: #888;
-    border: 1px solid #333;
+    color: #ffffff;
+    border: 1px solid #444;
     padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
@@ -330,7 +331,7 @@ body {
 .modal-close-icon {
     background: transparent;
     border: none;
-    color: #888;
+    color: #ffffff;
     font-size: 26px;
     cursor: pointer;
     line-height: 1;
