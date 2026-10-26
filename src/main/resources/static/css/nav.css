@@ -1,3 +1,5 @@
+@import url('carrito.css');
+
 /* ================================================================
    NAVBAR & FOOTER - GESTREST
    Diseño Responsive sin desbordamiento horizontal y botón visible
@@ -7,12 +9,21 @@
     box-sizing: border-box;
 }
 
-html, body {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden !important;
+html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
     margin: 0;
     padding: 0;
+}
+
+body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
 }
 
 .header {
@@ -34,7 +45,6 @@ html, body {
     padding: 16px 30px;
     box-sizing: border-box;
     transition: background-color 0.35s ease, background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease, -webkit-backdrop-filter 0.35s ease, padding 0.3s ease;
-    overflow-x: hidden;
 }
 
 .efecto-blur {

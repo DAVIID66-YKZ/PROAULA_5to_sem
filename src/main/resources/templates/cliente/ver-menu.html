@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -24,31 +24,49 @@
         /* Ajuste fino para acomodar las tarjetas del menú original al layout privado */
         .menu-page-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 40px 24px;
+        }
+
+        .section-header-inline {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 24px;
         }
 
         .menu-nav-inline {
             display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-            padding-bottom: 15px;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 36px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+            padding-bottom: 18px;
         }
 
         .menu-nav-inline a {
-            color: #888;
+            color: #d4ccbf;
             text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            letter-spacing: 1px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
-            transition: color 0.3s;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            transition: all 0.25s ease;
         }
 
         .menu-nav-inline a:hover {
-            color: #d4af37;
+            color: #12100d;
+            background: #d4af37;
+            border-color: #d4af37;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+            transform: translateY(-1px);
         }
     </style>
 </head>

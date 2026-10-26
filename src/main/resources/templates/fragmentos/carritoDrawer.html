@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="carritoDrawer" style="display: contents;">
+        <!-- ===== BACKDROP DEL CARRITO GLOBAL ===== -->
+        <div id="carritoBackdrop" class="carrito-backdrop" onclick="cerrarCarrito();"></div>
+
+        <!-- ===== DRAWER LATERAL DEL CARRITO GLOBAL ===== -->
+        <aside id="carritoDrawer" class="carrito-drawer" aria-label="Carrito de Reserva">
+            <div class="carrito-header">
+                <div class="carrito-header-title">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #d4af37; flex-shrink: 0;">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <div>
+                        <h3>Tu Carrito</h3>
+                        <p>Reserva local en este dispositivo</p>
+                    </div>
+                </div>
+                <button type="button" class="carrito-close-btn" onclick="cerrarCarrito();" aria-label="Cerrar">&times;</button>
+            </div>
+
+            <div id="carritoBody" class="carrito-body">
+                <!-- Se inyecta dinámicamente desde carritoReserva.js -->
+            </div>
+
+            <div id="carritoFooter" class="carrito-footer">
+                <button type="button" id="btnConfirmarCarrito" class="btn-confirmar-carrito" onclick="confirmarReservaCarrito();">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Confirmar Reserva</span>
+                </button>
+                <button type="button" class="btn-vaciar-carrito" onclick="eliminarReservaCarrito();">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    <span>Vaciar Carrito</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ===== MODAL DE SELECCIÓN DE PLATOS PARA EL CARRITO ===== -->
+        <div id="modalMenuIndex" class="reserva-modal-backdrop hidden" style="display: none; position: fixed; inset: 0; z-index: 100002;" aria-hidden="true" onclick="if(event.target === this) cerrarModalMenuIndex();">
+            <div class="reserva-modal" role="dialog" aria-modal="true" aria-labelledby="tituloModalMenuIndex">
+                <div class="reserva-modal-header">
+                    <div>
+                        <h3 id="tituloModalMenuIndex">Agrega platos a tu reserva</h3>
+                        <p>Elige de nuestra carta para tenerlos listos a tu llegada.</p>
+                    </div>
+                    <button type="button" class="reserva-modal-close" onclick="cerrarModalMenuIndex();" aria-label="Cerrar modal">&times;</button>
+                </div>
+                <div class="reserva-modal-body" id="modalIndexPlatosBody">
+                    <p class="reserva-menu-vacio" id="modalIndexMenuVacioMsg">
+                        Cargando platos disponibles...
+                    </p>
+                </div>
+                <div class="reserva-modal-footer">
+                    <button type="button" class="reserva-btn-secondary" onclick="cerrarModalMenuIndex();">Cancelar</button>
+                    <button type="button" class="reserva-btn-primary" onclick="guardarPlatosSeleccionadosIndex(); cerrarModalMenuIndex();">Confirmar Platos</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
