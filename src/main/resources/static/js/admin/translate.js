@@ -1,4 +1,4 @@
-﻿/* ================================================================
+/* ================================================================
    SISTEMA INTEGRAL DE IDIOMAS (i18n) - GESTREST
    Traductor Unificado para Consola Admin y Portal Cliente
    Archivo único: translate.js
@@ -28,6 +28,7 @@
             "nav.usuarios": "GESTIONAR USUARIOS",
             "nav.perfil": "MI PERFIL",
             "nav.menu": "GESTIONAR MENÚ",
+            "nav.prediccion": "PREDICCIÓN ML",
             "nav.verSitio": "Ver Sitio",
             "nav.cerrarSesion": "Cerrar Sesión",
             "header.miPerfil": "Mi Perfil",
@@ -177,6 +178,7 @@
             "nav.usuarios": "MANAGE USERS",
             "nav.perfil": "MY PROFILE",
             "nav.menu": "MANAGE MENU",
+            "nav.prediccion": "ML PREDICTION",
             "nav.verSitio": "View Site",
             "nav.cerrarSesion": "Log Out",
             "header.miPerfil": "My Profile",

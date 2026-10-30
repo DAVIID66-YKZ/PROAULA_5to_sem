@@ -107,5 +107,9 @@ public class ViewController {
     public String menuAdmin() {
         return "admin/menu";
     }
-    
+
+    @GetMapping({"/admin/prediccion", "/admin/predicciones"})
+    public String adminPrediccion() {
+        return "admin/prediccion";
+    }
 }

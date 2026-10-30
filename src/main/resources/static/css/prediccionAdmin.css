@@ -1,0 +1,314 @@
+/* ================================================================
+   PREDICCIÓN DE RESERVAS Y DEMANDA (ML) - GESTREST
+   Estilos para Panel de Control Predictivo en Tiempo Real
+   ================================================================ */
+
+.prediccion-container {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ===== BARRA DE HERRAMIENTAS Y FILTROS ===== */
+.prediccion-toolbar {
+    background: var(--color-gray, #1C1B1B);
+    border: 1px solid var(--color-gray-light, #2A2A2A);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.filtros-grupo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.filtro-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filtro-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #A0A0A0;
+    letter-spacing: 0.5px;
+}
+
+.filtro-input, .filtro-select {
+    background: #121212;
+    border: 1px solid #333333;
+    color: #FFFFFF;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filtro-input:focus, .filtro-select:focus {
+    border-color: var(--color-primary, #D4AF37);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
+
+.acciones-grupo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* Indicador de estado En Vivo */
+.live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.35);
+    color: #4ADE80;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: #22C55E;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #22C55E;
+    animation: pulse-live 1.8s infinite;
+}
+
+@keyframes pulse-live {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 14px #22C55E; }
+    100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+.btn-actualizar-prediccion {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #D4AF37 0%, #AA820A 100%);
+    color: #121212;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s;
+}
+
+.btn-actualizar-prediccion:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.btn-actualizar-prediccion:active {
+    transform: translateY(1px);
+}
+
+.btn-actualizar-prediccion.loading span.material-symbols-outlined {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+/* ===== BANNER DE ALERTA DE CAPACIDAD ===== */
+.alerta-banner {
+    padding: 14px 18px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.alerta-banner.optima {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: #22C55E;
+    color: #86EFAC;
+}
+
+.alerta-banner.advertencia {
+    background: rgba(234, 179, 8, 0.1);
+    border-color: #EAB308;
+    color: #FDE047;
+}
+
+.alerta-banner.peligro {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #EF4444;
+    color: #FCA5A5;
+}
+
+/* ===== CARDS DE KPIS ===== */
+.kpis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.kpi-card-predictivo {
+    background: var(--color-gray, #1C1B1B);
+    border: 1px solid var(--color-gray-light, #2A2A2A);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.kpi-card-predictivo:hover {
+    transform: translateY(-2px);
+    border-color: rgba(212, 175, 55, 0.4);
+}
+
+.kpi-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--color-primary, #D4AF37);
+}
+
+.kpi-icon-wrap.green {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22C55E;
+}
+
+.kpi-icon-wrap.purple {
+    background: rgba(168, 85, 247, 0.15);
+    color: #C084FC;
+}
+
+.kpi-icon-wrap.blue {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60A5FA;
+}
+
+.kpi-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.kpi-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9E9E9E;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.kpi-number {
+    font-size: 26px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin: 4px 0 2px 0;
+    font-family: var(--font-family-title, "Noto Serif", serif);
+}
+
+.kpi-subtext {
+    font-size: 11px;
+    color: #777;
+}
+
+/* ===== SECCIÓN DE GRÁFICOS ===== */
+.graficos-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 1024px) {
+    .graficos-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.grafico-card {
+    background: var(--color-gray, #1C1B1B);
+    border: 1px solid var(--color-gray-light, #2A2A2A);
+    border-radius: 12px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.grafico-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.grafico-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFFFFF;
+    font-family: var(--font-family-title, "Noto Serif", serif);
+}
+
+.grafico-canvas-wrap {
+    position: relative;
+    width: 100%;
+    min-height: 280px;
+}
+
+/* ===== TABLA DE DESGLOSE POR HORARIOS ===== */
+.desglose-card {
+    background: var(--color-gray, #1C1B1B);
+    border: 1px solid var(--color-gray-light, #2A2A2A);
+    border-radius: 12px;
+    padding: 22px;
+}
+
+.badge-estado {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.badge-estado.optimo {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ADE80;
+}
+
+.badge-estado.moderado {
+    background: rgba(234, 179, 8, 0.15);
+    color: #FDE047;
+}
+
+.badge-estado.alto {
+    background: rgba(239, 68, 68, 0.15);
+    color: #F87171;
+}
+

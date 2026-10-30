@@ -34,3 +34,12 @@ build/
 
 ### Variables de Entorno ###
 .env
+*.env.local
+
+### Python & Microservicio ML ###
+servicio-ml/.venv/
+servicio-ml/venv/
+servicio-ml/__pycache__/
+__pycache__/
+*.py[cod]
+.pytest_cache/

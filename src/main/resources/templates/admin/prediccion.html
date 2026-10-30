@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción y Demanda (ML) - GestRest</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboardAdmin.css}">
+    <link rel="stylesheet" th:href="@{/css/reservaAdmin.css}">
+    <link rel="stylesheet" th:href="@{/css/prediccionAdmin.css}">
+
+    <!-- Chart.js para visualización gráfica predictiva -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- ===== SIDEBAR ADMIN ===== -->
+        <div th:replace="~{fragmentos/sidebarAdmin :: sidebarAdmin}"></div>
+
+        <!-- ===== MOBILE BACKDROP ===== -->
+        <div id="adminSidebarBackdrop" class="admin-sidebar-backdrop"></div>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+            <!-- ===== TOP NAVBAR ===== -->
+            <header th:replace="~{fragmentos/navAdmin :: navbarAdmin}"></header>
+
+            <section class="content-section active prediccion-container">
+                <header class="section-header">
+                    <div>
+                        <h1 class="gold-text">Predicción de Reservas y Demanda</h1>
+                        <p>Inferencia predictiva en tiempo real impulsada por Machine Learning y datos de MongoDB Atlas.</p>
+                    </div>
+                </header>
+
+                <!-- ===== BARRA DE CONTROL Y FILTROS ===== -->
+                <div class="prediccion-toolbar">
+                    <div class="filtros-grupo">
+                        <div class="filtro-item">
+                            <label class="filtro-label" for="inputFechaInicio">FECHA INICIO</label>
+                            <input type="date" id="inputFechaInicio" class="filtro-input">
+                        </div>
+
+                        <div class="filtro-item">
+                            <label class="filtro-label" for="inputFechaFin">FECHA FIN</label>
+                            <input type="date" id="inputFechaFin" class="filtro-input">
+                        </div>
+
+                        <div class="filtro-item">
+                            <label class="filtro-label" for="selectTurno">TURNO / FRANJA</label>
+                            <select id="selectTurno" class="filtro-select">
+                                <option value="COMPLETO">Día Completo (11:00 - 22:00)</option>
+                                <option value="ALMUERZO">Almuerzo (12:00 - 15:00)</option>
+                                <option value="CENA">Cena (18:00 - 22:00)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="acciones-grupo">
+                        <div class="live-badge" title="Monitoreo y streaming activo con MongoDB y FastAPI">
+                            <span class="live-dot"></span>
+                            <span id="txtEstadoLive">EN VIVO / CONECTADO</span>
+                        </div>
+
+                        <button id="btnActualizarPrediccion" class="btn-actualizar-prediccion" onclick="actualizarPrediccionManual()">
+                            <span class="material-symbols-outlined">sync</span>
+                            <span>Actualizar Predicción</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== BANNER DE ALERTA DINÁMICA ===== -->
+                <div id="bannerAlerta" class="alerta-banner optima">
+                    <span class="material-symbols-outlined" id="bannerAlertaIcon">verified</span>
+                    <span id="bannerAlertaTexto">Sincronizando estado y demanda con el modelo predictivo...</span>
+                </div>
+
+                <!-- ===== KPIS PREDICTIVOS ===== -->
+                <div class="kpis-grid">
+                    <div class="kpi-card-predictivo">
+                        <div class="kpi-icon-wrap">
+                            <span class="material-symbols-outlined">table_restaurant</span>
+                        </div>
+                        <div class="kpi-details">
+                            <span class="kpi-title">MESAS A PREPARAR (PICO)</span>
+                            <h2 class="kpi-number" id="kpiMesasPico">--</h2>
+                            <span class="kpi-subtext">Holgura de seguridad +10% aplicada</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card-predictivo">
+                        <div class="kpi-icon-wrap green">
+                            <span class="material-symbols-outlined">person_pin</span>
+                        </div>
+                        <div class="kpi-details">
+                            <span class="kpi-title">COMENSALES ESTIMADOS</span>
+                            <h2 class="kpi-number" id="kpiComensalesEst">--</h2>
+                            <span class="kpi-subtext" id="kpiComensalesReales">Reales en BD: 0</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card-predictivo">
+                        <div class="kpi-icon-wrap purple">
+                            <span class="material-symbols-outlined">percent</span>
+                        </div>
+                        <div class="kpi-details">
+                            <span class="kpi-title">OCUPACIÓN PROYECTADA</span>
+                            <h2 class="kpi-number" id="kpiOcupacionProy">--%</h2>
+                            <span class="kpi-subtext" id="kpiOcupacionReal">Ocupación real actual: 0%</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card-predictivo">
+                        <div class="kpi-icon-wrap blue">
+                            <span class="material-symbols-outlined">book_online</span>
+                        </div>
+                        <div class="kpi-details">
+                            <span class="kpi-title">RESERVAS EN MONGODB</span>
+                            <h2 class="kpi-number" id="kpiTotalReservas">0</h2>
+                            <span class="kpi-subtext" id="kpiTotalMesasLocal">Capacidad: -- mesas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== SECCIÓN DE GRÁFICOS INTERACTIVOS ===== -->
+                <div class="graficos-grid">
+                    <!-- Gráfico 1: Comparativo por Horarios -->
+                    <div class="grafico-card">
+                        <div class="grafico-header">
+                            <div>
+                                <h3>Demanda Estimada vs. Reservas Reales</h3>
+                                <p style="font-size:12px;color:#888;margin:2px 0 0 0;">Comparación por franja horaria en base al modelo ML y MongoDB Atlas</p>
+                            </div>
+                        </div>
+                        <div class="grafico-canvas-wrap">
+                            <canvas id="chartComparativo"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico 2: Ocupación vs Capacidad -->
+                    <div class="grafico-card">
+                        <div class="grafico-header">
+                            <div>
+                                <h3>Capacidad del Restaurante</h3>
+                                <p style="font-size:12px;color:#888;margin:2px 0 0 0;">Proyección de aforo vs. Capacidad máxima</p>
+                            </div>
+                        </div>
+                        <div class="grafico-canvas-wrap">
+                            <canvas id="chartOcupacion"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== TABLA DE DESGLOSE POR HORARIOS ===== -->
+                <div class="desglose-card">
+                    <h3 style="color:#FFF;margin-bottom:14px;font-family:var(--font-family-title,serif);">Desglose por Franja Horaria</h3>
+                    <div class="table-wrapper">
+                        <table class="reservas-table manuscript-table">
+                            <thead>
+                                <tr>
+                                    <th>FECHA</th>
+                                    <th>HORA / FRANJA</th>
+                                    <th>COMENSALES ESTIMADOS (ML)</th>
+                                    <th>COMENSALES REALES (BD)</th>
+                                    <th>RESERVAS ACTIVAS</th>
+                                    <th>MESAS SUGERIDAS</th>
+                                    <th>% OCUPACIÓN</th>
+                                    <th>ESTADO CARGA</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaPrediccionBody">
+                                <tr>
+                                    <td colspan="8" style="text-align:center;color:#888;padding:30px;">Cargando predicciones del restaurante...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts comunes del panel -->
+    <script th:src="@{/js/admin/translate.js}"></script>
+    <script th:src="@{/js/admin/adminNav.js}"></script>
+    <!-- Script de Predicción y Lógica Reactiva -->
+    <script th:src="@{/js/admin/prediccionAdmin.js}"></script>
+</body>
+</html>
+
