@@ -91,6 +91,9 @@ body {
 .nav-contenedor {
     display: flex;
     align-items: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .nav-links {
@@ -136,6 +139,30 @@ body {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+}
+
+.nav-pdf-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--color-primary, #d4af37);
+    margin-right: 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.nav-pdf-btn:hover {
+    background: var(--color-primary, #d4af37);
+    color: #0b0b0b;
+    border-color: var(--color-primary, #d4af37);
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
+    transform: translateY(-1px);
 }
 
 .sesion-btn {

@@ -331,6 +331,30 @@ h1, h2, h3 {
 .perfil-contenedor {
     display: flex;
     align-items: center;
+    gap: 16px;
+}
+
+.nav-pdf-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--primary, #d4af37);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.nav-pdf-btn:hover {
+    background: var(--primary, #d4af37);
+    color: #0b0b0b;
+    border-color: var(--primary, #d4af37);
+    box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
+    transform: translateY(-1px);
 }
 
 .perfil-link {
