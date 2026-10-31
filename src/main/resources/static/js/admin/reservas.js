@@ -1,4 +1,4 @@
-﻿/* ================================================================
+/* ================================================================
    HISTÓRICO Y GESTIÓN DE RESERVAS - GESTREST
    Lógica completa de visualización y edición conectada a MongoDB
    ================================================================ */
@@ -23,7 +23,11 @@ async function cargarTodasLasReservas() {
     let tbody = document.getElementById("reservasAllTableBody");
     if (!tbody) return;
 
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#888;padding:40px;">Cargando histórico de reservas desde el manuscrito en vivo...</td></tr>';
+    if (window.SkeletonTable) {
+        window.SkeletonTable.attach("reservasAllTableBody", { columns: 7, rows: 6, type: "reservas" });
+    } else {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#888;padding:40px;">Cargando histórico de reservas desde el manuscrito en vivo...</td></tr>';
+    }
 
     try {
         let resp = await fetch("/api/admin/reservas-recientes?pagina=0&tamanio=9999", {
@@ -141,6 +145,12 @@ function renderizarTablaReservasTodas(listaFiltrada) {
         tbody.appendChild(tr);
     });
 
+    if (window.SkeletonTable) {
+        tbody.classList.remove("skeleton-fade-in");
+        void tbody.offsetWidth;
+        tbody.classList.add("skeleton-fade-in");
+    }
+
     let totalPags = Math.max(1, Math.ceil(total / itemsPorPaginaTodas));
     actualizarPaginacion(paginaActualTodas, totalPags);
 }
@@ -150,6 +160,20 @@ function actualizarPaginacion(actual, total) {
     let elTotal = document.getElementById("totalPaginasTodas");
     if (elActual) elActual.textContent = actual;
     if (elTotal) elTotal.textContent = total;
+
+    let btnAnterior = document.getElementById("btnPagAnteriorTodas");
+    let btnSiguiente = document.getElementById("btnPagSiguienteTodas");
+
+    if (btnAnterior) {
+        btnAnterior.disabled = actual <= 1;
+        btnAnterior.style.opacity = actual <= 1 ? "0.4" : "1";
+        btnAnterior.style.cursor = actual <= 1 ? "not-allowed" : "pointer";
+    }
+    if (btnSiguiente) {
+        btnSiguiente.disabled = actual >= total;
+        btnSiguiente.style.opacity = actual >= total ? "0.4" : "1";
+        btnSiguiente.style.cursor = actual >= total ? "not-allowed" : "pointer";
+    }
 }
 
 function paginaAnteriorTodas() {

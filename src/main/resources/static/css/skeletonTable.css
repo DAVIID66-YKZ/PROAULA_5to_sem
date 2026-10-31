@@ -1,0 +1,239 @@
+/* ================================================================
+   SKELETON TABLE & DATE CONTROLS COMPONENT - GESTREST ADMIN
+   Diseño de alta fidelidad, accesible y fluido (Anti-CLS)
+   ================================================================ */
+
+/* ================================================================
+   1. SKELETON TABLE SHIMMER ANIMATION & STYLES
+   ================================================================ */
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton-table-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+.skeleton-table-row:hover {
+    background-color: transparent !important;
+}
+
+.skeleton-cell {
+    padding: 18px 20px !important;
+    vertical-align: middle;
+}
+
+.skeleton-bone {
+    height: 14px;
+    border-radius: 6px;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.04) 25%,
+        rgba(212, 175, 55, 0.12) 50%,
+        rgba(255, 255, 255, 0.04) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.8s ease-in-out infinite;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.skeleton-bone.pill {
+    height: 22px;
+    border-radius: 9999px;
+    width: 85px;
+}
+
+.skeleton-bone.circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.skeleton-bone.btn-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.skeleton-flex-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.skeleton-user-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+/* Transición suave cuando los datos reales reemplazan al skeleton */
+.skeleton-fade-in {
+    animation: skeletonFadeIn 0.35s ease-out forwards;
+}
+
+@keyframes skeletonFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================================================================
+   2. CONTROLES Y NAVEGACIÓN TEMPORAL DE FECHAS (MODERN SVG ICONS)
+   ================================================================ */
+.date-stepper-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #121212;
+    border: 1px solid #333333;
+    border-radius: 10px;
+    padding: 3px 6px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.date-stepper-wrapper:focus-within {
+    border-color: var(--primary, #d4af37);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.25), inset 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.date-stepper-input {
+    background: transparent !important;
+    border: none !important;
+    color: #FFFFFF !important;
+    padding: 6px 8px !important;
+    font-size: 13px !important;
+    font-family: inherit !important;
+    font-weight: 600 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color-scheme: dark;
+    min-width: 130px;
+}
+
+.date-stepper-input::-webkit-calendar-picker-indicator {
+    filter: invert(0.8) sepia(50%) saturate(1000%) hue-rotate(5deg) brightness(1.1);
+    cursor: pointer;
+    margin-left: 6px;
+    transition: transform 0.2s ease;
+}
+
+.date-stepper-input::-webkit-calendar-picker-indicator:hover {
+    transform: scale(1.15);
+}
+
+.date-step-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #A0A0A0;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.date-step-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 2.25;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s ease;
+}
+
+.date-step-btn:hover:not(:disabled) {
+    background: rgba(212, 175, 55, 0.14);
+    border-color: rgba(212, 175, 55, 0.35);
+    color: var(--primary, #d4af37);
+}
+
+.date-step-btn.prev:hover:not(:disabled) svg {
+    transform: translateX(-2px);
+}
+
+.date-step-btn.next:hover:not(:disabled) svg {
+    transform: translateX(2px);
+}
+
+.date-step-btn:active:not(:disabled) {
+    background: rgba(212, 175, 55, 0.25);
+    transform: scale(0.92);
+}
+
+.date-step-btn:focus-visible {
+    outline: 2px solid var(--primary, #d4af37);
+    outline-offset: 1px;
+}
+
+.date-step-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+    background: transparent !important;
+    border-color: transparent !important;
+}
+
+/* ================================================================
+   3. BOTONES DE PAGINACIÓN MEJORADOS CON ICONOS SVG (ANTERIOR / SIGUIENTE)
+   ================================================================ */
+.btn-pagination {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 9px 18px !important;
+    border-radius: 8px !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn-pagination svg {
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    stroke-width: 2.25;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.2s ease;
+}
+
+.btn-pagination.prev:hover:not(:disabled) svg {
+    transform: translateX(-2px);
+}
+
+.btn-pagination.next:hover:not(:disabled) svg {
+    transform: translateX(2px);
+}
+
+.btn-pagination:focus-visible {
+    outline: 2px solid var(--primary, #d4af37);
+    outline-offset: 2px;
+}
+

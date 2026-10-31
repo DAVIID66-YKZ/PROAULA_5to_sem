@@ -1,4 +1,4 @@
-﻿/* ================================================================
+/* ================================================================
    PANEL ADMIN (DASHBOARD) - GESTREST
    Lógica para KPIs y reservas recientes conectadas a MongoDB
    ================================================================ */
@@ -97,7 +97,11 @@ async function cargarReservasRecientes() {
     let tbody = document.getElementById("reservasTableBody");
     if (!tbody) return;
 
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:35px;">Consultando manuscrito de reservas en vivo...</td></tr>';
+    if (window.SkeletonTable) {
+        window.SkeletonTable.attach("reservasTableBody", { columns: 6, rows: 5, type: "reservas" });
+    } else {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:35px;">Consultando manuscrito de reservas en vivo...</td></tr>';
+    }
 
     try {
         let resp = await fetch("/api/admin/reservas-recientes?pagina=0&tamanio=200", {
@@ -202,6 +206,12 @@ function renderizarTablaRecientes(lista) {
         tbody.appendChild(tr);
     });
 
+    if (window.SkeletonTable) {
+        tbody.classList.remove("skeleton-fade-in");
+        void tbody.offsetWidth;
+        tbody.classList.add("skeleton-fade-in");
+    }
+
     let totalPags = Math.max(1, Math.ceil(total / itemsPorPaginaRecientes));
     actualizarPaginacionRecientes(paginaActualRecientes, totalPags);
 }
@@ -211,6 +221,20 @@ function actualizarPaginacionRecientes(actual, total) {
     let elTot = document.getElementById("totalPaginas");
     if (elPag) elPag.textContent = actual;
     if (elTot) elTot.textContent = total;
+
+    let btnAnterior = document.getElementById("btnPagAnteriorRecientes");
+    let btnSiguiente = document.getElementById("btnPagSiguienteRecientes");
+
+    if (btnAnterior) {
+        btnAnterior.disabled = actual <= 1;
+        btnAnterior.style.opacity = actual <= 1 ? "0.4" : "1";
+        btnAnterior.style.cursor = actual <= 1 ? "not-allowed" : "pointer";
+    }
+    if (btnSiguiente) {
+        btnSiguiente.disabled = actual >= total;
+        btnSiguiente.style.opacity = actual >= total ? "0.4" : "1";
+        btnSiguiente.style.cursor = actual >= total ? "not-allowed" : "pointer";
+    }
 }
 
 function paginaAnterior() {
