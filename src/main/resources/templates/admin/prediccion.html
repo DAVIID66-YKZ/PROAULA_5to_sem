@@ -17,7 +17,6 @@
 
     <!-- Chart.js para visualización gráfica predictiva -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" th:href="@{/css/skeletonTable.css}">
 </head>
 <body>
     <div class="dashboard-container">
@@ -176,65 +175,8 @@
                                 </tr>
                             </thead>
                             <tbody id="tablaPrediccionBody">
-                                <tr class="skeleton-table-row" aria-hidden="true">
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 75%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 55%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 45%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 70%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 40%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 65%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 50%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                </tr>
-                                <tr class="skeleton-table-row" aria-hidden="true">
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 75%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 55%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 45%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 70%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 40%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 65%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 50%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                </tr>
-                                <tr class="skeleton-table-row" aria-hidden="true">
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 75%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 55%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 45%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 70%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 40%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 65%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 50%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                </tr>
-                                <tr class="skeleton-table-row" aria-hidden="true">
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 75%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 55%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 45%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 70%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 40%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 65%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 50%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                </tr>
-                                <tr class="skeleton-table-row" aria-hidden="true">
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 75%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 55%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 45%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 70%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 40%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 65%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 50%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                </tr>
-                                <tr class="skeleton-table-row" aria-hidden="true">
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 75%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 55%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 45%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 70%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 40%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 65%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 50%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
+                                <tr>
+                                    <td colspan="8" style="text-align:center;color:#888;padding:30px;">Cargando predicciones del restaurante...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -246,7 +188,6 @@
 
     <!-- Scripts comunes del panel -->
     <script th:src="@{/js/admin/translate.js}"></script>
-    <script th:src="@{/js/admin/skeletonTable.js}"></script>
     <script th:src="@{/js/admin/adminNav.js}"></script>
     <!-- Script de Predicción y Lógica Reactiva -->
     <script th:src="@{/js/admin/prediccionAdmin.js}"></script>

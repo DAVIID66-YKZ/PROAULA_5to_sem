@@ -351,7 +351,6 @@
             }
         }
     </style>
-    <link rel="stylesheet" th:href="@{/css/skeletonTable.css}">
 </head>
 <body>
     <div class="dashboard-container">
@@ -371,7 +370,7 @@
                 <div class="usuarios-header-row">
                     <div>
                         <h1 data-i18n="user.titulo">Gestión de Usuarios</h1>
-                        <p data-i18n="user.subtitulo">Administra cuentas, asigna roles de acceso y activa o desactiva usuarios.</p>
+                        <p data-i18n="user.subtitulo">Administra cuentas, asigna roles de acceso y activa o desactiva usuarios protegiendo el historial del restaurante.</p>
                     </div>
                     <button type="button" class="btn-crear-usuario" onclick="abrirModalCrearUsuario()">
                         <span class="material-symbols-outlined notranslate" style="color: #000000 !important; font-size: 19px !important;">person_add</span>
@@ -468,132 +467,7 @@
                                 </tr>
                             </thead>
                             <tbody id="usuariosTableBody">
-                                <tr class="skeleton-table-row" aria-hidden="true">
-                                    <td class="skeleton-cell">
-                                        <div class="skeleton-flex-user">
-                                            <span class="skeleton-bone circle"></span>
-                                            <div class="skeleton-user-lines">
-                                                <span class="skeleton-bone" style="width: 140px;"></span>
-                                                <span class="skeleton-bone" style="width: 80px; height: 10px;"></span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 75%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 55%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                    <td class="skeleton-cell">
-                                        <div style="display:flex; gap:6px;">
-                                            <span class="skeleton-bone btn-icon"></span>
-                                            <span class="skeleton-bone btn-icon"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="skeleton-table-row" aria-hidden="true">
-                                    <td class="skeleton-cell">
-                                        <div class="skeleton-flex-user">
-                                            <span class="skeleton-bone circle"></span>
-                                            <div class="skeleton-user-lines">
-                                                <span class="skeleton-bone" style="width: 140px;"></span>
-                                                <span class="skeleton-bone" style="width: 80px; height: 10px;"></span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 75%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 55%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                    <td class="skeleton-cell">
-                                        <div style="display:flex; gap:6px;">
-                                            <span class="skeleton-bone btn-icon"></span>
-                                            <span class="skeleton-bone btn-icon"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="skeleton-table-row" aria-hidden="true">
-                                    <td class="skeleton-cell">
-                                        <div class="skeleton-flex-user">
-                                            <span class="skeleton-bone circle"></span>
-                                            <div class="skeleton-user-lines">
-                                                <span class="skeleton-bone" style="width: 140px;"></span>
-                                                <span class="skeleton-bone" style="width: 80px; height: 10px;"></span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 75%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 55%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                    <td class="skeleton-cell">
-                                        <div style="display:flex; gap:6px;">
-                                            <span class="skeleton-bone btn-icon"></span>
-                                            <span class="skeleton-bone btn-icon"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="skeleton-table-row" aria-hidden="true">
-                                    <td class="skeleton-cell">
-                                        <div class="skeleton-flex-user">
-                                            <span class="skeleton-bone circle"></span>
-                                            <div class="skeleton-user-lines">
-                                                <span class="skeleton-bone" style="width: 140px;"></span>
-                                                <span class="skeleton-bone" style="width: 80px; height: 10px;"></span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 75%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 55%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                    <td class="skeleton-cell">
-                                        <div style="display:flex; gap:6px;">
-                                            <span class="skeleton-bone btn-icon"></span>
-                                            <span class="skeleton-bone btn-icon"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="skeleton-table-row" aria-hidden="true">
-                                    <td class="skeleton-cell">
-                                        <div class="skeleton-flex-user">
-                                            <span class="skeleton-bone circle"></span>
-                                            <div class="skeleton-user-lines">
-                                                <span class="skeleton-bone" style="width: 140px;"></span>
-                                                <span class="skeleton-bone" style="width: 80px; height: 10px;"></span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 75%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 55%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                    <td class="skeleton-cell">
-                                        <div style="display:flex; gap:6px;">
-                                            <span class="skeleton-bone btn-icon"></span>
-                                            <span class="skeleton-bone btn-icon"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="skeleton-table-row" aria-hidden="true">
-                                    <td class="skeleton-cell">
-                                        <div class="skeleton-flex-user">
-                                            <span class="skeleton-bone circle"></span>
-                                            <div class="skeleton-user-lines">
-                                                <span class="skeleton-bone" style="width: 140px;"></span>
-                                                <span class="skeleton-bone" style="width: 80px; height: 10px;"></span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 75%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone" style="width: 55%;"></span></td>
-                                    <td class="skeleton-cell"><span class="skeleton-bone pill"></span></td>
-                                    <td class="skeleton-cell">
-                                        <div style="display:flex; gap:6px;">
-                                            <span class="skeleton-bone btn-icon"></span>
-                                            <span class="skeleton-bone btn-icon"></span>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <!-- Inyectado dinámicamente -->
                             </tbody>
                         </table>
                     </div>
@@ -791,7 +665,6 @@
     </div>
 
     <script th:src="@{/js/admin/translate.js}"></script>
-    <script th:src="@{/js/admin/skeletonTable.js}"></script>
     <script th:src="@{/js/admin/adminNav.js}"></script>
     <script th:src="@{/js/admin/usuarios.js}"></script>
 </body>

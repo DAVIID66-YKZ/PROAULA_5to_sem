@@ -38,20 +38,16 @@ async function cargarUsuarios() {
     let tbody = document.getElementById("usuariosTableBody");
     if (!tbody) return;
 
-    if (window.SkeletonTable) {
-        window.SkeletonTable.attach("usuariosTableBody", { columns: 6, rows: 6, type: "usuarios" });
-    } else {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="6" style="text-align:center; color:#888; padding:45px;">
-                    <div style="display:inline-flex; align-items:center; gap:10px;">
-                        <span class="material-symbols-outlined" style="animation: spin 1s infinite linear;">sync</span>
-                        <span>Cargando usuarios desde la base de datos...</span>
-                    </div>
-                </td>
-            </tr>
-        `;
-    }
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="6" style="text-align:center; color:#888; padding:45px;">
+                <div style="display:inline-flex; align-items:center; gap:10px;">
+                    <span class="material-symbols-outlined" style="animation: spin 1s infinite linear;">sync</span>
+                    <span>Cargando usuarios desde la base de datos...</span>
+                </div>
+            </td>
+        </tr>
+    `;
 
     try {
         let resp = await fetch("/api/admin/usuarios", {
@@ -279,12 +275,6 @@ function renderizarTablaUsuarios(listaEspecifica) {
 
         tbody.appendChild(tr);
     });
-
-    if (window.SkeletonTable) {
-        tbody.classList.remove("skeleton-fade-in");
-        void tbody.offsetWidth;
-        tbody.classList.add("skeleton-fade-in");
-    }
 
     actualizarPaginacionUsuarios(paginaActualUsuarios, totalPags, total);
 }

@@ -20,10 +20,6 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("inputFechaInicio")?.addEventListener("change", () => cargarPrediccion(true));
     document.getElementById("inputFechaFin")?.addEventListener("change", () => cargarPrediccion(true));
     document.getElementById("selectTurno")?.addEventListener("change", () => cargarPrediccion(true));
-
-    // Limpieza de polling en desmontaje o cambio de vista para prevenir memory leaks
-    window.addEventListener("beforeunload", detenerMonitoreoEnVivo);
-    window.addEventListener("pagehide", detenerMonitoreoEnVivo);
 });
 
 function obtenerTokenAdmin() {
@@ -40,12 +36,6 @@ function inicializarFiltrosFechas() {
     }
     if (inputFin && !inputFin.value) {
         inputFin.value = hoy;
-    }
-
-    // Inicializar selectores de fecha con navegación táctil e iconos SVG
-    if (window.DateStepper) {
-        window.DateStepper.init("inputFechaInicio", () => cargarPrediccion(true));
-        window.DateStepper.init("inputFechaFin", () => cargarPrediccion(true));
     }
 }
 
@@ -169,34 +159,13 @@ function inicializarGraficos() {
 // ===== CONSULTA PRINCIPAL AL BACKEND DE SPRING BOOT =====
 async function cargarPrediccion(animarBoton = false) {
     const btn = document.getElementById("btnActualizarPrediccion");
-    let iconoOriginal = null;
-
-    if (animarBoton && btn) {
-        btn.disabled = true;
-        btn.classList.add("loading");
-        iconoOriginal = btn.querySelector(".material-symbols-outlined");
-        if (iconoOriginal) {
-            iconoOriginal.style.display = "none";
-        }
-
-        let spinner = btn.querySelector(".btn-spinner-icon");
-        if (!spinner) {
-            spinner = document.createElement("span");
-            spinner.className = "btn-spinner-icon";
-            btn.insertBefore(spinner, btn.firstChild);
-        }
-    }
+    if (animarBoton && btn) btn.classList.add("loading");
 
     const fInicio = document.getElementById("inputFechaInicio")?.value || "";
     const fFin = document.getElementById("inputFechaFin")?.value || "";
     const turno = document.getElementById("selectTurno")?.value || "COMPLETO";
 
     const token = obtenerTokenAdmin();
-
-    const tbody = document.getElementById("tablaPrediccionBody");
-    if (animarBoton && tbody && window.SkeletonTable) {
-        window.SkeletonTable.attach("tablaPrediccionBody", { columns: 8, rows: 6, type: "prediccion" });
-    }
 
     try {
         const queryParams = new URLSearchParams({
@@ -217,33 +186,17 @@ async function cargarPrediccion(animarBoton = false) {
             const data = await resp.json();
             renderizarDatosPrediccion(data);
             actualizarIndicadorLive(true);
-            if (animarBoton) {
-                mostrarToastPrediccion("Predicción actualizada con éxito. Datos sincronizados con la base de datos.", "success");
-            }
         } else if (resp.status === 403 || resp.status === 401) {
             console.warn("Sesión expirada o permisos de admin requeridos.");
         } else {
             console.error("Error al obtener predicción:", resp.status);
             actualizarIndicadorLive(false);
-            if (animarBoton) {
-                mostrarToastPrediccion("No se pudo actualizar la predicción. Intenta nuevamente.", "error");
-            }
         }
     } catch (e) {
         console.error("Fallo de conexión:", e);
         actualizarIndicadorLive(false);
-        if (animarBoton) {
-            mostrarToastPrediccion("No se pudo conectar con la base de datos. Verifica tu conexión e intenta nuevamente.", "error");
-        }
     } finally {
-        if (btn) {
-            btn.classList.remove("loading");
-            btn.disabled = false;
-            const spinner = btn.querySelector(".btn-spinner-icon");
-            if (spinner) spinner.remove();
-            const icono = btn.querySelector(".material-symbols-outlined");
-            if (icono) icono.style.display = "";
-        }
+        if (btn) btn.classList.remove("loading");
     }
 }
 
@@ -323,12 +276,6 @@ function renderizarDatosPrediccion(data) {
             return;
         }
 
-        if (window.SkeletonTable) {
-            tbody.classList.remove("skeleton-fade-in");
-            void tbody.offsetWidth;
-            tbody.classList.add("skeleton-fade-in");
-        }
-
         tbody.innerHTML = data.series.map(s => {
             let badgeClass = "optimo";
             let badgeText = "Óptimo";
@@ -348,7 +295,7 @@ function renderizarDatosPrediccion(data) {
                     <td style="color:#60A5FA;">${s.comensalesReales} comensales</td>
                     <td>${s.reservasRealesCount}</td>
                     <td style="font-weight:700;color:#34D399;">${s.mesasSugeridas} mesas</td>
-                    <td>${Math.round((s.ocupacionProyectadaPorcentaje || 0) * 10) / 10}%</td>
+                    <td>${s.ocupacionProyectadaPorcentaje}%</td>
                     <td><span class="badge-estado ${badgeClass}">${badgeText}</span></td>
                 </tr>
             `;
@@ -356,27 +303,16 @@ function renderizarDatosPrediccion(data) {
     }
 }
 
-// ===== MONITOREO REACTIVO EN TIEMPO REAL (POLLING CADA 3 MINUTOS) =====
+// ===== MONITOREO REACTIVO EN TIEMPO REAL =====
 function iniciarMonitoreoEnVivo() {
+    // 1. Polling silencioso reactivo cada 7 segundos
     if (liveInterval) clearInterval(liveInterval);
-    // Actualización periódica en vivo cada 3 minutos (180,000 ms)
     liveInterval = setInterval(() => {
+        // Solo refrescar si la pestaña está activa
         if (!document.hidden) {
-            // Actualización silenciosa en segundo plano sin CLS ni reset abrupto
             cargarPrediccion(false);
         }
-    }, 180000);
-}
-
-function detenerMonitoreoEnVivo() {
-    if (liveInterval) {
-        clearInterval(liveInterval);
-        liveInterval = null;
-    }
-    if (sseEventSource) {
-        sseEventSource.close();
-        sseEventSource = null;
-    }
+    }, 7000);
 }
 
 function actualizarIndicadorLive(conectado) {
@@ -395,49 +331,3 @@ function actualizarIndicadorLive(conectado) {
     }
 }
 
-
-// ===== SISTEMA DE NOTIFICACIONES TOAST =====
-function mostrarToastPrediccion(mensaje, tipo = "info") {
-    let container = document.getElementById("prediccionToastContainer");
-    if (!container) {
-        container = document.createElement("div");
-        container.id = "prediccionToastContainer";
-        container.className = "toast-container";
-        document.body.appendChild(container);
-    }
-
-    const toast = document.createElement("div");
-    toast.className = `gestrest-toast ${tipo}`;
-
-    let iconName = "info";
-    if (tipo === "success") iconName = "check_circle";
-    else if (tipo === "error") iconName = "error";
-
-    toast.innerHTML = `
-        <span class="material-symbols-outlined toast-icon">${iconName}</span>
-        <span class="toast-msg">${mensaje}</span>
-        <button type="button" class="toast-close" aria-label="Cerrar">
-            <span class="material-symbols-outlined" style="font-size:16px;">close</span>
-        </button>
-    `;
-
-    container.appendChild(toast);
-
-    // Animación de entrada
-    requestAnimationFrame(() => {
-        toast.classList.add("show");
-    });
-
-    const closeBtn = toast.querySelector(".toast-close");
-    let autoCloseTimer = null;
-
-    const removerToast = () => {
-        if (autoCloseTimer) clearTimeout(autoCloseTimer);
-        toast.classList.remove("show");
-        toast.classList.add("hide");
-        setTimeout(() => toast.remove(), 350);
-    };
-
-    closeBtn.addEventListener("click", removerToast);
-    autoCloseTimer = setTimeout(removerToast, 4000);
-}
