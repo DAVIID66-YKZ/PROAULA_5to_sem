@@ -31,11 +31,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Peticiones preflight OPTIONS siempre permitidas
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD, jakarta.servlet.DispatcherType.ERROR).permitAll()
                         // Recursos estáticos
                         .requestMatchers("/css/**", "/js/**", "/imagenes/**", "/iconos/**", "/favicon.ico", "/favicon.png", "/favicon*").permitAll()
                         // Vistas públicas
-                        .requestMatchers("/", "/index", "/login", "/register", "/menu", "/menu/**", "/legal/**", "/menu/menu.pdf", "/error").permitAll()
+                        .requestMatchers("/", "/index", "/login", "/register", "/menu", "/menu/**", "/legal/**", "/menu/menu.pdf").permitAll()
                         // Endpoints de autenticación públicos
                         .requestMatchers("/auth/**").permitAll()
                         // Vistas HTML de la aplicación (protegen su contenido con token en localStorage vía JS)

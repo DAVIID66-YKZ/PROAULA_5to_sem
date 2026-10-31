@@ -4,11 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.restaurante.reservasapp.Entity.PlatoEntity;
 import com.restaurante.reservasapp.services.PlatoService;
-
-import java.util.Collections;
-import java.util.List;
 
 @Controller
 public class ViewController {
@@ -19,18 +15,10 @@ public class ViewController {
         this.platoService = platoService;
     }
 
-    private List<PlatoEntity> obtenerPlatosSeguro() {
-        try {
-            return platoService.listarPlatos();
-        } catch (Exception e) {
-            return Collections.emptyList();
-        }
-    }
-
     // Maneja la página principal (localhost:8080/)
     @GetMapping("/")
     public String home(Model model) {
-        model.addAttribute("platos", obtenerPlatosSeguro());
+        model.addAttribute("platos", platoService.listarPlatos());
         return "index";
     }
 
@@ -49,13 +37,13 @@ public class ViewController {
     // Maneja el index si tienes una ruta específica para él
     @GetMapping("/index")
     public String index(Model model) {
-        model.addAttribute("platos", obtenerPlatosSeguro());
+        model.addAttribute("platos", platoService.listarPlatos());
         return "index";
     }
 
     @GetMapping({"/reserva", "/cliente/reserva"})
     public String reserva(Model model) {
-        model.addAttribute("platos", obtenerPlatosSeguro());
+        model.addAttribute("platos", platoService.listarPlatos());
         return "cliente/reserva";
     }
 
