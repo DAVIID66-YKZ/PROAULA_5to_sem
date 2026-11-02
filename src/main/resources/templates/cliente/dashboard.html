@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -34,24 +34,25 @@
 
                 <section class="welcome-block">
                     <div class="welcome-text">
-                        <h1>Bienvenido de nuevo, <span id="userName" class="user-name serif-italic">Invitado</span></h1>
-                        <p>Tu mesa te espera. Revisa tus próximas veladas o reserva un nuevo momento especial con nosotros.</p>
+                        <h1><span data-i18n="clientDash.bienvenido">Bienvenido de nuevo,</span> <span id="userName" class="user-name serif-italic">Invitado</span></h1>
+                        <p data-i18n="clientDash.subtitulo">Tu mesa te espera. Revisa tus próximas veladas o reserva un nuevo momento especial con nosotros.</p>
                     </div>
                     <button class="btn-new-reservation" onclick="location.href='/reserva'">
                         <span class="material-symbols-outlined icon-small">menu_book</span>
-                        Nueva Reserva`r`n                    </button>
+                        <span data-i18n="clientNav.nuevaReserva">+ Nueva Reserva</span>
+                    </button>
                 </section>
 
                 <div class="booking-grid-functional">
                     <div id="featuredBookingContainer" class="w-100">
-                        <div class="card-loading">Consultando reservas...</div>
+                        <div class="card-loading" data-i18n="clientDash.consultando">Consultando reservas...</div>
                     </div>
                 </div>
 
                 <section class="future-bookings-section">
                     <div class="section-header">
-                        <h3 class="section-title">PRÓXIMAS RESERVAS</h3>
-                        <a href="/mis-reservas" class="link-view-history">VER LISTA COMPLETA</a>
+                        <h3 class="section-title" data-i18n="clientDash.proximasReservas">PRÓXIMAS RESERVAS</h3>
+                        <a href="/mis-reservas" class="link-view-history" data-i18n="clientDash.verListaCompleta">VER LISTA COMPLETA</a>
                     </div>
 
                     <div id="futureBookingsContainer">

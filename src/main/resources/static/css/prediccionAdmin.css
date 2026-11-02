@@ -1,24 +1,29 @@
-/* ================================================================
+﻿/* ================================================================
    PREDICCIÓN DE RESERVAS Y DEMANDA (ML) - GESTREST
    Estilos para Panel de Control Predictivo en Tiempo Real
    Diseño Responsive Total (Móviles, Tablets, Laptops y 4K)
    ================================================================ */
 
 .prediccion-container {
-    padding: 24px;
+    padding: 0 0 35px 0;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
     box-sizing: border-box;
     width: 100%;
     max-width: 100%;
+    min-width: 0;
+}
+
+.prediccion-container .section-header {
+    margin-bottom: 5px;
 }
 
 /* ===== BARRA DE HERRAMIENTAS Y FILTROS ===== */
 .prediccion-toolbar {
-    background: var(--color-gray, #1C1B1B);
-    border: 1px solid var(--color-gray-light, #2A2A2A);
-    border-radius: 12px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 14px;
     padding: 16px 20px;
     display: flex;
     flex-wrap: wrap;
@@ -26,6 +31,9 @@
     align-items: center;
     gap: 16px;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     box-sizing: border-box;
 }
 
@@ -34,16 +42,18 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 14px;
-    flex: 1;
-    min-width: 280px;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .filtro-item {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    flex: 1;
-    min-width: 160px;
+    flex: 1 1 160px;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .filtro-label {
@@ -54,23 +64,69 @@
     letter-spacing: 0.5px;
 }
 
+.filtro-select {
+    cursor: pointer;
+}
+
 .filtro-input, .filtro-select {
     background: #121212;
     border: 1px solid #333333;
     color: #FFFFFF;
     padding: 9px 12px;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 13px;
     font-family: inherit;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
     box-sizing: border-box;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.filtro-input:hover, .filtro-select:hover {
+    border-color: rgba(212, 175, 55, 0.45);
+    background-color: #171717;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 12px rgba(212, 175, 55, 0.12), inset 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .filtro-input:focus, .filtro-select:focus {
     border-color: var(--color-primary, #D4AF37);
-    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+    background-color: #181818;
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.25), 0 4px 16px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.date-stepper-wrapper:hover {
+    border-color: rgba(212, 175, 55, 0.45) !important;
+    background-color: #171717 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 12px rgba(212, 175, 55, 0.12), inset 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+
+.date-stepper-wrapper:focus-within {
+    border-color: var(--primary, #d4af37) !important;
+    background-color: #181818 !important;
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.25), 0 4px 16px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Icono de selector de fecha en dorado institucional GestRest (#D4AF37) */
+.filtro-input::-webkit-calendar-picker-indicator,
+.date-stepper-input::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='18' height='18' fill='%23d4af37'%3E%3Cpath d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h5v5H7z'/%3E%3C/svg%3E") !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: 18px 18px !important;
+    filter: none !important;
+    opacity: 1 !important;
+    cursor: pointer !important;
+    margin-left: 6px;
+    transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+}
+
+.filtro-input::-webkit-calendar-picker-indicator:hover,
+.date-stepper-input::-webkit-calendar-picker-indicator:hover,
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.6)) brightness(1.12) !important;
 }
 
 .acciones-grupo {
@@ -207,52 +263,86 @@
 /* ===== CARDS DE KPIS ===== */
 .kpis-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
     width: 100%;
-}
-
-.kpi-card-predictivo {
-    background: var(--color-gray, #1C1B1B);
-    border: 1px solid var(--color-gray-light, #2A2A2A);
-    border-radius: 12px;
-    padding: 20px;
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    transition: transform 0.2s, border-color 0.2s;
+    min-width: 0;
     box-sizing: border-box;
 }
 
+.kpi-card-predictivo {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 14px;
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.kpi-card-predictivo::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+    transition: left 0.6s ease;
+    pointer-events: none;
+}
+
 .kpi-card-predictivo:hover {
-    transform: translateY(-2px);
     border-color: rgba(212, 175, 55, 0.4);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(212, 175, 55, 0.15), 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.kpi-card-predictivo:hover::before {
+    left: 100%;
+}
+
+.kpi-card-predictivo:hover .kpi-icon-wrap {
+    transform: scale(1.06);
+    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.2);
 }
 
 .kpi-icon-wrap {
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(212, 175, 55, 0.15);
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.25);
     color: var(--color-primary, #D4AF37);
     flex-shrink: 0;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .kpi-icon-wrap.green {
-    background: rgba(34, 197, 94, 0.15);
-    color: #22C55E;
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.25);
+    color: #4CAF50;
 }
 
 .kpi-icon-wrap.purple {
-    background: rgba(168, 85, 247, 0.15);
+    background: rgba(168, 85, 247, 0.1);
+    border-color: rgba(168, 85, 247, 0.25);
     color: #C084FC;
 }
 
 .kpi-icon-wrap.blue {
-    background: rgba(59, 130, 246, 0.15);
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.25);
     color: #60A5FA;
 }
 
@@ -287,26 +377,42 @@
     font-size: 11px;
     color: #777;
     line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* ===== SECCIÓN DE GRÁFICOS ===== */
 .graficos-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     gap: 20px;
     width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .grafico-card {
-    background: var(--color-gray, #1C1B1B);
-    border: 1px solid var(--color-gray-light, #2A2A2A);
-    border-radius: 12px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 14px;
     padding: 22px;
     display: flex;
     flex-direction: column;
     gap: 16px;
     box-sizing: border-box;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.grafico-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(212, 175, 55, 0.35);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.08);
 }
 
 .grafico-header {
@@ -328,18 +434,35 @@
 .grafico-canvas-wrap {
     position: relative;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     min-height: 280px;
     height: 320px;
+    overflow: hidden;
+}
+
+.grafico-canvas-wrap canvas {
+    max-width: 100% !important;
 }
 
 /* ===== TABLA DE DESGLOSE POR HORARIOS ===== */
 .desglose-card {
-    background: var(--color-gray, #1C1B1B);
-    border: 1px solid var(--color-gray-light, #2A2A2A);
-    border-radius: 12px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 14px;
     padding: 22px;
     box-sizing: border-box;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.desglose-card:hover {
+    border-color: rgba(212, 175, 55, 0.35);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
 }
 
 .table-wrapper {
@@ -379,13 +502,49 @@
 }
 
 /* ================================================================
-   BREAKPOINTS RESPONSIVE DESIGN AVANZADO
+   BREAKPOINTS RESPONSIVE DESIGN AVANZADO (DESKTOP, ZOOM & MÓVIL)
    ================================================================ */
+
+/* --- LAPTOPS (1366px, 1440px), ZOOM Y PANTALLAS COMPACTAS (<= 1440px) --- */
+@media (max-width: 1440px) {
+    .kpis-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .graficos-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .grafico-canvas-wrap {
+        height: 310px;
+    }
+}
+
+/* --- ADAPTACIÓN DE TOOLBAR ANTE RESOLUCIONES MEDIANAS (<= 1180px) --- */
+@media (max-width: 1180px) {
+    .prediccion-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+    }
+
+    .filtros-grupo {
+        width: 100%;
+        gap: 12px;
+    }
+
+    .acciones-grupo {
+        width: 100%;
+        justify-content: flex-end;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+}
 
 /* --- TABLETS / PANTALLAS MEDIANAS (<= 1024px) --- */
 @media (max-width: 1024px) {
     .prediccion-container {
-        padding: 18px;
+        padding: 0 0 30px 0;
         gap: 18px;
     }
 
@@ -394,7 +553,7 @@
     }
 
     .graficos-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .grafico-canvas-wrap {
@@ -438,14 +597,14 @@
     }
 
     .kpis-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-/* --- CELULARES ESTÁNDAR (<= 600px) --- */
-@media (max-width: 600px) {
+/* --- CELULARES ESTÁNDAR (<= 640px) --- */
+@media (max-width: 640px) {
     .prediccion-container {
-        padding: 12px 10px;
+        padding: 0 0 25px 0;
         gap: 14px;
     }
 
@@ -511,7 +670,7 @@
     }
 
     .kpis-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         gap: 12px;
     }
 
@@ -549,7 +708,7 @@
 /* --- CELULARES PEQUEÑOS (<= 380px) --- */
 @media (max-width: 380px) {
     .prediccion-container {
-        padding: 8px 6px;
+        padding: 0 0 20px 0;
     }
 
     .section-header h1 {

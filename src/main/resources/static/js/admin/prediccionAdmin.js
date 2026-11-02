@@ -1,4 +1,4 @@
-/* ================================================================
+﻿/* ================================================================
    PREDICCIÓN DE RESERVAS Y DEMANDA (ML) - GESTREST ADMIN
    Integración reactiva con Spring Boot, MongoDB Atlas y FastAPI
    ================================================================ */
@@ -7,6 +7,7 @@ let chartComparativoInstance = null;
 let chartOcupacionInstance = null;
 let liveInterval = null;
 let sseEventSource = null;
+let ultimoPayloadPrediccion = null;
 
 document.addEventListener("DOMContentLoaded", function () {
     inicializarFiltrosFechas();
@@ -24,6 +25,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // Limpieza de polling en desmontaje o cambio de vista para prevenir memory leaks
     window.addEventListener("beforeunload", detenerMonitoreoEnVivo);
     window.addEventListener("pagehide", detenerMonitoreoEnVivo);
+
+    // Escuchar cambio de idioma para actualizar textos de las gráficas
+    window.addEventListener("idiomaCambiado", actualizarTextosGraficos);
+    actualizarTextosGraficos();
 });
 
 function obtenerTokenAdmin() {
@@ -51,6 +56,7 @@ function inicializarFiltrosFechas() {
 
 // ===== INICIALIZACIÓN DE GRÁFICOS (CHART.JS) =====
 function inicializarGraficos() {
+    const fnT = (k, fb) => (typeof window.t === "function" ? window.t(k, fb) : fb);
     // 1. Gráfico Comparativo: Demanda Real vs. Estimada
     const ctxComp = document.getElementById("chartComparativo");
     if (ctxComp) {
@@ -60,7 +66,7 @@ function inicializarGraficos() {
                 labels: [],
                 datasets: [
                     {
-                        label: "Comensales Estimados (ML)",
+                        label: fnT("prediction.chartSerieEstimados", "Comensales Estimados (ML)"),
                         data: [],
                         backgroundColor: "rgba(212, 175, 55, 0.75)",
                         borderColor: "#D4AF37",
@@ -68,7 +74,7 @@ function inicializarGraficos() {
                         borderRadius: 4
                     },
                     {
-                        label: "Comensales Reales (MongoDB)",
+                        label: fnT("prediction.chartSerieReales", "Comensales Reales (MongoDB)"),
                         data: [],
                         backgroundColor: "rgba(96, 165, 250, 0.75)",
                         borderColor: "#3B82F6",
@@ -76,7 +82,7 @@ function inicializarGraficos() {
                         borderRadius: 4
                     },
                     {
-                        label: "Mesas Sugeridas",
+                        label: fnT("prediction.chartSerieMesas", "Mesas Sugeridas"),
                         type: "line",
                         data: [],
                         borderColor: "#34D399",
@@ -119,13 +125,13 @@ function inicializarGraficos() {
                         grid: { color: "rgba(255, 255, 255, 0.05)" }
                     },
                     y: {
-                        title: { display: true, text: "Comensales", color: "#A0A0A0" },
+                        title: { display: true, text: fnT("prediction.chartEjeComensales", "Comensales"), color: "#A0A0A0" },
                         ticks: { color: "#A0A0A0" },
                         grid: { color: "rgba(255, 255, 255, 0.05)" }
                     },
                     yMesas: {
                         position: "right",
-                        title: { display: true, text: "Mesas", color: "#34D399" },
+                        title: { display: true, text: fnT("prediction.chartEjeMesas", "Mesas"), color: "#34D399" },
                         ticks: { color: "#34D399", stepSize: 1 },
                         grid: { drawOnChartArea: false }
                     }
@@ -140,7 +146,10 @@ function inicializarGraficos() {
         chartOcupacionInstance = new Chart(ctxOcup, {
             type: "doughnut",
             data: {
-                labels: ["Ocupación Proyectada", "Capacidad Disponible"],
+                labels: [
+                    fnT("prediction.chartDoughnutProyectada", "Ocupación Proyectada"),
+                    fnT("prediction.chartDoughnutDisponible", "Capacidad Disponible")
+                ],
                 datasets: [
                     {
                         data: [0, 100],
@@ -164,7 +173,70 @@ function inicializarGraficos() {
             }
         });
     }
+
+    // Garantizar respuesta fluida e inmediata ante eventos de zoom o redimensión de ventana
+    const graficosGrid = document.querySelector(".graficos-grid");
+    if (graficosGrid && window.ResizeObserver && !window._prediccionResizeObserverSet) {
+        window._prediccionResizeObserverSet = true;
+        const ro = new ResizeObserver(() => {
+            if (chartComparativoInstance) chartComparativoInstance.resize();
+            if (chartOcupacionInstance) chartOcupacionInstance.resize();
+        });
+        ro.observe(graficosGrid);
+    }
+
+    if (!window._prediccionWindowResizeSet) {
+        window._prediccionWindowResizeSet = true;
+        window.addEventListener("resize", () => {
+            if (chartComparativoInstance) chartComparativoInstance.resize();
+            if (chartOcupacionInstance) chartOcupacionInstance.resize();
+        });
+    }
 }
+
+// ===== ACTUALIZACIÓN DINÁMICA DE IDIOMA EN GRÁFICOS =====
+function actualizarTextosGraficos() {
+    const fnT = (k, fb) => (typeof window.t === "function" ? window.t(k, fb) : fb);
+
+    if (chartComparativoInstance) {
+        if (chartComparativoInstance.data && chartComparativoInstance.data.datasets) {
+            if (chartComparativoInstance.data.datasets[0]) {
+                chartComparativoInstance.data.datasets[0].label = fnT("prediction.chartSerieEstimados", "Comensales Estimados (ML)");
+            }
+            if (chartComparativoInstance.data.datasets[1]) {
+                chartComparativoInstance.data.datasets[1].label = fnT("prediction.chartSerieReales", "Comensales Reales (MongoDB)");
+            }
+            if (chartComparativoInstance.data.datasets[2]) {
+                chartComparativoInstance.data.datasets[2].label = fnT("prediction.chartSerieMesas", "Mesas Sugeridas");
+            }
+        }
+        if (chartComparativoInstance.options && chartComparativoInstance.options.scales) {
+            if (chartComparativoInstance.options.scales.y && chartComparativoInstance.options.scales.y.title) {
+                chartComparativoInstance.options.scales.y.title.text = fnT("prediction.chartEjeComensales", "Comensales");
+            }
+            if (chartComparativoInstance.options.scales.yMesas && chartComparativoInstance.options.scales.yMesas.title) {
+                chartComparativoInstance.options.scales.yMesas.title.text = fnT("prediction.chartEjeMesas", "Mesas");
+            }
+        }
+        chartComparativoInstance.update();
+    }
+
+    if (chartOcupacionInstance) {
+        if (chartOcupacionInstance.data) {
+            chartOcupacionInstance.data.labels = [
+                fnT("prediction.chartDoughnutProyectada", "Ocupación Proyectada"),
+                fnT("prediction.chartDoughnutDisponible", "Capacidad Disponible")
+            ];
+        }
+        chartOcupacionInstance.update();
+    }
+
+    if (ultimoPayloadPrediccion) {
+        renderizarDatosPrediccion(ultimoPayloadPrediccion);
+    }
+}
+window.actualizarTextosGraficos = actualizarTextosGraficos;
+window.reaplicarIdiomaPrediccion = actualizarTextosGraficos;
 
 // ===== CONSULTA PRINCIPAL AL BACKEND DE SPRING BOOT =====
 async function cargarPrediccion(animarBoton = false) {
@@ -218,7 +290,7 @@ async function cargarPrediccion(animarBoton = false) {
             renderizarDatosPrediccion(data);
             actualizarIndicadorLive(true);
             if (animarBoton) {
-                mostrarToastPrediccion("Predicción actualizada con éxito. Datos sincronizados con la base de datos.", "success");
+                mostrarToastPrediccion(typeof window.t === "function" ? window.t("prediction.toastExito", "Predicción actualizada con éxito. Datos sincronizados con la base de datos.") : "Predicción actualizada con éxito. Datos sincronizados con la base de datos.", "success");
             }
         } else if (resp.status === 403 || resp.status === 401) {
             console.warn("Sesión expirada o permisos de admin requeridos.");
@@ -226,14 +298,14 @@ async function cargarPrediccion(animarBoton = false) {
             console.error("Error al obtener predicción:", resp.status);
             actualizarIndicadorLive(false);
             if (animarBoton) {
-                mostrarToastPrediccion("No se pudo actualizar la predicción. Intenta nuevamente.", "error");
+                mostrarToastPrediccion(typeof window.t === "function" ? window.t("prediction.toastError", "No se pudo actualizar la predicción. Intenta nuevamente.") : "No se pudo actualizar la predicción. Intenta nuevamente.", "error");
             }
         }
     } catch (e) {
         console.error("Fallo de conexión:", e);
         actualizarIndicadorLive(false);
         if (animarBoton) {
-            mostrarToastPrediccion("No se pudo conectar con la base de datos. Verifica tu conexión e intenta nuevamente.", "error");
+            mostrarToastPrediccion(typeof window.t === "function" ? window.t("prediction.toastConexion", "No se pudo conectar con la base de datos. Verifica tu conexión e intenta nuevamente.") : "No se pudo conectar con la base de datos. Verifica tu conexión e intenta nuevamente.", "error");
         }
     } finally {
         if (btn) {
@@ -254,6 +326,8 @@ function actualizarPrediccionManual() {
 // ===== RENDERIZAR EN DOM Y ACTUALIZAR GRÁFICOS =====
 function renderizarDatosPrediccion(data) {
     if (!data) return;
+    ultimoPayloadPrediccion = data;
+    const fnT = (k, fb) => (typeof window.t === "function" ? window.t(k, fb) : fb);
 
     // 1. KPIs
     const elMesas = document.getElementById("kpiMesasPico");
@@ -266,11 +340,22 @@ function renderizarDatosPrediccion(data) {
 
     if (elMesas) elMesas.textContent = data.mesasSugeridasPico || 0;
     if (elComEst) elComEst.textContent = data.totalComensalesEstimados || 0;
-    if (elComReales) elComReales.textContent = `Reales en BD: ${data.totalComensalesReales || 0}`;
+    if (elComReales) {
+        const tpl = fnT("prediction.kpiRealesEnBd", "Reales en BD: {count}");
+        elComReales.textContent = tpl.replace("{count}", data.totalComensalesReales || 0);
+    }
     if (elOcProy) elOcProy.textContent = `${data.ocupacionProyectadaGlobal || 0}%`;
-    if (elOcReal) elOcReal.textContent = `Ocupación real actual: ${data.ocupacionRealGlobal || 0}%`;
+    if (elOcReal) {
+        const tpl = fnT("prediction.kpiOcupacionRealActual", "Ocupación real actual: {percent}%");
+        elOcReal.textContent = tpl.replace("{percent}", data.ocupacionRealGlobal || 0);
+    }
     if (elTotRes) elTotRes.textContent = data.totalReservasReales || 0;
-    if (elTotMesas) elTotMesas.textContent = `Capacidad: ${data.totalMesasRestaurante || 0} mesas (${data.capacidadMaximaLocal || 0} plazas)`;
+    if (elTotMesas) {
+        const tpl = fnT("prediction.kpiCapacidadMesas", "Capacidad: {mesas} mesas ({plazas} plazas)");
+        elTotMesas.textContent = tpl
+            .replace("{mesas}", data.totalMesasRestaurante || 0)
+            .replace("{plazas}", data.capacidadMaximaLocal || 0);
+    }
 
     // 2. Banner de Alerta Dinámica
     const banner = document.getElementById("bannerAlerta");
@@ -278,7 +363,7 @@ function renderizarDatosPrediccion(data) {
     const bannerIcon = document.getElementById("bannerAlertaIcon");
 
     if (banner && bannerTexto) {
-        bannerTexto.textContent = data.alertaCapacidad || "Capacidad Operativa Óptima";
+        bannerTexto.textContent = data.alertaCapacidad || fnT("prediction.alertaCapacidadOptima", "Capacidad Operativa Óptima");
         banner.className = "alerta-banner";
 
         if ((data.alertaCapacidad || "").includes("ALERTA") || data.ocupacionProyectadaGlobal > 90) {
@@ -319,7 +404,7 @@ function renderizarDatosPrediccion(data) {
     const tbody = document.getElementById("tablaPrediccionBody");
     if (tbody && Array.isArray(data.series)) {
         if (data.series.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#888;padding:25px;">No hay franjas para los filtros seleccionados.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#888;padding:25px;">' + fnT("prediction.tablaVacia", "No hay franjas para los filtros seleccionados.") + '</td></tr>';
             return;
         }
 
@@ -331,13 +416,13 @@ function renderizarDatosPrediccion(data) {
 
         tbody.innerHTML = data.series.map(s => {
             let badgeClass = "optimo";
-            let badgeText = "Óptimo";
+            let badgeText = fnT("prediction.badgeOptimo", "Óptimo");
             if (s.ocupacionProyectadaPorcentaje >= 85) {
                 badgeClass = "alto";
-                badgeText = "Alta Demanda";
+                badgeText = fnT("prediction.badgeAltaDemanda", "Alta Demanda");
             } else if (s.ocupacionProyectadaPorcentaje >= 60) {
                 badgeClass = "moderado";
-                badgeText = "Moderada";
+                badgeText = fnT("prediction.badgeModerada", "Moderada");
             }
 
             return `
@@ -345,9 +430,9 @@ function renderizarDatosPrediccion(data) {
                     <td style="font-weight:600;color:#DDD;">${s.fecha}</td>
                     <td style="font-weight:700;color:var(--color-primary, #D4AF37);">${s.hora}</td>
                     <td><strong>${s.comensalesEstimados}</strong></td>
-                    <td style="color:#60A5FA;">${s.comensalesReales} comensales</td>
+                    <td style="color:#60A5FA;">${s.comensalesReales} ${fnT("prediction.unidadComensales", "comensales")}</td>
                     <td>${s.reservasRealesCount}</td>
-                    <td style="font-weight:700;color:#34D399;">${s.mesasSugeridas} mesas</td>
+                    <td style="font-weight:700;color:#34D399;">${s.mesasSugeridas} ${fnT("prediction.unidadMesas", "mesas")}</td>
                     <td>${Math.round((s.ocupacionProyectadaPorcentaje || 0) * 10) / 10}%</td>
                     <td><span class="badge-estado ${badgeClass}">${badgeText}</span></td>
                 </tr>
@@ -387,11 +472,11 @@ function actualizarIndicadorLive(conectado) {
     if (conectado) {
         badge.style.borderColor = "rgba(34, 197, 94, 0.35)";
         badge.style.color = "#4ADE80";
-        txt.textContent = "EN VIVO / CONECTADO";
+        txt.textContent = typeof window.t === "function" ? window.t("prediction.estadoEnVivo", "EN VIVO / CONECTADO") : "EN VIVO / CONECTADO";
     } else {
         badge.style.borderColor = "rgba(239, 68, 68, 0.35)";
         badge.style.color = "#F87171";
-        txt.textContent = "RECONECTANDO...";
+        txt.textContent = typeof window.t === "function" ? window.t("prediction.estadoReconectando", "RECONECTANDO...") : "RECONECTANDO...";
     }
 }
 

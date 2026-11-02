@@ -35,8 +35,8 @@
             <section class="content-section active prediccion-container">
                 <header class="section-header">
                     <div>
-                        <h1 class="gold-text">Predicción de Reservas y Demanda</h1>
-                        <p>Inferencia predictiva en tiempo real impulsada por Machine Learning y datos de MongoDB Atlas.</p>
+                        <h1 class="gold-text" data-i18n="prediction.titulo">Predicción de Reservas y Demanda</h1>
+                        <p data-i18n="prediction.subtitulo">Inferencia predictiva en tiempo real impulsada por Machine Learning y datos de MongoDB Atlas.</p>
                     </div>
                 </header>
 
@@ -44,34 +44,34 @@
                 <div class="prediccion-toolbar">
                     <div class="filtros-grupo">
                         <div class="filtro-item">
-                            <label class="filtro-label" for="inputFechaInicio">FECHA INICIO</label>
+                            <label class="filtro-label" for="inputFechaInicio" data-i18n="prediction.fechaInicio">FECHA INICIO</label>
                             <input type="date" id="inputFechaInicio" class="filtro-input">
                         </div>
 
                         <div class="filtro-item">
-                            <label class="filtro-label" for="inputFechaFin">FECHA FIN</label>
+                            <label class="filtro-label" for="inputFechaFin" data-i18n="prediction.fechaFin">FECHA FIN</label>
                             <input type="date" id="inputFechaFin" class="filtro-input">
                         </div>
 
                         <div class="filtro-item">
-                            <label class="filtro-label" for="selectTurno">TURNO / FRANJA</label>
+                            <label class="filtro-label" for="selectTurno" data-i18n="prediction.turno">TURNO / FRANJA</label>
                             <select id="selectTurno" class="filtro-select">
-                                <option value="COMPLETO">Día Completo (11:00 - 22:00)</option>
-                                <option value="ALMUERZO">Almuerzo (12:00 - 15:00)</option>
-                                <option value="CENA">Cena (18:00 - 22:00)</option>
+                                <option value="COMPLETO" data-i18n="prediction.turnoCompleto">Día Completo (11:00 - 22:00)</option>
+                                <option value="ALMUERZO" data-i18n="prediction.turnoAlmuerzo">Almuerzo (12:00 - 15:00)</option>
+                                <option value="CENA" data-i18n="prediction.turnoCena">Cena (18:00 - 22:00)</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="acciones-grupo">
-                        <div class="live-badge" title="Monitoreo y streaming activo con MongoDB y FastAPI">
+                        <div class="live-badge" title="Monitoreo y streaming activo con MongoDB y FastAPI" data-i18n-title="prediction.tooltipLive">
                             <span class="live-dot"></span>
-                            <span id="txtEstadoLive">EN VIVO / CONECTADO</span>
+                            <span id="txtEstadoLive" data-i18n="prediction.estadoEnVivo">EN VIVO / CONECTADO</span>
                         </div>
 
                         <button id="btnActualizarPrediccion" class="btn-actualizar-prediccion" onclick="actualizarPrediccionManual()">
                             <span class="material-symbols-outlined">sync</span>
-                            <span>Actualizar Predicción</span>
+                            <span id="btnActualizarTexto" data-i18n="prediction.btnActualizar">Actualizar Predicción</span>
                         </button>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
                 <!-- ===== BANNER DE ALERTA DINÁMICA ===== -->
                 <div id="bannerAlerta" class="alerta-banner optima">
                     <span class="material-symbols-outlined" id="bannerAlertaIcon">verified</span>
-                    <span id="bannerAlertaTexto">Sincronizando estado y demanda con el modelo predictivo...</span>
+                    <span id="bannerAlertaTexto" data-i18n="prediction.alertaSincronizando">Sincronizando estado y demanda con el modelo predictivo...</span>
                 </div>
 
                 <!-- ===== KPIS PREDICTIVOS ===== -->
@@ -89,9 +89,9 @@
                             <span class="material-symbols-outlined">table_restaurant</span>
                         </div>
                         <div class="kpi-details">
-                            <span class="kpi-title">MESAS A PREPARAR (PICO)</span>
+                            <span class="kpi-title" data-i18n="prediction.kpiMesasPico">MESAS A PREPARAR (PICO)</span>
                             <h2 class="kpi-number" id="kpiMesasPico">--</h2>
-                            <span class="kpi-subtext">Holgura de seguridad +10% aplicada</span>
+                            <span class="kpi-subtext" data-i18n="prediction.kpiHolgura">Holgura de seguridad +10% aplicada</span>
                         </div>
                     </div>
 
@@ -100,9 +100,9 @@
                             <span class="material-symbols-outlined">person_pin</span>
                         </div>
                         <div class="kpi-details">
-                            <span class="kpi-title">COMENSALES ESTIMADOS</span>
+                            <span class="kpi-title" data-i18n="prediction.kpiComensalesEst">COMENSALES ESTIMADOS</span>
                             <h2 class="kpi-number" id="kpiComensalesEst">--</h2>
-                            <span class="kpi-subtext" id="kpiComensalesReales">Reales en BD: 0</span>
+                            <span class="kpi-subtext" id="kpiComensalesReales" data-i18n="prediction.kpiRealesEnBd">Reales en BD: 0</span>
                         </div>
                     </div>
 
@@ -111,9 +111,9 @@
                             <span class="material-symbols-outlined">percent</span>
                         </div>
                         <div class="kpi-details">
-                            <span class="kpi-title">OCUPACIÓN PROYECTADA</span>
+                            <span class="kpi-title" data-i18n="prediction.kpiOcupacionProy">OCUPACIÓN PROYECTADA</span>
                             <h2 class="kpi-number" id="kpiOcupacionProy">--%</h2>
-                            <span class="kpi-subtext" id="kpiOcupacionReal">Ocupación real actual: 0%</span>
+                            <span class="kpi-subtext" id="kpiOcupacionReal" data-i18n="prediction.kpiOcupacionRealActual">Ocupación real actual: 0%</span>
                         </div>
                     </div>
 
@@ -122,9 +122,9 @@
                             <span class="material-symbols-outlined">book_online</span>
                         </div>
                         <div class="kpi-details">
-                            <span class="kpi-title">RESERVAS EN MONGODB</span>
+                            <span class="kpi-title" data-i18n="prediction.kpiTotalReservas">RESERVAS EN MONGODB</span>
                             <h2 class="kpi-number" id="kpiTotalReservas">0</h2>
-                            <span class="kpi-subtext" id="kpiTotalMesasLocal">Capacidad: -- mesas</span>
+                            <span class="kpi-subtext" id="kpiTotalMesasLocal" data-i18n="prediction.kpiCapacidadMesas">Capacidad: -- mesas</span>
                         </div>
                     </div>
                 </div>
@@ -135,8 +135,8 @@
                     <div class="grafico-card">
                         <div class="grafico-header">
                             <div>
-                                <h3>Demanda Estimada vs. Reservas Reales</h3>
-                                <p style="font-size:12px;color:#888;margin:2px 0 0 0;">Comparación por franja horaria en base al modelo ML y MongoDB Atlas</p>
+                                <h3 data-i18n="prediction.chartDemandaTitulo">Demanda Estimada vs. Reservas Reales</h3>
+                                <p style="font-size:12px;color:#888;margin:2px 0 0 0;" data-i18n="prediction.chartDemandaSubtitulo">Comparación por franja horaria en base al modelo ML y MongoDB Atlas</p>
                             </div>
                         </div>
                         <div class="grafico-canvas-wrap">
@@ -148,8 +148,8 @@
                     <div class="grafico-card">
                         <div class="grafico-header">
                             <div>
-                                <h3>Capacidad del Restaurante</h3>
-                                <p style="font-size:12px;color:#888;margin:2px 0 0 0;">Proyección de aforo vs. Capacidad máxima</p>
+                                <h3 data-i18n="prediction.chartCapacidadTitulo">Capacidad del Restaurante</h3>
+                                <p style="font-size:12px;color:#888;margin:2px 0 0 0;" data-i18n="prediction.chartCapacidadSubtitulo">Proyección de aforo vs. Capacidad máxima</p>
                             </div>
                         </div>
                         <div class="grafico-canvas-wrap">
@@ -160,19 +160,19 @@
 
                 <!-- ===== TABLA DE DESGLOSE POR HORARIOS ===== -->
                 <div class="desglose-card">
-                    <h3 style="color:#FFF;margin-bottom:14px;font-family:var(--font-family-title,serif);">Desglose por Franja Horaria</h3>
+                    <h3 style="color:#FFF;margin-bottom:14px;font-family:var(--font-family-title,serif);" data-i18n="prediction.tablaTitulo">Desglose por Franja Horaria</h3>
                     <div class="table-wrapper">
                         <table class="reservas-table manuscript-table">
                             <thead>
                                 <tr>
-                                    <th>FECHA</th>
-                                    <th>HORA / FRANJA</th>
-                                    <th>COMENSALES ESTIMADOS (ML)</th>
-                                    <th>COMENSALES REALES (BD)</th>
-                                    <th>RESERVAS ACTIVAS</th>
-                                    <th>MESAS SUGERIDAS</th>
-                                    <th>% OCUPACIÓN</th>
-                                    <th>ESTADO CARGA</th>
+                                    <th data-i18n="prediction.thFecha">FECHA</th>
+                                    <th data-i18n="prediction.thHora">HORA / FRANJA</th>
+                                    <th data-i18n="prediction.thComensalesEst">COMENSALES ESTIMADOS (ML)</th>
+                                    <th data-i18n="prediction.thComensalesReales">COMENSALES REALES (BD)</th>
+                                    <th data-i18n="prediction.thReservasActivas">RESERVAS ACTIVAS</th>
+                                    <th data-i18n="prediction.thMesasSugeridas">MESAS SUGERIDAS</th>
+                                    <th data-i18n="prediction.thOcupacion">% OCUPACIÓN</th>
+                                    <th data-i18n="prediction.thEstadoCarga">ESTADO CARGA</th>
                                 </tr>
                             </thead>
                             <tbody id="tablaPrediccionBody">
@@ -252,4 +252,3 @@
     <script th:src="@{/js/admin/prediccionAdmin.js}"></script>
 </body>
 </html>
-

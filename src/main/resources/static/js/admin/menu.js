@@ -1,4 +1,4 @@
-﻿let todosLosPlatos = [];
+let todosLosPlatos = [];
 let paginaActualPlatos = 1;
 const itemsPorPaginaPlatos = 8;
 const formatoPrecioPlato = new Intl.NumberFormat("es-CO", {
@@ -6,6 +6,32 @@ const formatoPrecioPlato = new Intl.NumberFormat("es-CO", {
     currency: "COP",
     maximumFractionDigits: 0
 });
+
+function fnT(k, fb) {
+    return typeof window.t === "function" ? window.t(k, fb) : fb;
+}
+
+function obtenerCategoriaPlatoTraducida(cat) {
+    let limpia = String(cat || "").trim().toUpperCase().replaceAll(" ", "_");
+    let isEn = (typeof window.obtenerIdioma === "function" ? window.obtenerIdioma() : (localStorage.getItem("adminIdioma") || "es")) === "en";
+    const categorias = {
+        "ENTRADAS": isEn ? "APPETIZERS" : "ENTRADAS",
+        "PLATOS_FUERTES": isEn ? "MAIN COURSES" : "PLATOS FUERTES",
+        "BEBIDAS": isEn ? "BEVERAGES" : "BEBIDAS",
+        "POSTRES": isEn ? "DESSERTS" : "POSTRES"
+    };
+    return categorias[limpia] || String(cat || (isEn ? "No category" : "Sin categoría")).replaceAll("_", " ");
+}
+
+function preTraducirPlatos(platos) {
+    if (!Array.isArray(platos) || typeof window.traducirDinamico !== "function") return;
+    let isEn = (typeof window.obtenerIdioma === "function" ? window.obtenerIdioma() : (localStorage.getItem("adminIdioma") || "es")) === "en";
+    if (!isEn) return;
+    platos.forEach(function (p) {
+        if (p.nombre) window.traducirDinamico(p.nombre, "es", "en");
+        if (p.descripcion) window.traducirDinamico(p.descripcion, "es", "en");
+    });
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     cargarPlatos();
@@ -35,7 +61,7 @@ async function cargarPlatos() {
     let container = document.getElementById("platosListContainer");
     if (!container) return;
 
-    mostrarMensajePlatos("Cargando platos del menú...", "#888");
+    mostrarMensajePlatos(fnT("menu.cargando", "Cargando platos del menú..."), "#888");
 
     let token = obtenerTokenAdmin();
     try {
@@ -49,7 +75,7 @@ async function cargarPlatos() {
         if (!resp.ok) {
             console.error(`Error al cargar platos: ${resp.status} ${resp.statusText}`);
             todosLosPlatos = [];
-            mostrarMensajePlatos("No se pudieron cargar los platos del menú.", "#f44336");
+            mostrarMensajePlatos(fnT("menu.errorCargar", "No se pudieron cargar los platos del menú."), "#f44336");
             actualizarPaginacionPlatos(1, 1);
             actualizarContadoresPlatos();
             return;
@@ -62,11 +88,12 @@ async function cargarPlatos() {
 
         todosLosPlatos = platos;
         paginaActualPlatos = 1;
+        preTraducirPlatos(platos);
         renderizarListaPlatos();
     } catch (error) {
         console.error("Error al cargar platos:", error);
         todosLosPlatos = [];
-        mostrarMensajePlatos("Error al conectar con el servicio de platos.", "#f44336");
+        mostrarMensajePlatos(fnT("menu.errorConexion", "Error al conectar con el servicio de platos."), "#f44336");
         actualizarPaginacionPlatos(1, 1);
         actualizarContadoresPlatos();
     }
@@ -78,12 +105,18 @@ function obtenerListaFiltradaPlatos() {
 
     return todosLosPlatos.filter(function (plato) {
         let disponibilidad = plato.disponible ? "disponible" : "no disponible";
+        let cachedNombre = typeof window.obtenerTraduccionCacheada === "function" ? window.obtenerTraduccionCacheada(plato.nombre, "es", "en") : "";
+        let cachedDesc = typeof window.obtenerTraduccionCacheada === "function" ? window.obtenerTraduccionCacheada(plato.descripcion, "es", "en") : "";
         let texto = [
             plato.nombre,
+            cachedNombre,
             plato.descripcion,
+            cachedDesc,
             plato.precio,
             plato.categoria,
-            disponibilidad
+            obtenerCategoriaPlatoTraducida(plato.categoria),
+            disponibilidad,
+            plato.disponible ? "available" : "unavailable"
         ].map(valor => String(valor ?? "")).join(" ").toLowerCase();
         let coincideTexto = !termino || texto.includes(termino);
         let coincideCategoria = !categoria
@@ -99,7 +132,7 @@ function renderizarListaPlatos(listaFiltrada) {
     container.replaceChildren();
     let lista = listaFiltrada !== undefined ? listaFiltrada : obtenerListaFiltradaPlatos();
     if (lista.length === 0) {
-        mostrarMensajePlatos("No hay platos para mostrar con los filtros actuales.", "#888");
+        mostrarMensajePlatos(fnT("menu.vacioFiltros", "No hay platos para mostrar con los filtros actuales."), "#888");
         actualizarPaginacionPlatos(1, 1);
         actualizarContadoresPlatos();
         return;
@@ -109,6 +142,8 @@ function renderizarListaPlatos(listaFiltrada) {
     paginaActualPlatos = Math.min(paginaActualPlatos, totalPaginas);
     let inicio = (paginaActualPlatos - 1) * itemsPorPaginaPlatos;
     let visibles = lista.slice(inicio, inicio + itemsPorPaginaPlatos);
+
+    let isEn = (typeof window.obtenerIdioma === "function" ? window.obtenerIdioma() : (localStorage.getItem("adminIdioma") || "es")) === "en";
 
     visibles.forEach(function (plato) {
         let item = document.createElement("article");
@@ -133,26 +168,49 @@ function renderizarListaPlatos(listaFiltrada) {
         contenido.className = "plato-info";
         let nombrePlato = document.createElement("span");
         nombrePlato.className = "plato-nombre";
-        nombrePlato.textContent = plato.nombre || "Plato sin nombre";
+
         let descripcion = document.createElement("span");
         descripcion.className = "plato-descripcion";
-        descripcion.textContent = plato.descripcion || "Sin descripción";
+
+        let nombreOriginal = plato.nombre || fnT("menu.platoSinNombre", "Plato sin nombre");
+        let descOriginal = plato.descripcion || fnT("menu.sinDescripcion", "Sin descripción");
+
+        // Traducción dinámica de nombre y descripción
+        if (isEn && typeof window.traducirDinamico === "function") {
+            let cacheNombre = typeof window.obtenerTraduccionCacheada === "function" ? window.obtenerTraduccionCacheada(plato.nombre, "es", "en") : null;
+            nombrePlato.textContent = cacheNombre || nombreOriginal;
+            if (!cacheNombre && plato.nombre) {
+                window.traducirDinamico(plato.nombre, "es", "en").then(res => {
+                    if (nombrePlato.isConnected) nombrePlato.textContent = res;
+                });
+            }
+
+            let cacheDesc = typeof window.obtenerTraduccionCacheada === "function" ? window.obtenerTraduccionCacheada(plato.descripcion, "es", "en") : null;
+            descripcion.textContent = cacheDesc || descOriginal;
+            if (!cacheDesc && plato.descripcion) {
+                window.traducirDinamico(plato.descripcion, "es", "en").then(res => {
+                    if (descripcion.isConnected) descripcion.textContent = res;
+                });
+            }
+        } else {
+            nombrePlato.textContent = nombreOriginal;
+            descripcion.textContent = descOriginal;
+        }
 
         let categoria = document.createElement("span");
         categoria.className = "plato-categoria";
-        categoria.textContent = String(plato.categoria || "Sin categoría").replaceAll("_", " ");
+        categoria.textContent = obtenerCategoriaPlatoTraducida(plato.categoria);
 
         let precio = Number(plato.precio);
         let precioPlato = document.createElement("span");
         precioPlato.className = "plato-precio";
         precioPlato.textContent = Number.isFinite(precio)
             ? formatoPrecioPlato.format(precio)
-            : "No especificado";
+            : fnT("menu.noEspecificado", "No especificado");
 
         let disponible = Boolean(plato.disponible);
         let badge = document.createElement("span");
         badge.className = `status-badge ${disponible ? "status-confirmed" : "status-cancelada"}`;
-                let isEn = (localStorage.getItem("adminIdioma") === "en");
         badge.textContent = disponible ? (isEn ? "AVAILABLE" : "DISPONIBLE") : (isEn ? "UNAVAILABLE" : "NO DISPONIBLE");
 
         let metadatos = document.createElement("div");
@@ -163,7 +221,7 @@ function renderizarListaPlatos(listaFiltrada) {
         let editarButton = document.createElement("button");
         editarButton.type = "button";
         editarButton.className = "action-btn mesa-edit-btn";
-        editarButton.title = "Editar plato";
+        editarButton.title = fnT("menu.editarPlato", "Editar plato");
         editarButton.dataset.accion = "editar-plato";
         editarButton.dataset.id = String(plato.id || plato._id || "");
         editarButton.disabled = !editarButton.dataset.id;
@@ -175,7 +233,7 @@ function renderizarListaPlatos(listaFiltrada) {
         let eliminarButton = document.createElement("button");
         eliminarButton.type = "button";
         eliminarButton.className = "action-btn mesa-delete-btn";
-        eliminarButton.title = "Eliminar plato";
+        eliminarButton.title = fnT("menu.eliminarPlato", "Eliminar plato");
         eliminarButton.dataset.accion = "eliminar-plato";
         eliminarButton.dataset.id = String(plato.id || plato._id || "");
         eliminarButton.disabled = !eliminarButton.dataset.id;
@@ -230,6 +288,14 @@ function actualizarPaginacionPlatos(actual, total) {
     let elTotal = document.getElementById("totalPaginasPlatos");
     if (elActual) elActual.textContent = actual;
     if (elTotal) elTotal.textContent = total;
+
+    let info = document.querySelector(".page-info");
+    if (info) {
+        const tpl = fnT("menu.paginacionInfo", "Mostrando {actual} de {total} páginas");
+        info.innerHTML = tpl
+            .replace("{actual}", `<span id="paginaActualPlatos">${actual}</span>`)
+            .replace("{total}", `<span id="totalPaginasPlatos">${total}</span>`);
+    }
 
     let btnAnterior = document.getElementById("btnPagAnteriorPlatos");
     let btnSiguiente = document.getElementById("btnPagSiguientePlatos");
@@ -300,7 +366,7 @@ function configurarFormularioPlato() {
             !Number.isFinite(precio) ||
             precio < 0
         ) {
-            alert("Completa los datos del plato con valores válidos.");
+            alert(fnT("menu.errorDatosInvalidos", "Completa los datos del plato con valores válidos."));
             return;
         }
 
@@ -311,17 +377,17 @@ function configurarFormularioPlato() {
         ];
 
         if (!platoEnEdicion && !archivo) {
-            alert("Selecciona una imagen para el plato.");
+            alert(fnT("menu.errorSeleccionarImagen", "Selecciona una imagen para el plato."));
             return;
         }
 
         if (archivo && !tiposPermitidos.includes(archivo.type)) {
-            alert("Selecciona una imagen JPG, PNG o WebP.");
+            alert(fnT("menu.errorTipoImagen", "Selecciona una imagen JPG, PNG o WebP."));
             return;
         }
 
         if (archivo && archivo.size > 5 * 1024 * 1024) {
-            alert("La imagen no debe superar los 5 MB.");
+            alert(fnT("menu.errorTamanoImagen", "La imagen no debe superar los 5 MB."));
             return;
         }
 
@@ -356,7 +422,7 @@ function configurarFormularioPlato() {
                     `Error al guardar plato: ${resp.status}`,
                     detalle
                 );
-                alert("No se pudo guardar el plato. Revisa la consola.");
+                alert(fnT("menu.errorGuardarServidor", "No se pudo guardar el plato. Revisa la consola."));
                 return;
             }
 
@@ -364,16 +430,16 @@ function configurarFormularioPlato() {
             platoEnEdicion = null;
 
             const botonGuardar = form.querySelector('[type="submit"]');
-            if (botonGuardar) botonGuardar.textContent = "AÑADIR PLATO";
+            if (botonGuardar) botonGuardar.textContent = fnT("menu.guardar", "AÑADIR PLATO");
 
             await cargarPlatos();
             alert(editando
-                ? "Plato actualizado correctamente."
-                : "Plato añadido correctamente.");
+                ? fnT("menu.exitoActualizar", "Plato actualizado correctamente.")
+                : fnT("menu.exitoAnadir", "Plato añadido correctamente."));
 
         } catch (error) {
             console.error("Error al guardar plato:", error);
-            alert("Error de red al guardar el plato.");
+            alert(fnT("menu.errorGuardarRed", "Error de red al guardar el plato."));
         }
     });
 
@@ -384,14 +450,13 @@ function configurarFormularioPlato() {
             platoEnEdicion = null;
 
             const botonGuardar = form.querySelector('[type="submit"]');
-            if (botonGuardar) botonGuardar.textContent = "AÑADIR PLATO";
+            if (botonGuardar) botonGuardar.textContent = fnT("menu.guardar", "AÑADIR PLATO");
         });
     }
 }
 
-
 async function eliminarPlato(id) {
-    if (!id || !confirm("¿Está seguro de eliminar este plato permanentemente del menú?")) return;
+    if (!id || !confirm(fnT("menu.confirmarEliminar", "¿Está seguro de eliminar este plato permanentemente del menú?"))) return;
 
     let token = obtenerTokenAdmin();
     try {
@@ -404,14 +469,14 @@ async function eliminarPlato(id) {
 
         if (!resp.ok) {
             console.error(`Error al eliminar el plato: ${resp.status} ${resp.statusText}`);
-            alert("No se pudo eliminar el plato en el servidor.");
+            alert(fnT("menu.errorEliminarServidor", "No se pudo eliminar el plato en el servidor."));
             return;
         }
 
         await cargarPlatos();
     } catch (error) {
         console.error("Error al eliminar plato:", error);
-        alert("Error de red al eliminar el plato.");
+        alert(fnT("menu.errorEliminarRed", "Error de red al eliminar el plato."));
     }
 }
 
@@ -421,7 +486,7 @@ async function editarPlato(id) {
     );
 
     if (!id || !plato) {
-        alert("No se encontró el plato que deseas editar.");
+        alert(fnT("menu.errorNoEncontrado", "No se encontró el plato que deseas editar."));
         return;
     }
 
@@ -441,21 +506,30 @@ async function editarPlato(id) {
     platoEnEdicion = String(id);
 
     const botonGuardar = form.querySelector('[type="submit"]');
-    if (botonGuardar) botonGuardar.textContent = "GUARDAR CAMBIOS";
+    if (botonGuardar) botonGuardar.textContent = fnT("menu.guardarCambios", "GUARDAR CAMBIOS");
 
     form.scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
 }
+
 // ===== EXPOSICIÓN GLOBAL Y EVENTOS =====
 window.renderizarPlatos = renderizarListaPlatos;
 window.todosLosPlatos = todosLosPlatos;
 window.addEventListener("idiomaCambiado", function () {
+    preTraducirPlatos(todosLosPlatos);
     if (typeof renderizarListaPlatos === "function") {
         renderizarListaPlatos();
-        if (typeof actualizarContadoresPlatos === "function") {
-            actualizarContadoresPlatos();
+    }
+    if (typeof actualizarContadoresPlatos === "function") {
+        actualizarContadoresPlatos();
+    }
+    const form = document.getElementById("formPlato");
+    if (form) {
+        const botonGuardar = form.querySelector('[type="submit"]');
+        if (botonGuardar) {
+            botonGuardar.textContent = fnT(platoEnEdicion ? "menu.guardarCambios" : "menu.guardar", platoEnEdicion ? "GUARDAR CAMBIOS" : "AÑADIR PLATO");
         }
     }
 });

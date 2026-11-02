@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -34,8 +34,8 @@
             <main class="mis-reservas-container">
                 <header class="section-header-inline">
                     <div>
-                        <span class="reserva-badge">Configuración de Cuenta</span>
-                        <h1 class="serif-title" style="font-size: 3.2rem; color: #fff;">Mi Perfil</h1>
+                        <span class="reserva-badge" data-i18n="clientProfile.badge">Configuración de Cuenta</span>
+                        <h1 class="serif-title" style="font-size: 3.2rem; color: #fff;" data-i18n="clientProfile.titulo">Mi Perfil</h1>
                     </div>
                 </header>
 
@@ -47,42 +47,42 @@
                                 <div class="perfil-card-icon">
                                     <span class="material-symbols-outlined">person</span>
                                 </div>
-                                <h2 class="perfil-card-title">Datos Personales</h2>
+                                <h2 class="perfil-card-title" data-i18n="clientProfile.datosPersonales">Datos Personales</h2>
                             </div>
 
                             <form id="perfilForm" class="perfil-form">
                                 <div class="perfil-form-row">
                                     <div class="perfil-form-group">
-                                        <label for="perfilNombre" class="perfil-label">Nombre</label>
-                                        <input type="text" id="perfilNombre" class="perfil-input" placeholder="Tu nombre" required>
+                                        <label for="perfilNombre" class="perfil-label" data-i18n="clientProfile.nombre">Nombre</label>
+                                        <input type="text" id="perfilNombre" class="perfil-input" placeholder="Tu nombre" data-i18n-placeholder="clientProfile.tuNombre" required>
                                     </div>
 
                                     <div class="perfil-form-group">
-                                        <label for="perfilApellido" class="perfil-label">Apellido</label>
-                                        <input type="text" id="perfilApellido" class="perfil-input" placeholder="Tu apellido" required>
+                                        <label for="perfilApellido" class="perfil-label" data-i18n="clientProfile.apellido">Apellido</label>
+                                        <input type="text" id="perfilApellido" class="perfil-input" placeholder="Tu apellido" data-i18n-placeholder="clientProfile.tuApellido" required>
                                     </div>
                                 </div>
 
                                 <div class="perfil-form-group">
-                                    <label for="perfilCorreo" class="perfil-label">Correo Electrónico</label>
+                                    <label for="perfilCorreo" class="perfil-label" data-i18n="clientProfile.correo">Correo Electrónico</label>
                                     <input type="email" id="perfilCorreo" class="perfil-input" disabled>
-                                    <span class="perfil-hint">El correo no puede modificarse por seguridad.</span>
+                                    <span class="perfil-hint" data-i18n="clientProfile.correoHint">El correo no puede modificarse por seguridad.</span>
                                 </div>
 
                                 <div class="perfil-form-group">
-                                    <label for="perfilTelefono" class="perfil-label">Teléfono</label>
+                                    <label for="perfilTelefono" class="perfil-label" data-i18n="clientProfile.telefono">Teléfono</label>
                                     <input type="tel" id="perfilTelefono" class="perfil-input" placeholder="+57 300 1234567">
                                 </div>
 
                                 <div class="perfil-form-group">
-                                    <label for="perfilDireccion" class="perfil-label">Dirección de Residencia</label>
-                                    <input type="text" id="perfilDireccion" class="perfil-input" placeholder="Tu dirección completa">
+                                    <label for="perfilDireccion" class="perfil-label" data-i18n="clientProfile.direccion">Dirección de Residencia</label>
+                                    <input type="text" id="perfilDireccion" class="perfil-input" placeholder="Tu dirección completa" data-i18n-placeholder="clientProfile.tuDireccion">
                                 </div>
 
                                 <div class="perfil-actions">
                                     <button type="submit" id="btnActualizarDatos" class="btn-update-profile">
                                         <span class="material-symbols-outlined">save</span>
-                                        Actualizar Datos
+                                        <span data-i18n="clientProfile.btnActualizar">Actualizar Datos</span>
                                     </button>
                                 </div>
                             </form>
@@ -94,12 +94,12 @@
                                 <div class="perfil-card-icon">
                                     <span class="material-symbols-outlined">lock</span>
                                 </div>
-                                <h2 class="perfil-card-title">Cambiar Contraseña</h2>
+                                <h2 class="perfil-card-title" data-i18n="clientProfile.cambiarPassword">Cambiar Contraseña</h2>
                             </div>
 
                             <form id="formPasswordCliente" class="perfil-form">
                                 <div class="perfil-form-group">
-                                    <label for="passwordActualCliente" class="perfil-label">Contraseña Actual</label>
+                                    <label for="passwordActualCliente" class="perfil-label" data-i18n="clientProfile.passwordActual">Contraseña Actual</label>
                                     <div class="password-wrapper">
                                         <input type="password" id="passwordActualCliente" class="perfil-input" placeholder="••••••••" required>
                                         <button type="button" class="toggle-password-btn" onclick="togglePasswordCliente('passwordActualCliente', this)" title="Mostrar contraseña" aria-label="Mostrar contraseña">
@@ -112,7 +112,7 @@
                                 </div>
 
                                 <div class="perfil-form-group">
-                                    <label for="passwordNuevaCliente" class="perfil-label">Nueva Contraseña (mínimo 8 caracteres)</label>
+                                    <label for="passwordNuevaCliente" class="perfil-label" data-i18n="clientProfile.passwordNueva">Nueva Contraseña (mínimo 8 caracteres)</label>
                                     <div class="password-wrapper">
                                         <input type="password" id="passwordNuevaCliente" class="perfil-input" minlength="8" placeholder="••••••••" required>
                                         <button type="button" class="toggle-password-btn" onclick="togglePasswordCliente('passwordNuevaCliente', this)" title="Mostrar contraseña" aria-label="Mostrar contraseña">
@@ -126,12 +126,12 @@
                                         <div class="perfil-strength-bar-wrapper">
                                             <div id="barraFortalezaCliente" class="perfil-strength-bar"></div>
                                         </div>
-                                        <p class="perfil-strength-text" id="textoFortalezaCliente">Muy débil</p>
+                                        <p class="perfil-strength-text" id="textoFortalezaCliente" data-i18n="clientProfile.muyDebil">Muy débil</p>
                                     </div>
                                 </div>
 
                                 <div class="perfil-form-group">
-                                    <label for="passwordConfirmarCliente" class="perfil-label">Confirmar Nueva Contraseña</label>
+                                    <label for="passwordConfirmarCliente" class="perfil-label" data-i18n="clientProfile.passwordConfirmar">Confirmar Nueva Contraseña</label>
                                     <div class="password-wrapper">
                                         <input type="password" id="passwordConfirmarCliente" class="perfil-input" minlength="8" placeholder="••••••••" required>
                                         <button type="button" class="toggle-password-btn" onclick="togglePasswordCliente('passwordConfirmarCliente', this)" title="Mostrar contraseña" aria-label="Mostrar contraseña">
@@ -151,7 +151,7 @@
                                 <div class="perfil-actions">
                                     <button type="submit" id="btnCambiarPassword" class="btn-update-profile">
                                         <span class="material-symbols-outlined">lock_reset</span>
-                                        Cambiar Contraseña
+                                        <span data-i18n="clientProfile.btnCambiarPassword">Cambiar Contraseña</span>
                                     </button>
                                 </div>
                             </form>
