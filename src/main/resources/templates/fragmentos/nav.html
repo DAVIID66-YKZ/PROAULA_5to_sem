@@ -12,6 +12,14 @@
     </nav>
 
     <div class="nav-acciones" id="navAcciones">
+        <a th:href="@{/menu/menu.pdf}" class="nav-pdf-btn" title="Descargar menú en PDF" aria-label="Descargar menú en PDF">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3v12"></path>
+                <path d="m7 10 5 5 5-5"></path>
+                <path d="M5 19h14"></path>
+            </svg>
+        </a>
+
         <button type="button" id="navBtnCarrito" class="nav-carrito-btn" onclick="abrirCarrito();" title="Mi Carrito de Reserva" aria-label="Carrito de Reserva">
             <span class="nav-carrito-icon">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
