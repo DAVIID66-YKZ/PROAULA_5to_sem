@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -34,97 +34,97 @@
             <section id="menu" class="content-section active">
                 <header class="section-header">
                     <div>
-                        <h1>Gestión del Menú</h1>
-                        <p>Administra los platos y bebidas de tu menú.</p>
+                        <h1 data-i18n="menu.titulo">Gestión del Menú</h1>
+                        <p data-i18n="menu.subtitulo">Administra los platos y bebidas de tu menú.</p>
                     </div>
                 </header>
                 <div class="mesas-container menu-container">
                     <div class="mesa-form-panel">
                         <h3 class="titulo-icono">
                             <span class="material-symbols-outlined">restaurant_menu</span>
-                            Añadir plato
+                            <span data-i18n="menu.anadir">Añadir plato</span>
                         </h3>
 
                         <form id="formPlato" class="mesa-form">
                             <div class="form-group">
-                                <label for="nombrePlato">NOMBRE DEL PLATO</label>
-                                <input type="text" id="nombrePlato" placeholder="Ej. Pasta artesanal" required>
+                                <label for="nombrePlato" data-i18n="menu.nombre">NOMBRE DEL PLATO</label>
+                                <input type="text" id="nombrePlato" placeholder="Ej. Pasta artesanal" data-i18n-placeholder="menu.placeholderNombre" required>
                             </div>
 
                             <div class="form-group">
-                                <label for="descripcionPlato">DESCRIPCIÓN</label>
+                                <label for="descripcionPlato" data-i18n="menu.descripcion">DESCRIPCIÓN</label>
                                 <textarea id="descripcionPlato" class="menu-form-textarea"
-                                    placeholder="Describe los ingredientes y preparación..." required></textarea>
+                                    placeholder="Describe los ingredientes y preparación..." data-i18n-placeholder="menu.placeholderDescripcion" required></textarea>
                             </div>
 
                             <div class="form-group">
-                                <label for="categoriaPlato">CATEGORÍA</label>
+                                <label for="categoriaPlato" data-i18n="menu.categoria">CATEGORÍA</label>
                                 <select id="categoriaPlato" class="filter-select" required>
-                                    <option value="" disabled selected>Selecciona una categoría</option>
-                                    <option value="ENTRADAS">Entradas</option>
-                                    <option value="PLATOS_FUERTES">Platos Fuertes</option>
-                                    <option value="BEBIDAS">Bebidas</option>
-                                    <option value="POSTRES">Postres</option>
+                                    <option value="" disabled selected data-i18n="menu.seleccionarCategoria">Selecciona una categoría</option>
+                                    <option value="ENTRADAS" data-i18n="menu.catEntradas">Entradas</option>
+                                    <option value="PLATOS_FUERTES" data-i18n="menu.catPlatosFuertes">Platos Fuertes</option>
+                                    <option value="BEBIDAS" data-i18n="menu.catBebidas">Bebidas</option>
+                                    <option value="POSTRES" data-i18n="menu.catPostres">Postres</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <label for="precioPlato">PRECIO (COP)</label>
+                                <label for="precioPlato" data-i18n="menu.precio">PRECIO (COP)</label>
                                 <input type="number" id="precioPlato" placeholder="25000" min="10000" step="1000" required>
                             </div>
 
                             <div class="form-group">
-                                <label for="imagenPlato">Selecciona un archivo:</label>
+                                <label for="imagenPlato" data-i18n="menu.seleccionaArchivo">Selecciona un archivo:</label>
                                 <input type="file" id="imagenPlato" name="imagenPlato" accept="image/jpeg, image/png, image/webp">
                             </div>
 
                             <div class="form-group">
-                                <label for="disponiblePlato">DISPONIBLE</label>
+                                <label for="disponiblePlato" data-i18n="menu.disponible">DISPONIBLE</label>
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="disponiblePlato" checked>
                                     <span class="slider"></span>
                                 </label>
                             </div>
 
-                            <button type="submit" class="btn-save">AÑADIR PLATO</button>
-                            <button type="reset" class="btn-clear">LIMPIAR FORMULARIO</button>
+                            <button type="submit" class="btn-save" data-i18n="menu.guardar">AÑADIR PLATO</button>
+                            <button type="reset" class="btn-clear" data-i18n="menu.limpiar">LIMPIAR FORMULARIO</button>
                         </form>
                     </div>
 
                     <div class="mesas-registry">
                         <div class="registry-header">
-                            <h3>Platos del menú</h3>
+                            <h3 data-i18n="menu.platos">Platos del menú</h3>
                             <div class="registry-stats">
-                                <span class="badge active-badge">DISPONIBLES: <span id="platosDisponibles">0</span></span>
-                                <span class="badge total-badge">TOTAL: <span id="platosTotales">0</span></span>
+                                <span class="badge active-badge"><span data-i18n="menu.disponiblesBadge">DISPONIBLES:</span> <span id="platosDisponibles">0</span></span>
+                                <span class="badge total-badge"><span data-i18n="menu.totalBadge">TOTAL:</span> <span id="platosTotales">0</span></span>
                             </div>
                         </div>
 
                         <div class="menu-list-filters">
                             <input type="text" id="buscarPlato" class="search-input"
-                                placeholder="Buscar por nombre, descripción o precio...">
+                                placeholder="Buscar por nombre, descripción o precio..." data-i18n-placeholder="menu.buscarPlaceholder">
                             <select id="filtroCategoria" class="filter-select" aria-label="Filtrar por categoría">
-                                <option value="">Todas las categorías</option>
-                                <option value="ENTRADAS">Entradas</option>
-                                <option value="PLATOS_FUERTES">Platos Fuertes</option>
-                                <option value="BEBIDAS">Bebidas</option>
-                                <option value="POSTRES">Postres</option>
+                                <option value="" data-i18n="menu.todasCategorias">Todas las categorías</option>
+                                <option value="ENTRADAS" data-i18n="menu.catEntradas">Entradas</option>
+                                <option value="PLATOS_FUERTES" data-i18n="menu.catPlatosFuertes">Platos Fuertes</option>
+                                <option value="BEBIDAS" data-i18n="menu.catBebidas">Bebidas</option>
+                                <option value="POSTRES" data-i18n="menu.catPostres">Postres</option>
                             </select>
                         </div>
 
                         <div class="platos-list" id="platosListContainer" aria-live="polite">
-                            <p class="platos-list-message">Cargando platos del menú...</p>
+                            <p class="platos-list-message" data-i18n="menu.cargando">Cargando platos del menú...</p>
                         </div>
 
                         <div class="pagination pagination-controls">
                             <button type="button" class="btn-pagination" id="btnPagAnteriorPlatos"
-                                onclick="paginaAnteriorPlatos()">Anterior</button>
+                                onclick="paginaAnteriorPlatos()" data-i18n="common.anterior">Anterior</button>
                             <span class="page-info">
                                 Mostrando <span id="paginaActualPlatos">1</span> de <span
                                     id="totalPaginasPlatos">1</span> páginas
                             </span>
                             <button type="button" class="btn-pagination" id="btnPagSiguientePlatos"
-                                onclick="paginaSiguientePlatos()">Siguiente</button>
+                                onclick="paginaSiguientePlatos()" data-i18n="common.siguiente">Siguiente</button>
                         </div>
                     </div>
                 </div>

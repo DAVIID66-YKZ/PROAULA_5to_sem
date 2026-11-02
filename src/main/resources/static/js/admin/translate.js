@@ -1,4 +1,4 @@
-﻿/* ================================================================
+/* ================================================================
    SISTEMA INTEGRAL DE IDIOMAS (i18n) - GESTREST
    Traductor Unificado para Consola Admin y Portal Cliente
    Archivo único: translate.js
@@ -28,6 +28,7 @@
             "nav.usuarios": "GESTIONAR USUARIOS",
             "nav.perfil": "MI PERFIL",
             "nav.menu": "GESTIONAR MENÚ",
+            "nav.prediccion": "PREDICCIÓN ML",
             "nav.verSitio": "Ver Sitio",
             "nav.cerrarSesion": "Cerrar Sesión",
             "header.miPerfil": "Mi Perfil",
@@ -118,6 +119,45 @@
             "menu.disponible": "DISPONIBLE",
             "menu.guardar": "AÑADIR PLATO",
             "menu.platos": "Platos del menú",
+            "menu.placeholderNombre": "Ej. Pasta artesanal",
+            "menu.placeholderDescripcion": "Describe los ingredientes y preparación...",
+            "menu.seleccionarCategoria": "Selecciona una categoría",
+            "menu.catEntradas": "Entradas",
+            "menu.catPlatosFuertes": "Platos Fuertes",
+            "menu.catBebidas": "Bebidas",
+            "menu.catPostres": "Postres",
+            "menu.seleccionaArchivo": "Selecciona un archivo:",
+            "menu.guardarCambios": "GUARDAR CAMBIOS",
+            "menu.limpiar": "LIMPIAR FORMULARIO",
+            "menu.disponiblesBadge": "DISPONIBLES:",
+            "menu.totalBadge": "TOTAL:",
+            "menu.buscarPlaceholder": "Buscar por nombre, descripción o precio...",
+            "menu.todasCategorias": "Todas las categorías",
+            "menu.cargando": "Cargando platos del menú...",
+            "menu.errorCargar": "No se pudieron cargar los platos del menú.",
+            "menu.errorConexion": "Error al conectar con el servicio de platos.",
+            "menu.vacioFiltros": "No hay platos para mostrar con los filtros actuales.",
+            "menu.sinDescripcion": "Sin descripción",
+            "menu.sinCategoria": "Sin categoría",
+            "menu.noEspecificado": "No especificado",
+            "menu.platoSinNombre": "Plato sin nombre",
+            "menu.disponibleBadge": "DISPONIBLE",
+            "menu.noDisponibleBadge": "NO DISPONIBLE",
+            "menu.editarPlato": "Editar plato",
+            "menu.eliminarPlato": "Eliminar plato",
+            "menu.confirmarEliminar": "¿Está seguro de eliminar este plato permanentemente del menú?",
+            "menu.exitoAnadir": "Plato añadido correctamente.",
+            "menu.exitoActualizar": "Plato actualizado correctamente.",
+            "menu.errorEliminarServidor": "No se pudo eliminar el plato en el servidor.",
+            "menu.errorEliminarRed": "Error de red al eliminar el plato.",
+            "menu.errorGuardarServidor": "No se pudo guardar el plato. Revisa la consola.",
+            "menu.errorGuardarRed": "Error de red al guardar el plato.",
+            "menu.errorDatosInvalidos": "Completa los datos del plato con valores válidos.",
+            "menu.errorSeleccionarImagen": "Selecciona una imagen para el plato.",
+            "menu.errorTipoImagen": "Selecciona una imagen JPG, PNG o WebP.",
+            "menu.errorTamanoImagen": "La imagen no debe superar los 5 MB.",
+            "menu.errorNoEncontrado": "No se encontró el plato que deseas editar.",
+            "menu.paginacionInfo": "Mostrando {actual} de {total} páginas",
 
             // Admin Usuarios
             "user.titulo": "Gestión de Usuarios",
@@ -165,7 +205,153 @@
             "user.btnGuardar": "Guardar Cambios",
             "user.btnCrear": "Crear Usuario",
             "user.desactivarTitulo": "¿Desactivar Cuenta?",
-            "user.reactivarTitulo": "¿Reactivar Cuenta?"
+            "user.reactivarTitulo": "¿Reactivar Cuenta?",
+
+            // Admin Predicción (ML & MongoDB)
+            "prediction.titulo": "Predicción de Reservas y Demanda",
+            "prediction.subtitulo": "Inferencia predictiva en tiempo real impulsada por Machine Learning y datos de MongoDB Atlas.",
+            "prediction.fechaInicio": "FECHA INICIO",
+            "prediction.fechaFin": "FECHA FIN",
+            "prediction.turno": "TURNO / FRANJA",
+            "prediction.turnoCompleto": "Día Completo (11:00 - 22:00)",
+            "prediction.turnoAlmuerzo": "Almuerzo (12:00 - 15:00)",
+            "prediction.turnoCena": "Cena (18:00 - 22:00)",
+            "prediction.estadoEnVivo": "EN VIVO / CONECTADO",
+            "prediction.estadoReconectando": "RECONECTANDO...",
+            "prediction.tooltipLive": "Monitoreo y streaming activo con MongoDB y FastAPI",
+            "prediction.btnActualizar": "Actualizar Predicción",
+            "prediction.btnActualizando": "Actualizando...",
+            "prediction.alertaSincronizando": "Sincronizando estado y demanda con el modelo predictivo...",
+            "prediction.alertaOptima": "CAPACIDAD ÓPTIMA: El restaurante cuenta con holgura suficiente para el turno.",
+            "prediction.alertaAdvertencia": "ALTA DEMANDA: Ocupación proyectada superior al 75%. Preparar mesas adicionales.",
+            "prediction.alertaPeligro": "ALERTA DE CAPACIDAD: Aforo proyectado supera el límite operativo. Se sugiere habilitar lista de espera.",
+            "prediction.kpiMesasPico": "MESAS A PREPARAR (PICO)",
+            "prediction.kpiHolgura": "Holgura de seguridad +10% aplicada",
+            "prediction.kpiComensalesEst": "COMENSALES ESTIMADOS",
+            "prediction.kpiRealesEnBd": "Reales en BD: {count}",
+            "prediction.kpiOcupacionProy": "OCUPACIÓN PROYECTADA",
+            "prediction.kpiOcupacionRealActual": "Ocupación real actual: {percent}%",
+            "prediction.kpiTotalReservas": "RESERVAS EN MONGODB",
+            "prediction.kpiCapacidadMesas": "Capacidad: {mesas} mesas ({plazas} plazas)",
+            "prediction.chartDemandaTitulo": "Demanda Estimada vs. Reservas Reales",
+            "prediction.chartDemandaSubtitulo": "Comparación por franja horaria en base al modelo ML y MongoDB Atlas",
+            "prediction.chartSerieEstimados": "Comensales Estimados (ML)",
+            "prediction.chartSerieReales": "Comensales Reales (MongoDB)",
+            "prediction.chartSerieMesas": "Mesas Sugeridas",
+            "prediction.chartEjeComensales": "Comensales",
+            "prediction.chartEjeMesas": "Mesas",
+            "prediction.chartCapacidadTitulo": "Capacidad del Restaurante",
+            "prediction.chartCapacidadSubtitulo": "Proyección de aforo vs. Capacidad máxima",
+            "prediction.chartDoughnutProyectada": "Ocupación Proyectada",
+            "prediction.chartDoughnutDisponible": "Capacidad Disponible",
+            "prediction.tablaTitulo": "Desglose por Franja Horaria",
+            "prediction.thFecha": "FECHA",
+            "prediction.thHora": "HORA / FRANJA",
+            "prediction.thComensalesEst": "COMENSALES ESTIMADOS (ML)",
+            "prediction.thComensalesReales": "COMENSALES REALES (BD)",
+            "prediction.thReservasActivas": "RESERVAS ACTIVAS",
+            "prediction.thMesasSugeridas": "MESAS SUGERIDAS",
+            "prediction.thOcupacion": "% OCUPACIÓN",
+            "prediction.thEstadoCarga": "ESTADO CARGA",
+            "prediction.badgeOptimo": "Óptimo",
+            "prediction.badgeAltaDemanda": "Alta Demanda",
+            "prediction.badgeModerada": "Moderada",
+            "prediction.tablaVacia": "No hay franjas para los filtros seleccionados.",
+            "prediction.unidadComensales": "comensales",
+            "prediction.unidadMesas": "mesas",
+            "prediction.toastExito": "Predicción actualizada con éxito. Datos sincronizados con la base de datos.",
+            "prediction.toastError": "No se pudo actualizar la predicción. Intenta nuevamente.",
+            "prediction.toastConexion": "No se pudo conectar con la base de datos. Verifica tu conexión e intenta nuevamente.",
+
+            // Cliente - Dashboard
+            "clientDash.bienvenido": "Bienvenido de nuevo,",
+            "clientDash.subtitulo": "Tu mesa te espera. Revisa tus próximas veladas o reserva un nuevo momento especial con nosotros.",
+            "clientDash.consultando": "Consultando reservas...",
+            "clientDash.proximasReservas": "PRÓXIMAS RESERVAS",
+            "clientDash.verListaCompleta": "VER LISTA COMPLETA",
+
+            // Cliente - Mis Reservas
+            "clientBookings.historialBadge": "Historial Personal",
+            "clientBookings.titulo": "Mis Reservas",
+            "clientBookings.thFecha": "FECHA",
+            "clientBookings.thHora": "HORA",
+            "clientBookings.thInvitados": "INVITADOS",
+            "clientBookings.thExperiencia": "EXPERIENCIA",
+            "clientBookings.thPlatos": "PLATOS PREORDENADOS",
+            "clientBookings.thEstado": "ESTADO",
+            "clientBookings.thAcciones": "ACCIONES",
+            "clientBookings.consultando": "Consultando los archivos del manuscrito...",
+            "clientBookings.modalMenuBadge": "Menú Seleccionado",
+            "clientBookings.modalPlatosTitulo": "Platos de tu Reserva",
+            "clientBookings.totalProductos": "Total en productos:",
+            "clientBookings.anticipoReserva": "Anticipo de reserva (5%, mín $10k):",
+            "clientBookings.modalComentarioTitulo": "Escribir Capítulo",
+            "clientBookings.modalComentarioDesc": "Cuéntanos tu experiencia culinaria en este evento.",
+            "clientBookings.modalComentarioPlaceholder": "Escribe tu reseña aquí...",
+            "clientBookings.guardarComentario": "Guardar en Manuscrito",
+
+            // Cliente - Calendario
+            "clientCalendar.badge": "Agenda de Experiencias",
+            "clientCalendar.titulo": "Mi Calendario",
+
+            // Cliente - Perfil
+            "clientProfile.badge": "Configuración de Cuenta",
+            "clientProfile.titulo": "Mi Perfil",
+            "clientProfile.datosPersonales": "Datos Personales",
+            "clientProfile.nombre": "Nombre",
+            "clientProfile.tuNombre": "Tu nombre",
+            "clientProfile.apellido": "Apellido",
+            "clientProfile.tuApellido": "Tu apellido",
+            "clientProfile.correo": "Correo Electrónico",
+            "clientProfile.correoHint": "El correo no puede modificarse por seguridad.",
+            "clientProfile.telefono": "Teléfono",
+            "clientProfile.direccion": "Dirección de Residencia",
+            "clientProfile.tuDireccion": "Tu dirección completa",
+            "clientProfile.btnActualizar": "Actualizar Datos",
+            "clientProfile.cambiarPassword": "Cambiar Contraseña",
+            "clientProfile.passwordActual": "Contraseña Actual",
+            "clientProfile.passwordNueva": "Nueva Contraseña (mínimo 8 caracteres)",
+            "clientProfile.passwordConfirmar": "Confirmar Nueva Contraseña",
+            "clientProfile.muyDebil": "Muy débil",
+            "clientProfile.btnCambiarPassword": "Cambiar Contraseña",
+
+            // Cliente - Carrito
+            "clientCart.tuCarrito": "Tu Carrito",
+            "clientCart.subtitulo": "Reserva local en este dispositivo",
+            "clientCart.confirmar": "Confirmar Reserva",
+            "clientCart.vaciar": "Vaciar Carrito",
+            "clientCart.vacioTitulo": "Tu carrito está vacío",
+            "clientCart.vacioDesc": "Configura tu mesa desde el inicio para apartar tu velada.",
+            "clientCart.crearReserva": "Crear una Reserva",
+            "clientCart.modalTitulo": "Agrega platos a tu reserva",
+            "clientCart.modalSubtitulo": "Elige de nuestra carta para tenerlos listos a tu llegada.",
+            "clientCart.cargandoPlatos": "Cargando platos disponibles...",
+            "clientCart.confirmarPlatos": "Confirmar Platos",
+
+            // Cliente - Reserva
+            "booking.heroTitulo1": "Reserva tu mesa",
+            "booking.heroTitulo2": "en la historia",
+            "booking.heroDesc": "Disfruta de una sinfonía de sabores creada por nuestros chefs expertos. Cada reserva es la promesa de una velada inolvidable.",
+            "booking.solicitudBadge": "Solicitud de reserva",
+            "booking.titulo": "Reservar",
+            "booking.fechaLlegada": "Fecha de llegada",
+            "booking.horaPreferida": "Hora preferida",
+            "booking.invitados": "Invitados",
+            "booking.seleccionaExp": "Selecciona tu Experiencia",
+            "booking.salonPrincipal": "Salón Principal",
+            "booking.vistaCiudad": "Vista a la Ciudad",
+            "booking.privado": "Privado",
+            "booking.elegirPlatos": "Elegir platos del menú",
+            "booking.ningunPlato": "Ningún plato seleccionado",
+            "booking.totalProductos": "Total en productos:",
+            "booking.anticipoMesa": "Anticipo para apartar mesa:",
+            "booking.anticipoNota": "* Se anticipa el 5% del valor de los platos seleccionados (tarifa mínima de $10.000 COP para reservar).",
+            "booking.btnConfirmar": "CONFIRMAR RESERVA",
+            "booking.vestimentaNota": "Se recomienda vestimenta formal. Tu reserva iniciará en estado Pendiente para su confirmación.",
+            "booking.modalTitulo": "Agrega platos a tu reserva",
+            "booking.guardarSeleccion": "Guardar selección",
+            "menu.masInfo": "Más información",
+            "common.noDisponible": "No disponible"
         },
         en: {
             // Admin Navbar & Sidebar
@@ -177,6 +363,7 @@
             "nav.usuarios": "MANAGE USERS",
             "nav.perfil": "MY PROFILE",
             "nav.menu": "MANAGE MENU",
+            "nav.prediccion": "ML PREDICTION",
             "nav.verSitio": "View Site",
             "nav.cerrarSesion": "Log Out",
             "header.miPerfil": "My Profile",
@@ -267,6 +454,45 @@
             "menu.disponible": "AVAILABLE",
             "menu.guardar": "ADD DISH",
             "menu.platos": "Menu Dishes",
+            "menu.placeholderNombre": "e.g. Handmade pasta",
+            "menu.placeholderDescripcion": "Describe ingredients and preparation...",
+            "menu.seleccionarCategoria": "Select a category",
+            "menu.catEntradas": "Appetizers",
+            "menu.catPlatosFuertes": "Main Courses",
+            "menu.catBebidas": "Beverages",
+            "menu.catPostres": "Desserts",
+            "menu.seleccionaArchivo": "Select a file:",
+            "menu.guardarCambios": "SAVE CHANGES",
+            "menu.limpiar": "CLEAR FORM",
+            "menu.disponiblesBadge": "AVAILABLE:",
+            "menu.totalBadge": "TOTAL:",
+            "menu.buscarPlaceholder": "Search by name, description or price...",
+            "menu.todasCategorias": "All Categories",
+            "menu.cargando": "Loading menu dishes...",
+            "menu.errorCargar": "Could not load menu dishes.",
+            "menu.errorConexion": "Error connecting to menu service.",
+            "menu.vacioFiltros": "No dishes to display with current filters.",
+            "menu.sinDescripcion": "No description",
+            "menu.sinCategoria": "No category",
+            "menu.noEspecificado": "Not specified",
+            "menu.platoSinNombre": "Unnamed dish",
+            "menu.disponibleBadge": "AVAILABLE",
+            "menu.noDisponibleBadge": "UNAVAILABLE",
+            "menu.editarPlato": "Edit dish",
+            "menu.eliminarPlato": "Delete dish",
+            "menu.confirmarEliminar": "Are you sure you want to permanently delete this dish from the menu?",
+            "menu.exitoAnadir": "Dish added successfully.",
+            "menu.exitoActualizar": "Dish updated successfully.",
+            "menu.errorEliminarServidor": "Could not delete dish on server.",
+            "menu.errorEliminarRed": "Network error while deleting dish.",
+            "menu.errorGuardarServidor": "Could not save dish. Check console.",
+            "menu.errorGuardarRed": "Network error while saving dish.",
+            "menu.errorDatosInvalidos": "Please complete dish data with valid values.",
+            "menu.errorSeleccionarImagen": "Please select an image for the dish.",
+            "menu.errorTipoImagen": "Please select a JPG, PNG or WebP image.",
+            "menu.errorTamanoImagen": "Image must not exceed 5 MB.",
+            "menu.errorNoEncontrado": "The dish you want to edit was not found.",
+            "menu.paginacionInfo": "Showing {actual} of {total} pages",
 
             // Admin Users
             "user.titulo": "User Management",
@@ -314,7 +540,153 @@
             "user.btnGuardar": "Save Changes",
             "user.btnCrear": "Create User",
             "user.desactivarTitulo": "Deactivate Account?",
-            "user.reactivarTitulo": "Reactivate Account?"
+            "user.reactivarTitulo": "Reactivate Account?",
+
+            // Admin Prediction (ML & MongoDB)
+            "prediction.titulo": "Reservations & Demand Prediction",
+            "prediction.subtitulo": "Real-time predictive inference powered by Machine Learning and MongoDB Atlas data.",
+            "prediction.fechaInicio": "START DATE",
+            "prediction.fechaFin": "END DATE",
+            "prediction.turno": "SHIFT / TIME SLOT",
+            "prediction.turnoCompleto": "Full Day (11:00 - 22:00)",
+            "prediction.turnoAlmuerzo": "Lunch (12:00 - 15:00)",
+            "prediction.turnoCena": "Dinner (18:00 - 22:00)",
+            "prediction.estadoEnVivo": "LIVE / CONNECTED",
+            "prediction.estadoReconectando": "RECONNECTING...",
+            "prediction.tooltipLive": "Active monitoring and streaming with MongoDB and FastAPI",
+            "prediction.btnActualizar": "Update Prediction",
+            "prediction.btnActualizando": "Updating...",
+            "prediction.alertaSincronizando": "Synchronizing status and demand with predictive model...",
+            "prediction.alertaOptima": "OPTIMAL CAPACITY: The restaurant has sufficient buffer for this shift.",
+            "prediction.alertaAdvertencia": "HIGH DEMAND: Projected occupancy exceeds 75%. Prepare additional tables.",
+            "prediction.alertaPeligro": "CAPACITY ALERT: Projected attendance exceeds operational limit. Enabling waitlist is suggested.",
+            "prediction.kpiMesasPico": "TABLES TO PREPARE (PEAK)",
+            "prediction.kpiHolgura": "+10% safety buffer applied",
+            "prediction.kpiComensalesEst": "ESTIMATED DINERS",
+            "prediction.kpiRealesEnBd": "Actual in DB: {count}",
+            "prediction.kpiOcupacionProy": "PROJECTED OCCUPANCY",
+            "prediction.kpiOcupacionRealActual": "Current actual occupancy: {percent}%",
+            "prediction.kpiTotalReservas": "RESERVATIONS IN MONGODB",
+            "prediction.kpiCapacidadMesas": "Capacity: {mesas} tables ({plazas} seats)",
+            "prediction.chartDemandaTitulo": "Estimated Demand vs. Actual Reservations",
+            "prediction.chartDemandaSubtitulo": "Time slot comparison based on ML model and MongoDB Atlas",
+            "prediction.chartSerieEstimados": "Estimated Diners (ML)",
+            "prediction.chartSerieReales": "Actual Diners (MongoDB)",
+            "prediction.chartSerieMesas": "Suggested Tables",
+            "prediction.chartEjeComensales": "Diners",
+            "prediction.chartEjeMesas": "Tables",
+            "prediction.chartCapacidadTitulo": "Restaurant Capacity",
+            "prediction.chartCapacidadSubtitulo": "Projected seating vs. Maximum capacity",
+            "prediction.chartDoughnutProyectada": "Projected Occupancy",
+            "prediction.chartDoughnutDisponible": "Available Capacity",
+            "prediction.tablaTitulo": "Breakdown by Time Slot",
+            "prediction.thFecha": "DATE",
+            "prediction.thHora": "TIME / SLOT",
+            "prediction.thComensalesEst": "ESTIMATED DINERS (ML)",
+            "prediction.thComensalesReales": "ACTUAL DINERS (DB)",
+            "prediction.thReservasActivas": "ACTIVE RESERVATIONS",
+            "prediction.thMesasSugeridas": "SUGGESTED TABLES",
+            "prediction.thOcupacion": "% OCCUPANCY",
+            "prediction.thEstadoCarga": "LOAD STATUS",
+            "prediction.badgeOptimo": "Optimal",
+            "prediction.badgeAltaDemanda": "High Demand",
+            "prediction.badgeModerada": "Moderate",
+            "prediction.tablaVacia": "No time slots found for selected filters.",
+            "prediction.unidadComensales": "diners",
+            "prediction.unidadMesas": "tables",
+            "prediction.toastExito": "Prediction updated successfully. Data synchronized with database.",
+            "prediction.toastError": "Could not update prediction. Please try again.",
+            "prediction.toastConexion": "Could not connect to database. Check your connection and try again.",
+
+            // Client - Dashboard
+            "clientDash.bienvenido": "Welcome back,",
+            "clientDash.subtitulo": "Your table awaits. Review your upcoming evenings or book a new special moment with us.",
+            "clientDash.consultando": "Checking reservations...",
+            "clientDash.proximasReservas": "UPCOMING RESERVATIONS",
+            "clientDash.verListaCompleta": "VIEW FULL LIST",
+
+            // Client - My Reservations
+            "clientBookings.historialBadge": "Personal History",
+            "clientBookings.titulo": "My Reservations",
+            "clientBookings.thFecha": "DATE",
+            "clientBookings.thHora": "TIME",
+            "clientBookings.thInvitados": "GUESTS",
+            "clientBookings.thExperiencia": "EXPERIENCE",
+            "clientBookings.thPlatos": "PRE-ORDERED DISHES",
+            "clientBookings.thEstado": "STATUS",
+            "clientBookings.thAcciones": "ACTIONS",
+            "clientBookings.consultando": "Consulting manuscript archives...",
+            "clientBookings.modalMenuBadge": "Selected Menu",
+            "clientBookings.modalPlatosTitulo": "Dishes in your Reservation",
+            "clientBookings.totalProductos": "Total in products:",
+            "clientBookings.anticipoReserva": "Reservation deposit (5%, min $10k):",
+            "clientBookings.modalComentarioTitulo": "Write Chapter",
+            "clientBookings.modalComentarioDesc": "Tell us about your culinary experience at this event.",
+            "clientBookings.modalComentarioPlaceholder": "Write your review here...",
+            "clientBookings.guardarComentario": "Save in Manuscript",
+
+            // Client - Calendar
+            "clientCalendar.badge": "Experience Schedule",
+            "clientCalendar.titulo": "My Calendar",
+
+            // Client - Profile
+            "clientProfile.badge": "Account Settings",
+            "clientProfile.titulo": "My Profile",
+            "clientProfile.datosPersonales": "Personal Information",
+            "clientProfile.nombre": "First Name",
+            "clientProfile.tuNombre": "Your first name",
+            "clientProfile.apellido": "Last Name",
+            "clientProfile.tuApellido": "Your last name",
+            "clientProfile.correo": "Email Address",
+            "clientProfile.correoHint": "Email cannot be modified for security reasons.",
+            "clientProfile.telefono": "Phone",
+            "clientProfile.direccion": "Residential Address",
+            "clientProfile.tuDireccion": "Your full address",
+            "clientProfile.btnActualizar": "Update Information",
+            "clientProfile.cambiarPassword": "Change Password",
+            "clientProfile.passwordActual": "Current Password",
+            "clientProfile.passwordNueva": "New Password (minimum 8 characters)",
+            "clientProfile.passwordConfirmar": "Confirm New Password",
+            "clientProfile.muyDebil": "Very weak",
+            "clientProfile.btnCambiarPassword": "Change Password",
+
+            // Client - Cart
+            "clientCart.tuCarrito": "Your Cart",
+            "clientCart.subtitulo": "Local reservation on this device",
+            "clientCart.confirmar": "Confirm Reservation",
+            "clientCart.vaciar": "Empty Cart",
+            "clientCart.vacioTitulo": "Your cart is empty",
+            "clientCart.vacioDesc": "Set up your table from the beginning to reserve your evening.",
+            "clientCart.crearReserva": "Create a Reservation",
+            "clientCart.modalTitulo": "Add dishes to your reservation",
+            "clientCart.modalSubtitulo": "Choose from our menu to have them ready upon arrival.",
+            "clientCart.cargandoPlatos": "Loading available dishes...",
+            "clientCart.confirmarPlatos": "Confirm Dishes",
+
+            // Client - Reservation
+            "booking.heroTitulo1": "Reserve your table",
+            "booking.heroTitulo2": "in history",
+            "booking.heroDesc": "Enjoy a symphony of flavors crafted by our master chefs. Every reservation promises an unforgettable evening.",
+            "booking.solicitudBadge": "Reservation Request",
+            "booking.titulo": "Book a Table",
+            "booking.fechaLlegada": "Arrival Date",
+            "booking.horaPreferida": "Preferred Time",
+            "booking.invitados": "Guests",
+            "booking.seleccionaExp": "Select your Experience",
+            "booking.salonPrincipal": "Main Dining Room",
+            "booking.vistaCiudad": "City View",
+            "booking.privado": "Private",
+            "booking.elegirPlatos": "Choose dishes from menu",
+            "booking.ningunPlato": "No dishes selected",
+            "booking.totalProductos": "Total in products:",
+            "booking.anticipoMesa": "Deposit to hold table:",
+            "booking.anticipoNota": "* A 5% deposit of selected dishes is required (minimum rate of $10,000 COP to reserve).",
+            "booking.btnConfirmar": "CONFIRM RESERVATION",
+            "booking.vestimentaNota": "Formal attire recommended. Your reservation will start in Pending status for confirmation.",
+            "booking.modalTitulo": "Add dishes to your reservation",
+            "booking.guardarSeleccion": "Save selection",
+            "menu.masInfo": "More info",
+            "common.noDisponible": "Unavailable"
         }
     };
 
@@ -334,7 +706,106 @@
         "VER SITIO": "VIEW SITE",
         "Cerrar Sesión": "Log Out",
         "CERRAR SESIÓN": "LOG OUT",
+
+        // --- Predicción ML ---
+        "Predicción de Reservas y Demanda": "Reservations & Demand Prediction",
+        "Inferencia predictiva en tiempo real impulsada por Machine Learning y datos de MongoDB Atlas.": "Real-time predictive inference powered by Machine Learning and MongoDB Atlas data.",
+        "FECHA INICIO": "START DATE",
+        "FECHA FIN": "END DATE",
+        "TURNO / FRANJA": "SHIFT / TIME SLOT",
+        "Día Completo (11:00 - 22:00)": "Full Day (11:00 - 22:00)",
+        "Almuerzo (12:00 - 15:00)": "Lunch (12:00 - 15:00)",
+        "Cena (18:00 - 22:00)": "Dinner (18:00 - 22:00)",
+        "EN VIVO / CONECTADO": "LIVE / CONNECTED",
+        "Actualizar Predicción": "Update Prediction",
+        "MESAS A PREPARAR (PICO)": "TABLES TO PREPARE (PEAK)",
+        "Holgura de seguridad +10% aplicada": "+10% safety buffer applied",
+        "COMENSALES ESTIMADOS": "ESTIMATED DINERS",
+        "OCUPACIÓN PROYECTADA": "PROJECTED OCCUPANCY",
+        "RESERVAS EN MONGODB": "RESERVATIONS IN MONGODB",
+        "Demanda Estimada vs. Reservas Reales": "Estimated Demand vs. Actual Reservations",
+        "Comparación por franja horaria en base al modelo ML y MongoDB Atlas": "Time slot comparison based on ML model and MongoDB Atlas",
+        "Capacidad del Restaurante": "Restaurant Capacity",
+        "Proyección de aforo vs. Capacidad máxima": "Projected seating vs. Maximum capacity",
+        "Desglose por Franja Horaria": "Breakdown by Time Slot",
+        "HORA / FRANJA": "TIME / SLOT",
+        "COMENSALES ESTIMADOS (ML)": "ESTIMATED DINERS (ML)",
+        "COMENSALES REALES (BD)": "ACTUAL DINERS (DB)",
+        "RESERVAS ACTIVAS": "ACTIVE RESERVATIONS",
+        "MESAS SUGERIDAS": "SUGGESTED TABLES",
+        "% OCUPACIÓN": "% OCCUPANCY",
+        "ESTADO CARGA": "LOAD STATUS",
+        "Alta Demanda": "High Demand",
         "Colapsar / Expandir menú": "Collapse / Expand menu",
+
+        // --- Client Portal Phrases ---
+        "TU PRÓXIMA VELADA": "YOUR UPCOMING EVENING",
+        "Tu mesa está apartada en el Manuscrito Culinario. Prepárate para disfrutar de una velada gastronómica memorable.": "Your table is reserved at Manuscrito Culinario. Get ready to enjoy a memorable dining experience.",
+        "No tienes más reservas programadas próximamente. Puedes ver tu historial de visitas pasadas en": "You have no more upcoming reservations scheduled. You can view your past visit history in",
+        "No tienes más reservas programadas próximamente. Puedes ver tu historial de visitas pasadas en Mis Reservas.": "You have no more upcoming reservations scheduled. You can view your past visit history in My Reservations.",
+        "No hay más reservas futuras. Consulta tu historial de visitas pasadas en Mis Reservas.": "No more upcoming reservations. Check your past visit history in My Reservations.",
+        "No tienes reservas programadas próximamente": "You have no upcoming reservations scheduled",
+        "Tu mesa te espera. Puedes reservar tu próxima velada gastronómica o consultar tus visitas anteriores en tu historial.": "Your table awaits. You can book your next culinary evening or check past visits in your history.",
+        "Reservar Ahora": "Book Now",
+        "Mesa reservada •": "Reserved table •",
+        "Salón Principal (Estándar)": "Main Dining Room (Standard)",
+        "Vista a la Ciudad (Ventana)": "City View (Window)",
+        "Zona Privada (Alcoba)": "Private Area (Alcove)",
+        "Mesa Estándar": "Standard Table",
+        "Mesa Ventana": "Window Table",
+        "Mesa Alcoba": "Alcove Table",
+        "Mesa-Estandar": "Standard Table",
+        "Mesa-Ventana": "Window Table",
+        "Mesa-Alcoba": "Alcove Table",
+        "Excelente": "Excellent",
+        "Regular": "Regular",
+        "Buena": "Good",
+        "Estandar": "Standard",
+        "Sin platos (Mesa base $10k)": "No dishes (Base table $10k)",
+        "Sin platos (Mesa base 10k)": "No dishes (Base table 10k)",
+        "Total en productos:": "Total in products:",
+        "Anticipo de reserva (5%, mín $10k):": "Reservation deposit (5%, min $10k):",
+        "Anticipo para apartar mesa:": "Deposit to hold table:",
+        "Escribir Capítulo": "Write Chapter",
+        "Cuéntanos tu experiencia culinaria en este evento.": "Tell us about your culinary experience at this event.",
+        "Escribe tu reseña aquí...": "Write your review here...",
+        "Guardar en Manuscrito": "Save in Manuscript",
+        "Aún no has escrito capítulos en tu historia culinaria.": "You haven't written chapters in your culinary story yet.",
+        "Ver platos seleccionados": "View selected dishes",
+        "Dejar Comentario": "Leave Comment",
+        "Confirmar esta reserva": "Confirm this reservation",
+        "Cancelar Reserva": "Cancel Reservation",
+        "Confirmar": "Confirm",
+        "Tu Carrito": "Your Cart",
+        "Reserva local en este dispositivo": "Local reservation on this device",
+        "Confirmar Reserva": "Confirm Reservation",
+        "CONFIRMAR RESERVA": "CONFIRM RESERVATION",
+        "Vaciar Carrito": "Empty Cart",
+        "Tu carrito está vacío": "Your cart is empty",
+        "Configura tu mesa desde el inicio para apartar tu velada.": "Set up your table from the beginning to reserve your evening.",
+        "Crear una Reserva": "Create a Reservation",
+        "Mesa Base (Sin platos preordenados)": "Base Table (No pre-ordered dishes)",
+        "Elegir platos del menú": "Choose dishes from menu",
+        "Ningún plato seleccionado": "No dishes selected",
+        "* Se anticipa el 5% del valor de los platos seleccionados (tarifa mínima de $10.000 COP para reservar).": "* A 5% deposit of selected dishes is required (minimum rate of $10,000 COP to reserve).",
+        "Se recomienda vestimenta formal. Tu reserva iniciará en estado Pendiente para su confirmación.": "Formal attire recommended. Your reservation will start in Pending status for confirmation.",
+        "Agrega platos a tu reserva": "Add dishes to your reservation",
+        "Elige de nuestra carta para tenerlos listos a tu llegada.": "Choose from our menu to have them ready upon arrival.",
+        "Cargando platos disponibles...": "Loading available dishes...",
+        "Confirmar Platos": "Confirm Dishes",
+        "Guardar selección": "Save selection",
+        "Reserva tu mesa en la historia": "Reserve your table in history",
+        "Disfruta de una sinfonía de sabores creada por nuestros chefs expertos. Cada reserva es la promesa de una velada inolvidable.": "Enjoy a symphony of flavors crafted by our master chefs. Every reservation promises an unforgettable evening.",
+        "Solicitud de reserva": "Reservation Request",
+        "Fecha de llegada": "Arrival Date",
+        "Hora preferida": "Preferred Time",
+        "Invitados": "Guests",
+        "Selecciona tu Experiencia": "Select your Experience",
+        "Salón Principal": "Main Dining Room",
+        "Vista a la Ciudad": "City View",
+        "Seguridad: Débil (mínimo 8 caracteres, números y letras)": "Security: Weak (minimum 8 characters, letters and numbers)",
+        "Seguridad: Aceptable (puedes agregar símbolos para mayor protección)": "Security: Fair (you can add symbols for stronger protection)",
+        "Seguridad: Fuerte y Segura ✨": "Security: Strong and Secure ✨",
 
         // --- Client Sidebar & Headers ---
         "Panel Cliente": "Client Panel",
@@ -398,6 +869,22 @@
         "Todos": "All",
         "Editar plato": "Edit dish",
         "Eliminar plato": "Delete dish",
+        "Ej. Pasta artesanal": "e.g. Handmade pasta",
+        "Describe los ingredientes y preparación...": "Describe ingredients and preparation...",
+        "Buscar por nombre, descripción o precio...": "Search by name, description or price...",
+        "BUSCAR POR NOMBRE, DESCRIPCIÓN O PRECIO...": "SEARCH BY NAME, DESCRIPTION OR PRICE...",
+        "Todas las categorías": "All Categories",
+        "DISPONIBLES:": "AVAILABLE:",
+        "DISPONIBLES": "AVAILABLE",
+        "ACTIVAS:": "ACTIVE:",
+        "ACTIVAS": "ACTIVE",
+        "TOTAL:": "TOTAL:",
+        "ENTRADAS": "APPETIZERS",
+        "PLATOS FUERTES": "MAIN COURSES",
+        "BEBIDAS": "BEVERAGES",
+        "POSTRES": "DESSERTS",
+        "GUARDAR CAMBIOS": "SAVE CHANGES",
+        "LIMPIAR FORMULARIO": "CLEAR FORM",
 
         // --- Admin: Reservas ---
         "Histórico de Reservas": "Reservation History",
@@ -606,6 +1093,12 @@
     // Patrones dinámicos regex
     const PATTERNS_ES_TO_EN = [
         { regex: /^Mesa\s+(\S+)$/i, repl: "Table $1" },
+        { regex: /^🍽️\s*(\d+)\s+platos?$/i, repl: function (m, p1) { return "🍽️ " + p1 + (parseInt(p1, 10) === 1 ? " dish" : " dishes"); } },
+        { regex: /^🍽️\s*(\d+)\s+platos?\s*\((.+)\)$/i, repl: function (m, p1, p2) { return "🍽️ " + p1 + (parseInt(p1, 10) === 1 ? " dish" : " dishes") + " (" + p2 + ")"; } },
+        { regex: /^Sin platos\s*\((.+)\)$/i, repl: function (m, p1) { return "No dishes (" + p1 + ")"; } },
+        { regex: /^Pendiente\s*\((.+)\)$/i, repl: function (m, p1) { return "Pending (" + p1 + ")"; } },
+        { regex: /^Anticipo requerido:\s*(.+)$/i, repl: function (m, p1) { return "Required deposit: " + p1; } },
+        { regex: /^Mesa reservada\s*•\s*(.+)$/i, repl: function (m, p1) { return "Reserved table • " + p1; } },
         { regex: /^(\d+)\s+personas?$/i, repl: "$1 guests" },
         { regex: /^ACTIVAS:\s*(\d+)$/i, repl: "ACTIVE: $1" },
         { regex: /^TOTAL:\s*(\d+)$/i, repl: "TOTAL: $1" },
@@ -620,6 +1113,12 @@
 
     const PATTERNS_EN_TO_ES = [
         { regex: /^Table\s+(\S+)$/i, repl: "Mesa $1" },
+        { regex: /^🍽️\s*(\d+)\s+dish(?:es)?$/i, repl: function (m, p1) { return "🍽️ " + p1 + (parseInt(p1, 10) === 1 ? " plato" : " platos"); } },
+        { regex: /^🍽️\s*(\d+)\s+dish(?:es)?\s*\((.+)\)$/i, repl: function (m, p1, p2) { return "🍽️ " + p1 + (parseInt(p1, 10) === 1 ? " plato" : " platos") + " (" + p2 + ")"; } },
+        { regex: /^No dishes\s*\((.+)\)$/i, repl: function (m, p1) { return "Sin platos (" + p1 + ")"; } },
+        { regex: /^Pending\s*\((.+)\)$/i, repl: function (m, p1) { return "Pendiente (" + p1 + ")"; } },
+        { regex: /^Required deposit:\s*(.+)$/i, repl: function (m, p1) { return "Anticipo requerido: " + p1; } },
+        { regex: /^Reserved table\s*•\s*(.+)$/i, repl: function (m, p1) { return "Mesa reservada • " + p1; } },
         { regex: /^(\d+)\s+guests?$/i, repl: "$1 personas" },
         { regex: /^ACTIVE:\s*(\d+)$/i, repl: "ACTIVAS: $1" },
         { regex: /^TOTAL:\s*(\d+)$/i, repl: "TOTAL: $1" },
@@ -668,6 +1167,9 @@
         }
         if (typeof window.renderizarPlatos === "function") {
             window.renderizarPlatos();
+        }
+        if (typeof window.reaplicarIdiomaPrediccion === "function") {
+            window.reaplicarIdiomaPrediccion();
         }
     }
 
@@ -1022,12 +1524,85 @@
     window.cambiarIdiomaAdmin = cambiarIdioma;
     window.cambiarIdioma = cambiarIdioma;
     window.aplicarTraduccionesAdmin = aplicarTraducciones;
-    window.t = function (key, defaultVal) {
+    window.t = function (key, defaultValOrParams, defaultVal) {
+        let l = obtenerIdioma();
+        let val = (I18N_KEYS[l] && I18N_KEYS[l][key] !== undefined)
+            ? I18N_KEYS[l][key]
+            : (I18N_KEYS.es && I18N_KEYS.es[key] !== undefined)
+                ? I18N_KEYS.es[key]
+                : (typeof defaultValOrParams === "string" ? defaultValOrParams : (defaultVal !== undefined ? defaultVal : key));
+
+        if (defaultValOrParams && typeof defaultValOrParams === "object") {
+            Object.keys(defaultValOrParams).forEach(function (param) {
+                val = String(val).replace(new RegExp("\\{" + param + "\\}", "g"), defaultValOrParams[param]);
+            });
+        }
+        return val;
+    };
+    window.tOriginal = function (key, defaultVal) {
         let l = obtenerIdioma();
         if (I18N_KEYS[l] && I18N_KEYS[l][key] !== undefined) return I18N_KEYS[l][key];
         if (I18N_KEYS.es && I18N_KEYS.es[key] !== undefined) return I18N_KEYS.es[key];
         return defaultVal !== undefined ? defaultVal : key;
     };
+
+    // ===== 7. TRADUCCIÓN DINÁMICA ASÍNCRONA (CONTENIDO DE BD / PLATOS) =====
+    const CACHE_DINAMICO = new Map();
+
+    function obtenerTraduccionCacheada(texto, origen = "es", destino = "en") {
+        if (!texto || origen === destino) return texto;
+        let limpio = texto.trim();
+        let key = `gestrest_tr_${origen}_${destino}_${limpio}`;
+        if (CACHE_DINAMICO.has(key)) return CACHE_DINAMICO.get(key);
+        try {
+            let guardado = sessionStorage.getItem(key);
+            if (guardado) {
+                CACHE_DINAMICO.set(key, guardado);
+                return guardado;
+            }
+        } catch (e) {}
+        return null;
+    }
+
+    function traducirDinamico(texto, origen = "es", destino = "en") {
+        if (!texto || typeof texto !== "string" || !texto.trim() || origen === destino) {
+            return Promise.resolve(texto);
+        }
+        let limpio = texto.trim();
+        let cacheado = obtenerTraduccionCacheada(limpio, origen, destino);
+        if (cacheado) {
+            return Promise.resolve(cacheado);
+        }
+
+        let key = `gestrest_tr_${origen}_${destino}_${limpio}`;
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${origen}&tl=${destino}&dt=t&q=${encodeURIComponent(limpio)}`;
+        return fetch(url)
+            .then(res => {
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                return res.json();
+            })
+            .then(data => {
+                if (Array.isArray(data) && Array.isArray(data[0])) {
+                    const traducido = data[0].map(item => item[0]).join("");
+                    if (traducido && traducido.trim()) {
+                        let resultado = traducido.trim();
+                        CACHE_DINAMICO.set(key, resultado);
+                        try {
+                            sessionStorage.setItem(key, resultado);
+                        } catch (e) {}
+                        return resultado;
+                    }
+                }
+                return limpio;
+            })
+            .catch(err => {
+                console.warn("Fallo en traducción automática dinámica:", err);
+                return limpio;
+            });
+    }
+
+    window.traducirDinamico = traducirDinamico;
+    window.obtenerTraduccionCacheada = obtenerTraduccionCacheada;
 
     // Auto-arranque
     if (document.readyState === "loading") {

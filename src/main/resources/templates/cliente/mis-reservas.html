@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -30,11 +30,11 @@
         <main class="mis-reservas-container">
             <header class="section-header-inline">
                 <div>
-                    <span class="reserva-badge">Historial Personal</span>
-                    <h1 class="serif-title">Mis Reservas</h1>
+                    <span class="reserva-badge" data-i18n="clientBookings.historialBadge">Historial Personal</span>
+                    <h1 class="serif-title" data-i18n="clientBookings.titulo">Mis Reservas</h1>
                 </div>
                 <button class="btn-new-reservation" onclick="location.href='/reserva'">
-                    + Nueva Reserva
+                    <span data-i18n="clientNav.nuevaReserva">+ Nueva Reserva</span>
                 </button>
             </header>
 
@@ -42,18 +42,18 @@
                 <table class="tabla-manuscript">
                     <thead>
                         <tr>
-                            <th>FECHA</th>
-                            <th>HORA</th>
-                            <th>INVITADOS</th>
-                            <th>EXPERIENCIA</th>
-                            <th>PLATOS PREORDENADOS</th>
-                            <th>ESTADO</th>
-                            <th>ACCIONES</th>
+                            <th data-i18n="clientBookings.thFecha">FECHA</th>
+                            <th data-i18n="clientBookings.thHora">HORA</th>
+                            <th data-i18n="clientBookings.thInvitados">INVITADOS</th>
+                            <th data-i18n="clientBookings.thExperiencia">EXPERIENCIA</th>
+                            <th data-i18n="clientBookings.thPlatos">PLATOS PREORDENADOS</th>
+                            <th data-i18n="clientBookings.thEstado">ESTADO</th>
+                            <th data-i18n="clientBookings.thAcciones">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody id="listaReservasBody">
                         <tr>
-                            <td colspan="7" class="reserva-visual-texto">
+                            <td colspan="7" class="reserva-visual-texto" data-i18n="clientBookings.consultando">
                                 Consultando los archivos del manuscrito...
                             </td>
                         </tr>
@@ -68,8 +68,8 @@
         <div class="modal-content modal-platos-content">
             <div class="modal-platos-header">
                 <div>
-                    <span class="reserva-badge">Menú Seleccionado</span>
-                    <h2 class="serif-title" style="color: #d4af37; margin: 4px 0 0; font-size: 1.5rem;">Platos de tu Reserva</h2>
+                    <span class="reserva-badge" data-i18n="clientBookings.modalMenuBadge">Menú Seleccionado</span>
+                    <h2 class="serif-title" style="color: #d4af37; margin: 4px 0 0; font-size: 1.5rem;" data-i18n="clientBookings.modalPlatosTitulo">Platos de tu Reserva</h2>
                 </div>
                 <button type="button" class="modal-close-icon" onclick="cerrarModalPlatos()">&times;</button>
             </div>
@@ -80,33 +80,34 @@
 
             <div class="modal-platos-totales">
                 <div class="linea-total">
-                    <span>Total en productos:</span>
+                    <span data-i18n="clientBookings.totalProductos">Total en productos:</span>
                     <strong id="modalPlatosTotalProductos">$ 0</strong>
                 </div>
                 <div class="linea-total destacado">
-                    <span>Anticipo de reserva (5%, mín $10k):</span>
+                    <span data-i18n="clientBookings.anticipoReserva">Anticipo de reserva (5%, mín $10k):</span>
                     <strong class="gold-text" id="modalPlatosAnticipo">$ 10.000</strong>
                 </div>
             </div>
 
             <div class="modal-buttons">
-                <button class="btn-modal-cancel" onclick="cerrarModalPlatos()">Cerrar</button>
+                <button class="btn-modal-cancel" onclick="cerrarModalPlatos()" data-i18n="common.cerrar">Cerrar</button>
             </div>
         </div>
     </div>
 
     <div id="modalComentario" class="modal-manuscript" style="display: none;">
         <div class="modal-content">
-            <h2 class="serif-title" style="color: #d4af37; margin-bottom: 5px;">Escribir Capítulo</h2>
-            <p style="color: #888; font-size: 0.85rem; margin-bottom: 20px;">Cuéntanos tu experiencia culinaria en este
-                evento.</p>
+            <h2 class="serif-title" style="color: #d4af37; margin-bottom: 5px;" data-i18n="clientBookings.modalComentarioTitulo">Escribir Capítulo</h2>
+            <p style="color: #888; font-size: 0.85rem; margin-bottom: 20px;" data-i18n="clientBookings.modalComentarioDesc">Cuéntanos tu experiencia culinaria en este evento.</p>
+
+
 
             <input type="hidden" id="modalReservaId">
-            <textarea id="txtComentario" placeholder="Escribe tu reseña aquí..." rows="5"></textarea>
+            <textarea id="txtComentario" placeholder="Escribe tu reseña aquí..." rows="5" data-i18n-placeholder="clientBookings.modalComentarioPlaceholder"></textarea>
 
             <div class="modal-buttons">
-                <button class="btn-modal-cancel" onclick="cerrarModal()">Cerrar</button>
-                <button class="btn-modal-save" onclick="guardarComentarioServidor()">Guardar en Manuscrito</button>
+                <button class="btn-modal-cancel" onclick="cerrarModal()" data-i18n="common.cerrar">Cerrar</button>
+                <button class="btn-modal-save" onclick="guardarComentarioServidor()" data-i18n="clientBookings.guardarComentario">Guardar en Manuscrito</button>
             </div>
         </div>
     </div>

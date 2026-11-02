@@ -15,7 +15,7 @@
 
     <div class="menu-info">
         <div class="menu-top">
-            <h2 th:text="${nombre}"></h2>
+            <h2 class="menu-card-title" th:text="${nombre}" th:data-original-nombre="${nombre}"></h2>
         </div>
 
         <div class="menu-bottom">
@@ -30,7 +30,7 @@
                     th:data-category="${categoria}"
                     th:data-image="${imgUrl}"
                     th:data-available="${disponible}">
-                Más información
+                <span data-i18n="menu.masInfo">Más información</span>
             </button>
         </div>
     </div>

@@ -2,6 +2,7 @@
    LÓGICA DE MIS RESERVAS - GESTREST
    Visualización de platos, cálculo de anticipo (5% o mín 10k)
    y confirmación de reservas en estado Pendiente.
+   Soporte completo internacionalización (ES / EN).
    ================================================================ */
 
 (function () {
@@ -25,6 +26,44 @@ const formatoCOP = new Intl.NumberFormat("es-CO", {
 let catalogoPlatosMap = {};
 let listaReservasActuales = [];
 
+function getIdiomaMisReservas() {
+    return (localStorage.getItem("adminIdioma") || localStorage.getItem("appIdioma") || "es") === "en" ? "en" : "es";
+}
+
+function formatearExperienciaCliente(exp, lang) {
+    if (!exp) return lang === "en" ? "Standard Table" : "Mesa Estándar";
+    const mapEn = {
+        "Mesa-Estandar": "Standard Table",
+        "Mesa-Ventana": "Window Table",
+        "Mesa-Alcoba": "Alcove Table",
+        "Estandar": "Standard Table",
+        "Estándar": "Standard Table",
+        "Ventana": "Window Table",
+        "Alcoba": "Alcove Table",
+        "Excelente": "Excellent",
+        "Regular": "Regular",
+        "Buena": "Good"
+    };
+    const mapEs = {
+        "Mesa-Estandar": "Mesa Estándar",
+        "Mesa-Ventana": "Mesa Ventana",
+        "Mesa-Alcoba": "Mesa Alcoba",
+        "Estandar": "Mesa Estándar",
+        "Estándar": "Mesa Estándar",
+        "Ventana": "Mesa Ventana",
+        "Alcoba": "Mesa Alcoba",
+        "Excelente": "Excelente",
+        "Regular": "Regular",
+        "Buena": "Buena"
+    };
+    return (lang === "en" ? mapEn[exp] : mapEs[exp]) || exp.replace("Mesa-", "");
+}
+
+// Reactividad ante cambio de idioma
+window.addEventListener("idiomaCambiado", () => {
+    cargarMisReservas();
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     cargarPlatosYReservas();
 });
@@ -40,6 +79,9 @@ async function cargarPlatosYReservas() {
             catalogoPlatosMap = {};
             platos.forEach(p => {
                 catalogoPlatosMap[p.id] = p;
+                if (getIdiomaMisReservas() === "en" && typeof window.traducirDinamico === "function" && p.nombre) {
+                    window.traducirDinamico(p.nombre, "es", "en");
+                }
             });
         }
     } catch (e) {
@@ -56,6 +98,7 @@ async function cargarMisReservas() {
     const token = localStorage.getItem("token");
     const idUsuario = localStorage.getItem("usuarioId");
     const tbody = document.getElementById("listaReservasBody");
+    const lang = getIdiomaMisReservas();
 
     if (!token || !idUsuario) {
         window.location.href = "/login";
@@ -76,11 +119,14 @@ async function cargarMisReservas() {
             tbody.innerHTML = "";
 
             if (listaReservasActuales.length === 0) {
+                const mensajeVacio = lang === "en"
+                    ? "You haven't written chapters in your culinary story yet."
+                    : "Aún no has escrito capítulos en tu historia culinaria.";
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="7" style="text-align:center; padding: 80px; color: #666;">
                             <span class="material-symbols-outlined" style="font-size: 48px; display: block; margin-bottom: 10px;">history_edu</span>
-                            Aún no has escrito capítulos en tu historia culinaria.
+                            ${mensajeVacio}
                         </td>
                     </tr>`;
                 return;
@@ -89,7 +135,7 @@ async function cargarMisReservas() {
             const ahora = new Date();
 
             listaReservasActuales.forEach(res => {
-                const nombreExperiencia = res.experiencia ? res.experiencia.replace("Mesa-", "") : "Estándar";
+                const nombreExperiencia = formatearExperienciaCliente(res.experiencia, lang);
 
                 // Comparación cronológica con la hora del sistema
                 const fechaReserva = new Date(`${res.fecha}T${res.hora}`);
@@ -111,59 +157,74 @@ async function cargarMisReservas() {
                 // HTML de la columna de platos
                 let platosHtml = "";
                 if (platosIds.length > 0) {
+                    const textoPlato = lang === "en"
+                        ? `${platosIds.length} ${platosIds.length > 1 ? "dishes" : "dish"}`
+                        : `${platosIds.length} plato${platosIds.length > 1 ? "s" : ""}`;
+                    const tooltipPlatos = lang === "en" ? "View selected dishes" : "Ver platos seleccionados";
                     platosHtml = `
-                        <button type="button" class="btn-ver-platos" onclick="verDetallePlatos('${res.id}')" title="Ver platos seleccionados">
-                            <span>🍽️ ${platosIds.length} plato${platosIds.length > 1 ? "s" : ""}</span>
+                        <button type="button" class="btn-ver-platos" onclick="verDetallePlatos('${res.id}')" title="${tooltipPlatos}">
+                            <span>🍽️ ${textoPlato}</span>
                             <span class="platos-precio-tag">(${formatoCOP.format(totalPlatos)})</span>
                         </button>
                     `;
                 } else {
-                    platosHtml = `<span class="sin-platos-tag">Sin platos (Mesa base $10k)</span>`;
+                    const textoSinPlatos = lang === "en" ? "No dishes (Base table $10k)" : "Sin platos (Mesa base $10k)";
+                    platosHtml = `<span class="sin-platos-tag">${textoSinPlatos}</span>`;
                 }
 
                 const estadoRes = String(res.estado || "PENDIENTE").toUpperCase();
                 let estadoBadge = "";
                 let botonesAcciones = "";
 
+                const textoPersonas = `${res.numeroPersonas} ${lang === "en" ? (res.numeroPersonas === 1 ? "guest" : "guests") : (res.numeroPersonas === 1 ? "persona" : "personas")}`;
+
                 if (yaPaso) {
-                    estadoBadge = `<span class="status-pill pill-past">Completada</span>`;
+                    estadoBadge = `<span class="status-pill pill-past">${lang === "en" ? "Completed" : "Completada"}</span>`;
 
                     const tieneComentario = res.comentario && res.comentario !== "null" && res.comentario.trim() !== "";
                     const icono = tieneComentario ? "rate_review" : "chat_bubble";
                     const estiloDorado = tieneComentario ? "style='color: #d4af37;'" : "";
                     const comentarioSanitizado = tieneComentario ? encodeURIComponent(res.comentario) : "";
+                    const tooltipComentario = lang === "en" ? "Leave Comment" : "Dejar Comentario";
 
                     botonesAcciones = `
-                        <button class="btn-icon-table" onclick="abrirModalComentario('${res.id}', '${comentarioSanitizado}')" title="Dejar Comentario">
+                        <button class="btn-icon-table" onclick="abrirModalComentario('${res.id}', '${comentarioSanitizado}')" title="${tooltipComentario}">
                             <span class="material-symbols-outlined" ${estiloDorado}>${icono}</span>
                         </button>
                     `;
                 } else if (estadoRes === "PENDIENTE") {
+                    const tooltipAnticipo = `${lang === "en" ? "Required deposit: " : "Anticipo requerido: "}${formatoCOP.format(anticipo)}`;
+                    const labelPendiente = `${lang === "en" ? "Pending" : "Pendiente"} (${formatoCOP.format(anticipo)})`;
+                    const tooltipConfirmar = lang === "en" ? "Confirm this reservation" : "Confirmar esta reserva";
+                    const btnConfirmarTexto = lang === "en" ? "Confirm" : "Confirmar";
+                    const tooltipCancelar = lang === "en" ? "Cancel Reservation" : "Cancelar Reserva";
+
                     estadoBadge = `
-                        <span class="status-pill" style="background:rgba(224,170,62,0.15); color:#e0aa3e; border:1px solid rgba(224,170,62,0.4);" title="Anticipo requerido: ${formatoCOP.format(anticipo)}">
-                            Pendiente (${formatoCOP.format(anticipo)})
+                        <span class="status-pill" style="background:rgba(224,170,62,0.15); color:#e0aa3e; border:1px solid rgba(224,170,62,0.4);" title="${tooltipAnticipo}">
+                            ${labelPendiente}
                         </span>
                     `;
 
                     botonesAcciones = `
-                        <button type="button" class="btn-confirmar-tabla" onclick="confirmarReserva('${res.id}', '${res.fecha}', '${res.hora}', ${totalPlatos}, ${anticipo})" title="Confirmar esta reserva">
+                        <button type="button" class="btn-confirmar-tabla" onclick="confirmarReserva('${res.id}', '${res.fecha}', '${res.hora}', ${totalPlatos}, ${anticipo})" title="${tooltipConfirmar}">
                             <span class="material-symbols-outlined">check_circle</span>
-                            <span>Confirmar</span>
+                            <span>${btnConfirmarTexto}</span>
                         </button>
-                        <button class="btn-icon-table btn-cancel" onclick="cancelarReserva('${res.id}')" title="Cancelar Reserva">
+                        <button class="btn-icon-table btn-cancel" onclick="cancelarReserva('${res.id}')" title="${tooltipCancelar}">
                             <span class="material-symbols-outlined">delete</span>
                         </button>
                     `;
                 } else {
                     // CONFIRMADA
+                    const tooltipCancelar = lang === "en" ? "Cancel Reservation" : "Cancelar Reserva";
                     estadoBadge = `
                         <span class="status-pill" style="background:rgba(46, 204, 113, 0.15); color:#2ecc71; border:1px solid rgba(46, 204, 113, 0.4);">
-                            Confirmada
+                            ${lang === "en" ? "Confirmed" : "Confirmada"}
                         </span>
                     `;
 
                     botonesAcciones = `
-                        <button class="btn-icon-table btn-cancel" onclick="cancelarReserva('${res.id}')" title="Cancelar Reserva">
+                        <button class="btn-icon-table btn-cancel" onclick="cancelarReserva('${res.id}')" title="${tooltipCancelar}">
                             <span class="material-symbols-outlined">delete</span>
                         </button>
                     `;
@@ -173,7 +234,7 @@ async function cargarMisReservas() {
                     <tr>
                         <td class="serif-gold">${res.fecha}</td>
                         <td>${res.hora}</td>
-                        <td>${res.numeroPersonas} personas</td>
+                        <td>${textoPersonas}</td>
                         <td><span class="gold-text">${nombreExperiencia}</span></td>
                         <td>${platosHtml}</td>
                         <td>${estadoBadge}</td>
@@ -188,7 +249,8 @@ async function cargarMisReservas() {
         }
     } catch (error) {
         console.error("Error al cargar:", error);
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #ff4444; padding: 20px;">Error de conexión con el servidor.</td></tr>`;
+        const errorMsg = lang === "en" ? "Connection error with server." : "Error de conexión con el servidor.";
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #ff4444; padding: 20px;">${errorMsg}</td></tr>`;
     }
 }
 
@@ -218,10 +280,31 @@ function verDetallePlatos(idReserva) {
 
         const fila = document.createElement("div");
         fila.className = "modal-plato-fila";
-        fila.innerHTML = `
-            <span class="plato-nombre">${nombre}</span>
-            <span class="plato-precio">${formatoCOP.format(precio)}</span>
-        `;
+
+        const nombreSpan = document.createElement("span");
+        nombreSpan.className = "plato-nombre";
+
+        const langActual = getIdiomaMisReservas();
+        if (langActual === "en" && typeof window.traducirDinamico === "function") {
+            const cached = typeof window.obtenerTraduccionCacheada === "function" ? window.obtenerTraduccionCacheada(nombre, "es", "en") : null;
+            nombreSpan.textContent = cached || nombre;
+            if (!cached && plato && plato.nombre) {
+                window.traducirDinamico(nombre, "es", "en").then(res => {
+                    if (nombreSpan.isConnected && getIdiomaMisReservas() === "en") {
+                        nombreSpan.textContent = res;
+                    }
+                });
+            }
+        } else {
+            nombreSpan.textContent = nombre;
+        }
+
+        const precioSpan = document.createElement("span");
+        precioSpan.className = "plato-precio";
+        precioSpan.textContent = formatoCOP.format(precio);
+
+        fila.appendChild(nombreSpan);
+        fila.appendChild(precioSpan);
         listaEl.appendChild(fila);
     });
 
@@ -243,16 +326,21 @@ function cerrarModalPlatos() {
  */
 async function confirmarReserva(id, fecha, hora, totalPlatos, anticipo) {
     const token = localStorage.getItem("token");
+    const lang = getIdiomaMisReservas();
     if (!token) {
         window.location.href = "/login";
         return;
     }
 
-    const mensajePregunta =
-        `¿Deseas confirmar definitivamente tu reserva para el ${fecha} a las ${hora}?\n\n` +
-        `• Total en productos: ${formatoCOP.format(totalPlatos)}\n` +
-        `• Anticipo para apartar mesa: ${formatoCOP.format(anticipo)} (5% del consumo, mínimo $10.000 COP)\n\n` +
-        `Tu mesa pasará a estado CONFIRMADA en nuestro restaurante.`;
+    const mensajePregunta = lang === "en"
+        ? `Do you want to definitively confirm your reservation for ${fecha} at ${hora}?\n\n` +
+          `• Total in products: ${formatoCOP.format(totalPlatos)}\n` +
+          `• Deposit to hold table: ${formatoCOP.format(anticipo)} (5% of consumption, minimum $10,000 COP)\n\n` +
+          `Your table will become CONFIRMED in our restaurant.`
+        : `¿Deseas confirmar definitivamente tu reserva para el ${fecha} a las ${hora}?\n\n` +
+          `• Total en productos: ${formatoCOP.format(totalPlatos)}\n` +
+          `• Anticipo para apartar mesa: ${formatoCOP.format(anticipo)} (5% del consumo, mínimo $10.000 COP)\n\n` +
+          `Tu mesa pasará a estado CONFIRMADA en nuestro restaurante.`;
 
     if (!confirm(mensajePregunta)) {
         return;
@@ -269,15 +357,18 @@ async function confirmarReserva(id, fecha, hora, totalPlatos, anticipo) {
         });
 
         if (response.ok) {
-            alert("🎉 ¡Reserva confirmada con éxito! Tu mesa ha sido asegurada.");
+            const exitoMsg = lang === "en"
+                ? "🎉 Reservation confirmed successfully! Your table is secured."
+                : "🎉 ¡Reserva confirmada con éxito! Tu mesa ha sido asegurada.";
+            alert(exitoMsg);
             cargarMisReservas();
         } else {
             const err = await response.text();
-            alert("No se pudo confirmar la reserva: " + err);
+            alert((lang === "en" ? "Could not confirm reservation: " : "No se pudo confirmar la reserva: ") + err);
         }
     } catch (e) {
         console.error("Error al confirmar reserva:", e);
-        alert("Ocurrió un error de conexión al confirmar la reserva.");
+        alert(lang === "en" ? "A connection error occurred while confirming the reservation." : "Ocurrió un error de conexión al confirmar la reserva.");
     }
 }
 
@@ -286,8 +377,13 @@ async function confirmarReserva(id, fecha, hora, totalPlatos, anticipo) {
  */
 async function cancelarReserva(id) {
     const token = localStorage.getItem("token");
+    const lang = getIdiomaMisReservas();
 
-    if (!confirm("¿Deseas cancelar esta reserva? Esta acción liberará tu mesa en el manuscrito y no se puede deshacer.")) {
+    const confirmMsg = lang === "en"
+        ? "Do you want to cancel this reservation? This action will release your table in the manuscript and cannot be undone."
+        : "¿Deseas cancelar esta reserva? Esta acción liberará tu mesa en el manuscrito y no se puede deshacer.";
+
+    if (!confirm(confirmMsg)) {
         return;
     }
 
@@ -300,14 +396,14 @@ async function cancelarReserva(id) {
         });
 
         if (response.ok) {
-            alert("Reserva cancelada con éxito. La mesa ha sido liberada.");
+            alert(lang === "en" ? "Reservation cancelled successfully. Table has been released." : "Reserva cancelada con éxito. La mesa ha sido liberada.");
             cargarMisReservas();
         } else {
             const msg = await response.text();
-            alert("No se pudo cancelar: " + msg);
+            alert((lang === "en" ? "Could not cancel: " : "No se pudo cancelar: ") + msg);
         }
     } catch (error) {
-        alert("Error al conectar con el servidor.");
+        alert(lang === "en" ? "Error connecting to the server." : "Error al conectar con el servidor.");
     }
 }
 
@@ -327,6 +423,7 @@ async function guardarComentarioServidor() {
     const id = document.getElementById("modalReservaId").value;
     const comentario = document.getElementById("txtComentario").value;
     const token = localStorage.getItem("token");
+    const lang = getIdiomaMisReservas();
 
     try {
         const response = await fetch(`/reservas/${id}/comentario`, {
@@ -339,14 +436,14 @@ async function guardarComentarioServidor() {
         });
 
         if (response.ok) {
-            alert("Tu reseña ha sido guardada en las páginas de nuestro manuscrito.");
+            alert(lang === "en" ? "Your review has been saved in the pages of our manuscript." : "Tu reseña ha sido guardada en las páginas de nuestro manuscrito.");
             cerrarModal();
             cargarMisReservas();
         } else {
-            alert("Error al guardar el comentario.");
+            alert(lang === "en" ? "Error saving review." : "Error al guardar el comentario.");
         }
     } catch (error) {
         console.error("Error en PATCH:", error);
-        alert("Error de conexión.");
+        alert(lang === "en" ? "Connection error." : "Error de conexión.");
     }
 }
