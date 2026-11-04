@@ -85,6 +85,29 @@
 
     <!-- FOOTER -->
     <footer th:replace="~{fragmentos/footer :: footer}"></footer>
+
+    <section id="verificationModal" class="verification-modal" role="dialog" aria-modal="true"
+        aria-labelledby="verificationTitle" aria-describedby="verificationDescription" hidden>
+        <div class="verification-modal__content">
+            <h2 id="verificationTitle">Verifica tu correo</h2>
+            <p id="verificationDescription">
+                Enviamos un código de 6 dígitos a <strong id="verificationEmail"></strong>.
+                Ingrésalo para activar tu cuenta.
+            </p>
+
+            <form id="verificationForm">
+                <label class="login-label" for="verificationCode">Código de verificación</label>
+                <input id="verificationCode" class="login-input" type="text" inputmode="numeric"
+                    autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" minlength="6"
+                    placeholder="000000" aria-describedby="verificationMessage" required>
+                <p id="verificationMessage" class="verification-message" role="status" aria-live="polite"></p>
+                <button type="submit" id="btnVerify" class="login-button">VERIFICAR CORREO</button>
+            </form>
+
+            <button type="button" id="btnResendCode" class="verification-resend" disabled>
+                Reenviar código en <span id="resendCountdown">60</span> s
+            </button>
+        </div>
+    </section>
 </body>
 </html>
-

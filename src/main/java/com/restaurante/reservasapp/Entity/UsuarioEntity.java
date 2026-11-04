@@ -85,6 +85,19 @@ public class UsuarioEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return isActivo();
+        return isActivo() && isCorreoVerificado();
     }
+
+
+    @Builder.Default
+    private Boolean correoVerificado = true;
+
+    public boolean isCorreoVerificado() {
+        return correoVerificado == null || correoVerificado;
+    }
+
+    public void setCorreoVerificado(Boolean correoVerificado) {
+        this.correoVerificado = correoVerificado;
+    }
+
 }
