@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -60,4 +61,27 @@ public class AuthController {
         }
         return ResponseEntity.ok("Se han registrado " + creados + " usuarios en la base de datos de manera masiva.");
     }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> verificarCorreo(@Valid @RequestBody VerificarCorreoRequest request){
+        try {
+            authService.verificarCorreo(request.getCorreo(),request.getCodigo());
+            return ResponseEntity.ok(Map.of("message", "Correo verificado exitosamente"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/resend-code")
+    public ResponseEntity<?> reenviarCorreo(@Valid @RequestBody ReenviarCodigoRequest request){
+        try {
+            authService.reenviarCodigo(request.getCorreo());
+            return ResponseEntity.ok(Map.of("message", "Código reenviado exitosamente"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", e.getMessage()));
+        }
+    }
+    
 }

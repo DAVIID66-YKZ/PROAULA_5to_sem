@@ -19,6 +19,66 @@ function togglePassword(inputId, btn) {
            </svg>`;
 }
 
+function getResponseMessage(data, fallback) {
+    if (data && typeof data === "object" && data.message) {
+        return data.message;
+    }
+    return typeof data === "string" && data.trim() ? data : fallback;
+}
+
+async function readResponseMessage(response, fallback) {
+    const body = await response.text();
+    if (!body) return fallback;
+
+    try {
+        return getResponseMessage(JSON.parse(body), fallback);
+    } catch {
+        return body;
+    }
+}
+
+function setButtonLoading(button, isLoading, loadingText, defaultText) {
+    if (!button) return;
+    button.disabled = isLoading;
+    button.classList.toggle("is-loading", isLoading);
+    button.textContent = isLoading ? loadingText : defaultText;
+}
+
+let verificationEmail = "";
+let resendTimer;
+
+function openVerificationModal(email) {
+    const modal = document.getElementById("verificationModal");
+    verificationEmail = email;
+    document.getElementById("verificationEmail").textContent = email;
+    document.getElementById("verificationCode").value = "";
+    document.getElementById("verificationMessage").textContent = "";
+    modal.hidden = false;
+    startResendCountdown(60);
+    document.getElementById("verificationCode").focus();
+}
+
+function startResendCountdown(seconds) {
+    const button = document.getElementById("btnResendCode");
+    let remaining = seconds;
+
+    clearInterval(resendTimer);
+    button.disabled = true;
+    button.innerHTML = `Reenviar código en <span id="resendCountdown">${remaining}</span> s`;
+
+    resendTimer = setInterval(() => {
+        remaining -= 1;
+        const countdownElement = document.getElementById("resendCountdown");
+        if (countdownElement) countdownElement.textContent = remaining;
+
+        if (remaining <= 0) {
+            clearInterval(resendTimer);
+            button.disabled = false;
+            button.textContent = "REENVIAR CÓDIGO";
+        }
+    }, 1000);
+}
+
 async function register(event) {
     event.preventDefault();
 
@@ -35,13 +95,7 @@ async function register(event) {
     }
 
     const btn = document.getElementById("btnRegister") || document.querySelector(".login-button");
-    const textoOriginal = btn ? btn.innerHTML : "REGISTRARME";
-
-    if (btn) {
-        btn.disabled = true;
-        btn.classList.add("is-loading");
-        btn.innerHTML = `<span class="btn-spinner"></span><span>Creando cuenta...</span>`;
-    }
+    setButtonLoading(btn, true, "Creando cuenta...", "REGISTRARME");
 
     try {
         const response = await fetch("/auth/register", {
@@ -59,39 +113,107 @@ async function register(event) {
 
         if (response.ok) {
             const data = await response.json();
-            if (data && data.token) {
-                localStorage.setItem("token", data.token);
-            }
-            const tieneCarrito = localStorage.getItem("reservaCarrito");
-            if (tieneCarrito) {
-                alert("¡Registro exitoso! Inicia sesión para confirmar la reserva apartada en tu carrito.");
-            } else {
-                alert("¡Registro exitoso! Ya puedes iniciar sesión.");
-            }
-            window.location.href = "/login";
+            setButtonLoading(btn, false, "Creando cuenta...", "REGISTRARME");
+            openVerificationModal(data.correo || correo);
         } else {
-            const errorMsg = await response.text();
+            const errorMsg = await readResponseMessage(response, "No se pudo completar el registro.");
             alert("Error al registrar: " + errorMsg);
-            if (btn) {
-                btn.disabled = false;
-                btn.classList.remove("is-loading");
-                btn.innerHTML = textoOriginal;
-            }
+            setButtonLoading(btn, false, "Creando cuenta...", "REGISTRARME");
         }
 
     } catch (error) {
         console.error("Error:", error);
         alert("No se pudo conectar con el servidor.");
-        if (btn) {
-            btn.disabled = false;
-            btn.classList.remove("is-loading");
-            btn.innerHTML = textoOriginal;
+        setButtonLoading(btn, false, "Creando cuenta...", "REGISTRARME");
+    }
+}
+
+async function verifyEmail(event) {
+    event.preventDefault();
+
+    const code = document.getElementById("verificationCode").value.trim();
+    const message = document.getElementById("verificationMessage");
+    const button = document.getElementById("btnVerify");
+
+    if (!/^\d{6}$/.test(code)) {
+        message.textContent = "Ingresa el código de 6 dígitos.";
+        message.className = "verification-message is-error";
+        return;
+    }
+
+    setButtonLoading(button, true, "Verificando...", "VERIFICAR CORREO");
+    message.textContent = "";
+    message.className = "verification-message";
+
+    try {
+        const response = await fetch("/auth/verify-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ correo: verificationEmail, codigo: code })
+        });
+
+        if (!response.ok) {
+            message.textContent = await readResponseMessage(response, "No se pudo verificar el correo.");
+            message.className = "verification-message is-error";
+            return;
         }
+
+        message.textContent = "Correo verificado. Redirigiendo al inicio de sesión...";
+        message.className = "verification-message is-success";
+        clearInterval(resendTimer);
+        window.setTimeout(() => {
+            window.location.href = "/login";
+        }, 1200);
+    } catch (error) {
+        console.error("Error al verificar el correo:", error);
+        message.textContent = "No se pudo conectar con el servidor. Inténtalo nuevamente.";
+        message.className = "verification-message is-error";
+    } finally {
+        setButtonLoading(button, false, "Verificando...", "VERIFICAR CORREO");
+    }
+}
+
+async function resendVerificationCode() {
+    const button = document.getElementById("btnResendCode");
+    const message = document.getElementById("verificationMessage");
+
+    button.disabled = true;
+    button.textContent = "Enviando código...";
+    message.textContent = "";
+    message.className = "verification-message";
+
+    try {
+        const response = await fetch("/auth/resend-code", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ correo: verificationEmail })
+        });
+
+        if (!response.ok) {
+            message.textContent = await readResponseMessage(response, "No se pudo reenviar el código.");
+            message.className = "verification-message is-error";
+            button.disabled = false;
+            button.textContent = "REENVIAR CÓDIGO";
+            return;
+        }
+
+        message.textContent = "Enviamos un nuevo código a tu correo.";
+        message.className = "verification-message is-success";
+        startResendCountdown(60);
+    } catch (error) {
+        console.error("Error al reenviar el código:", error);
+        message.textContent = "No se pudo conectar con el servidor. Inténtalo nuevamente.";
+        message.className = "verification-message is-error";
+        button.disabled = false;
+        button.textContent = "REENVIAR CÓDIGO";
     }
 }
 
 // Mostrar aviso en la pantalla de registro si el usuario viene con una reserva en el carrito
 document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("verificationForm").addEventListener("submit", verifyEmail);
+    document.getElementById("btnResendCode").addEventListener("click", resendVerificationCode);
+
     const tieneCarrito = localStorage.getItem("reservaCarrito");
     if (tieneCarrito) {
         const form = document.querySelector(".register-form");
