@@ -44,7 +44,7 @@
         </aside>
 
         <!-- ===== MODAL DE SELECCIÓN DE PLATOS PARA EL CARRITO ===== -->
-        <div id="modalMenuIndex" class="reserva-modal-backdrop hidden" style="display: none; position: fixed; inset: 0; z-index: 100002;" aria-hidden="true" onclick="if(event.target === this) cerrarModalMenuIndex();">
+        <div id="modalMenuIndex" class="reserva-modal-backdrop hidden" style="display: none; position: fixed; inset: 0; z-index: 100005;" aria-hidden="true" onclick="if(event.target === this) cerrarModalMenuIndex();">
             <div class="reserva-modal" role="dialog" aria-modal="true" aria-labelledby="tituloModalMenuIndex">
                 <div class="reserva-modal-header">
                     <div>
@@ -64,6 +64,24 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            (function () {
+                function reubicarModalesEnBody() {
+                    ["modalMenuIndex", "carritoDrawer", "carritoBackdrop"].forEach(function (id) {
+                        var el = document.getElementById(id);
+                        if (el && el.parentElement && el.parentElement !== document.body) {
+                            document.body.appendChild(el);
+                        }
+                    });
+                }
+                if (document.body) {
+                    reubicarModalesEnBody();
+                } else {
+                    document.addEventListener("DOMContentLoaded", reubicarModalesEnBody);
+                }
+            })();
+        </script>
     </div>
 </body>
 </html>

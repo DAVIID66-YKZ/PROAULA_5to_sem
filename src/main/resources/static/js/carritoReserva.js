@@ -48,8 +48,20 @@ function actualizarBadgeCarrito() {
     });
 }
 
+// Helper para asegurar que los modales y el drawer queden directamente en el body
+// evitando que queden atrapados dentro del stacking context del header (z-index: 1000)
+function asegurarModalesEnBody() {
+    ["modalMenuIndex", "carritoDrawer", "carritoBackdrop"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.parentElement && el.parentElement !== document.body) {
+            document.body.appendChild(el);
+        }
+    });
+}
+
 // 3. Control del Drawer del Carrito
 function abrirCarrito() {
+    asegurarModalesEnBody();
     const backdrop = document.getElementById("carritoBackdrop");
     const drawer = document.getElementById("carritoDrawer");
     if (!backdrop || !drawer) return;
@@ -244,6 +256,7 @@ function obtenerFechaYHoraLocal() {
 
 // 5. Control del Modal de Reserva en el Index
 function abrirModalReservaIndex() {
+    asegurarModalesEnBody();
     const backdrop = document.getElementById("modalReservaIndexBackdrop");
     if (!backdrop) return;
 
@@ -362,6 +375,42 @@ async function asegurarCatalogoPlatos() {
     return catalogoPlatosGlobal;
 }
 
+const CONFIG_CATEGORIAS_INDEX = [
+    { key: "ENTRADAS", nombre: "Entradas", icon: "🥗", subtitulo: "Aperitivos y entradas" },
+    { key: "PLATOS_FUERTES", nombre: "Platos Fuertes", icon: "🥩", subtitulo: "Especialidades y principales" },
+    { key: "BEBIDAS", nombre: "Bebidas", icon: "🍷", subtitulo: "Maridaje, cócteles y refrescos" },
+    { key: "POSTRES", nombre: "Postres", icon: "🍨", subtitulo: "Dulzura y repostería" }
+];
+
+function normalizarCategoriaPlato(cat) {
+    if (!cat) return "OTROS";
+    const limpia = String(cat).trim().toUpperCase().replaceAll(" ", "_");
+    if (limpia === "ENTRADAS" || limpia === "ENTRADA") return "ENTRADAS";
+    if (limpia === "PLATOS_FUERTES" || limpia === "PLATO_FUERTE" || limpia === "FUERTES" || limpia === "PRINCIPALES" || limpia === "PRINCIPAL") return "PLATOS_FUERTES";
+    if (limpia === "BEBIDAS" || limpia === "BEBIDA" || limpia === "COCTELES" || limpia === "VINOS") return "BEBIDAS";
+    if (limpia === "POSTRES" || limpia === "POSTRE" || limpia === "DULCES") return "POSTRES";
+    return limpia;
+}
+
+function filtrarCategoriaModalIndex(categoriaKey, boton) {
+    const contenedor = document.getElementById("modalIndexPlatosBody");
+    if (!contenedor) return;
+
+    contenedor.querySelectorAll(".reserva-cat-pill").forEach(p => p.classList.remove("active"));
+    if (boton) {
+        boton.classList.add("active");
+    }
+
+    const secciones = contenedor.querySelectorAll(".reserva-categoria-seccion");
+    secciones.forEach(sec => {
+        if (categoriaKey === "TODOS" || sec.getAttribute("data-categoria") === categoriaKey) {
+            sec.style.display = "flex";
+        } else {
+            sec.style.display = "none";
+        }
+    });
+}
+
 function renderizarCheckboxesPlatosIndex(platos) {
     const contenedor = document.getElementById("modalIndexPlatosBody");
     if (!contenedor || !Array.isArray(platos)) return;
@@ -371,23 +420,97 @@ function renderizarCheckboxesPlatosIndex(platos) {
         return;
     }
 
-    contenedor.innerHTML = platos.map(plato => `
-        <label class="reserva-plato-item">
-            <input type="checkbox"
-                   class="modal-index-plato-checkbox"
-                   value="${plato.id}"
-                   data-name="${plato.nombre}"
-                   data-precio="${plato.precio}"
-                   ${!plato.disponible ? 'disabled' : ''}>
-            <span class="reserva-plato-info">
-                <span>
-                    <span>${plato.nombre}</span>
-                    ${!plato.disponible ? '<small>No disponible</small>' : ''}
+    // Agrupar platos por categoría preservando el orden establecido
+    const mapaGrupos = new Map();
+    CONFIG_CATEGORIAS_INDEX.forEach(c => {
+        mapaGrupos.set(c.key, {
+            meta: c,
+            items: []
+        });
+    });
+
+    platos.forEach(plato => {
+        const key = normalizarCategoriaPlato(plato.categoria);
+        if (!mapaGrupos.has(key)) {
+            const nombreLegible = key.charAt(0) + key.slice(1).toLowerCase().replaceAll("_", " ");
+            mapaGrupos.set(key, {
+                meta: {
+                    key: key,
+                    nombre: key === "OTROS" ? "Otras Opciones" : nombreLegible,
+                    icon: "🍽️",
+                    subtitulo: "Selección de la casa"
+                },
+                items: []
+            });
+        }
+        mapaGrupos.get(key).items.push(plato);
+    });
+
+    // Conservar solo categorías con al menos un plato
+    const categoriasActivas = Array.from(mapaGrupos.values()).filter(g => g.items.length > 0);
+
+    if (categoriasActivas.length === 0) {
+        contenedor.innerHTML = '<p class="reserva-menu-vacio">No hay platos disponibles en el menú por el momento.</p>';
+        return;
+    }
+
+    // Píldoras de filtrado rápido superior
+    let navPillsHtml = `
+        <div class="reserva-categoria-nav" role="tablist" aria-label="Filtrar por categoría">
+            <button type="button" class="reserva-cat-pill active" onclick="filtrarCategoriaModalIndex('TODOS', this)">
+                Todos (${platos.length})
+            </button>
+    `;
+
+    categoriasActivas.forEach(g => {
+        navPillsHtml += `
+            <button type="button" class="reserva-cat-pill" onclick="filtrarCategoriaModalIndex('${g.meta.key}', this)">
+                <span>${g.meta.icon}</span> ${g.meta.nombre} (${g.items.length})
+            </button>
+        `;
+    });
+    navPillsHtml += `</div>`;
+
+    // Bloques separados por categoría
+    let seccionesHtml = "";
+    categoriasActivas.forEach(g => {
+        const tarjetas = g.items.map(plato => `
+            <label class="reserva-plato-item">
+                <input type="checkbox"
+                       class="modal-index-plato-checkbox"
+                       value="${plato.id}"
+                       data-name="${plato.nombre}"
+                       data-precio="${plato.precio}"
+                       data-categoria="${g.meta.key}"
+                       ${!plato.disponible ? 'disabled' : ''}>
+                <span class="reserva-plato-info">
+                    <span>
+                        <span>${plato.nombre}</span>
+                        ${!plato.disponible ? '<small>No disponible</small>' : ''}
+                    </span>
+                    <strong>${formatoCOP.format(plato.precio || 0)}</strong>
                 </span>
-                <strong>${formatoCOP.format(plato.precio || 0)}</strong>
-            </span>
-        </label>
-    `).join("");
+            </label>
+        `).join("");
+
+        seccionesHtml += `
+            <div class="reserva-categoria-seccion" data-categoria="${g.meta.key}">
+                <div class="reserva-categoria-header">
+                    <div class="reserva-categoria-titulo-izq">
+                        <span class="reserva-categoria-icon">${g.meta.icon}</span>
+                        <h4 class="reserva-categoria-nombre">${g.meta.nombre}</h4>
+                    </div>
+                    <span class="reserva-categoria-badge">${g.items.length} ${g.items.length === 1 ? 'opción' : 'opciones'}</span>
+                </div>
+                <div class="reserva-categoria-grid">
+                    ${tarjetas}
+                </div>
+            </div>
+        `;
+    });
+
+    contenedor.innerHTML = navPillsHtml + `<div class="reserva-secciones-contenedor">${seccionesHtml}</div>`;
+    sincronizarCheckboxesIndex();
 }
 
 function sincronizarCheckboxesIndex() {
@@ -397,8 +520,13 @@ function sincronizarCheckboxesIndex() {
 }
 
 function abrirModalMenuIndex() {
+    asegurarModalesEnBody();
     const modal = document.getElementById("modalMenuIndex");
     if (!modal) return;
+
+    if (modal.parentElement !== document.body) {
+        document.body.appendChild(modal);
+    }
 
     const mostrarModal = () => {
         sincronizarCheckboxesIndex();
@@ -491,6 +619,7 @@ function actualizarResumenMenuIndex() {
 }
 
 function editarPlatosDesdeCarrito() {
+    asegurarModalesEnBody();
     const reserva = obtenerReservaCarrito();
     if (reserva && Array.isArray(reserva.platos)) {
         platosConfirmadosIndex = [...reserva.platos];
@@ -732,6 +861,7 @@ function manejarClickBotonReserva(event) {
 }
 
 // Exponer explícitamente en el objeto window para evitar problemas de ámbito
+window.asegurarModalesEnBody = asegurarModalesEnBody;
 window.obtenerReservaCarrito = obtenerReservaCarrito;
 window.guardarReservaCarrito = guardarReservaCarrito;
 window.eliminarReservaCarrito = eliminarReservaCarrito;
@@ -749,9 +879,16 @@ window.cerrarModalMenuIndex = cerrarModalMenuIndex;
 window.guardarPlatosSeleccionadosIndex = guardarPlatosSeleccionadosIndex;
 window.actualizarResumenMenuIndex = actualizarResumenMenuIndex;
 window.editarPlatosDesdeCarrito = editarPlatosDesdeCarrito;
+window.filtrarCategoriaModalIndex = filtrarCategoriaModalIndex;
+
+// Reubicación inmediata si el body ya existe
+if (typeof document !== "undefined" && document.body) {
+    asegurarModalesEnBody();
+}
 
 // Auto-inicialización en carga
 document.addEventListener("DOMContentLoaded", () => {
+    asegurarModalesEnBody();
     actualizarBadgeCarrito();
 
     // Sincronizar platos si ya hay reserva en localStorage
