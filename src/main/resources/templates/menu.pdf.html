@@ -1,389 +1,510 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       lang="es">
-
 <head>
     <meta charset="UTF-8" />
-    <title>Menú - GESTREST</title>
-
-    <style>
+    <title>Menú Gastronómico - GestRest</title>
+    <style type="text/css">
         @page {
             size: A4 portrait;
-            margin: 14mm 10mm 18mm 10mm;
-            background-color: #0D0D0D;
-
+            margin: 6mm 6mm 6mm 6mm;
+            background-color: #0E0E12;
             @bottom-right {
-                content: "PÁGINA " counter(page) " DE " counter(pages);
-                font-family: Helvetica, sans-serif;
-                font-size: 8pt;
-                color: #D4AF37;
+                content: "Página " counter(page) " de " counter(pages);
+                font-family: Helvetica, Arial, sans-serif;
+                font-size: 6.5pt;
+                color: #8C7335;
             }
         }
 
         * {
             box-sizing: border-box;
-        }
-
-        html {
-            background-color: #0D0D0D;
-        }
-
-        body {
-            font-family: Helvetica, sans-serif;
-            background-color: #0D0D0D;
-            color: #E2E8F0;
-            font-size: 9pt;
             margin: 0;
-        }
-
-        .fondo-pagina {
-            position: fixed;
-            top: -14mm;
-            left: -10mm;
-            width: 210mm;
-            height: 297mm;
-            background-color: #0D0D0D;
-            z-index: -1;
-        }
-
-        .portada {
-            text-align: center;
-            padding: 13px 0 16px 0;
-            margin-bottom: 17px;
-            border-bottom: 1px solid #6D5924;
-        }
-
-        .marca {
-            font-family: Georgia, serif;
-            font-size: 30pt;
-            font-weight: bold;
-            letter-spacing: 5px;
-            color: #F5F5F5;
-            margin-bottom: 5px;
-        }
-
-        .lema {
-            font-size: 8pt;
-            letter-spacing: 3px;
-            color: #D4AF37;
-        }
-
-        .categoria {
-            margin-bottom: 15px;
-        }
-
-        .categoria-pagina {
-            page-break-before: always;
-        }
-
-        .titulo-categoria {
-            text-align: center;
-            font-family: Georgia, serif;
-            font-size: 23pt;
-            font-weight: normal;
-            color: #F5F5F5;
-            margin: 0 0 6px 0;
-        }
-
-        .capitulo {
-            text-align: center;
-            font-size: 8pt;
-            letter-spacing: 2.5px;
-            color: #D4AF37;
-            margin-bottom: 5px;
-        }
-
-        .introduccion {
-            text-align: center;
-            color: #A6A6A6;
-            font-style: italic;
-            margin: 0 auto 14px auto;
-        }
-
-        .platos {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 8px 9px;
-            table-layout: fixed;
-        }
-
-        .platos td {
-            width: 33.333%;
-            height: 65mm;
-            vertical-align: top;
             padding: 0;
         }
 
-        .tarjeta {
-            height: 65mm;
-            background-color: #141414;
-            border: 1px solid #292929;
-            border-radius: 8px;
-            padding: 12px 11px 10px 11px;
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            background-color: #0E0E12;
+            color: #E2E2E2;
+            font-size: 7.3pt;
+            line-height: 1.28;
         }
 
-        .estado {
-            display: inline-block;
-            color: #D4AF37;
-            font-size: 7pt;
-            letter-spacing: 1px;
-            border: 1px solid #6D5924;
-            border-radius: 12px;
-            padding: 3px 8px;
+        .marco-exterior {
+            border: 2px solid #5C471A;
+            padding: 8px 10px;
+            background-color: #0E0E12;
+            min-height: 280mm;
+        }
+
+        .marco-interior {
+            border: 1px solid #3D2F12;
+            padding: 8px 10px;
+        }
+
+        /* =========================================
+           CABECERA LIMPIA: SOLO GESTREST SIN FONDO NEGRO
+           ========================================= */
+        .cabecera-limpia {
+            text-align: center;
+            padding: 4px 0 8px 0;
             margin-bottom: 8px;
+            border-bottom: 1px solid #3D2F12;
         }
 
-        .nombre {
-            font-family: Georgia, serif;
-            font-size: 11.5pt;
+        .logo-marca {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 26pt;
             font-weight: bold;
-            color: #F5F5F5;
-            line-height: 1.3;
-            margin-bottom: 6px;
-            overflow-wrap: break-word;
-        }
-
-        .descripcion {
-            font-size: 8pt;
-            line-height: 1.45;
-            color: #B5ADA0;
-            overflow-wrap: break-word;
-        }
-
-        .precio {
-            font-family: Georgia, serif;
-            font-size: 11pt;
-            font-weight: bold;
-            color: #D4AF37;
-            margin-top: 10px;
-            padding-top: 7px;
-            border-top: 1px dashed #39332A;
-        }
-
-        .separador {
-            border-bottom: 1px solid #39332A;
-            margin: 15px 0;
-        }
-
-        .vacio {
-            text-align: center;
-            color: #A6A6A6;
-            font-style: italic;
-            padding: 10px;
-        }
-
-        .pie {
-            text-align: center;
-            border-top: 1px solid #39332A;
-            margin-top: 17px;
-            padding-top: 11px;
-            font-size: 7pt;
-            line-height: 1.6;
-            color: #A6A6A6;
-        }
-
-        .pie-marca {
-            color: #D4AF37;
+            color: #E5B842;
             letter-spacing: 2px;
+            line-height: 1.1;
+        }
+
+        .logo-icono-flor {
+            color: #E5B842;
+            font-size: 24pt;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+
+        .linea-subtitulo {
+            margin-top: 3px;
+            color: #8C7335;
+            font-size: 7.5pt;
+            letter-spacing: 3px;
+        }
+
+        .texto-menu-badge {
+            color: #FFFFFF;
             font-weight: bold;
+            letter-spacing: 4px;
+            margin: 0 6px;
         }
 
-        /* Keep each menu card and category heading together when paginating. */
-        .tarjeta,
-        .titulo-categoria,
-        .capitulo {
+        /* =========================================
+           SEPARADORES DE SECCIÓN
+           ========================================= */
+        .separador-seccion {
+            text-align: center;
+            margin: 7px 0 5px 0;
+        }
+
+        .titulo-seccion {
+            display: inline-block;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-style: italic;
+            font-size: 13.5pt;
+            color: #E5B842;
+            padding: 0 8px;
+            letter-spacing: 1px;
+        }
+
+        .adorno-rama {
+            color: #8C7335;
+            font-size: 9.5pt;
+            vertical-align: middle;
+        }
+
+        /* =========================================
+           COLUMNAS DE PLATOS A TEXTO (3 COLUMNAS)
+           ========================================= */
+        .tabla-items-3col {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-bottom: 5px;
+        }
+
+        .col-items {
+            width: 33.333%;
+            vertical-align: top;
+            padding: 0 5px;
+        }
+
+        .item-plato {
+            margin-bottom: 5px;
+            padding-bottom: 3px;
+            border-bottom: 1px dotted #211F1B;
             page-break-inside: avoid;
         }
 
-        .fila-platos {
+        .item-header {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .item-nombre {
+            font-size: 7.2pt;
+            font-weight: bold;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            width: 68%;
+            vertical-align: top;
+        }
+
+        .item-precio {
+            font-size: 7.2pt;
+            font-weight: bold;
+            color: #E5B842;
+            text-align: right;
+            width: 32%;
+            vertical-align: top;
+        }
+
+        .item-descripcion {
+            font-size: 6.2pt;
+            color: #A3A3A3;
+            line-height: 1.25;
+            margin-top: 1px;
+        }
+
+        /* =========================================
+           GALERÍAS DE FOTOS SIN ESTIRAR (TAMAÑO FIJO)
+           ========================================= */
+        .contenedor-fotos-centrado {
+            width: 100%;
+            text-align: center;
+            margin: 5px 0 7px 0;
             page-break-inside: avoid;
+        }
+
+        .tabla-fotos-centrada {
+            margin: 0 auto;
+            border-collapse: separate;
+            border-spacing: 12px 0;
+        }
+
+        .celda-foto-fija {
+            width: 175px;
+            vertical-align: top;
+            text-align: center;
+            padding: 0;
+        }
+
+        .tarjeta-foto {
+            width: 175px;
+            background-color: #141418;
+            border: 1px solid #4D3C18;
+            border-radius: 5px;
+            padding: 4px;
+        }
+
+        .img-plato-fija {
+            width: 165px;
+            height: 98px;
+            max-height: 98px;
+            border-radius: 4px;
+            border: 1px solid #5C471A;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .foto-info-tabla {
+            width: 100%;
+            margin-top: 3px;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .foto-info-nombre {
+            font-size: 6.6pt;
+            font-weight: bold;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            text-align: left;
+            width: 66%;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .foto-info-precio {
+            font-size: 6.6pt;
+            font-weight: bold;
+            color: #E5B842;
+            text-align: right;
+            width: 34%;
+        }
+
+        /* =========================================
+           PIE DE PÁGINA
+           ========================================= */
+        .tabla-pie {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px solid #3D2F12;
+            color: #7D7D7D;
+            font-size: 6.2pt;
+        }
+
+        .pie-col-izq {
+            width: 33%;
+            vertical-align: middle;
+            text-align: left;
+        }
+
+        .pie-col-centro {
+            width: 34%;
+            vertical-align: middle;
+            text-align: center;
+            color: #8C7335;
+        }
+
+        .pie-col-der {
+            width: 33%;
+            vertical-align: middle;
+            text-align: right;
+        }
+
+        .pie-destacado {
+            color: #E5B842;
+            font-weight: bold;
         }
     </style>
 </head>
-
 <body>
 
-    <div class="fondo-pagina"></div>
+<div class="marco-exterior">
+<div class="marco-interior">
 
-    <div class="portada">
-        <div class="marca">GESTREST</div>
-        <div class="lema">EXPERIENCIA CULINARIA</div>
+    <!-- CABECERA LIMPIA: SOLO GESTREST SIN FONDO NEGRO -->
+    <div class="cabecera-limpia">
+        <div class="logo-marca">
+            <span class="logo-icono-flor">&#10043;</span>GestRest
+        </div>
+        <div class="linea-subtitulo">
+            <span>&#9472;&#9472;&#9472; &#9830;</span>
+            <span class="texto-menu-badge">MENÚ GASTRONÓMICO</span>
+            <span>&#9830; &#9472;&#9472;&#9472;</span>
+        </div>
     </div>
 
-    <!-- ENTRADAS -->
-    <div class="categoria"
-         th:with="items=${platos.?[categoria != null and #strings.toLowerCase(categoria) == 'entradas']}">
+    <!-- =========================================
+         SECCIÓN 1: PLATOS FUERTES
+         ========================================= -->
+    <div class="separador-seccion">
+        <span class="adorno-rama">&#10086; &#10048;</span>
+        <span class="titulo-seccion">Platos Fuertes</span>
+        <span class="adorno-rama">&#10048; &#10086;</span>
+    </div>
 
-        <div class="capitulo">✦ CAPÍTULO I &#160; ✦ &#160; APERITIVOS ✦</div>
-        <h1 class="titulo-categoria">Entradas</h1>
+    <!-- Lista de Platos Fuertes a Texto (3 Columnas) -->
+    <table class="tabla-items-3col">
+        <tr>
+            <td class="col-items">
+                <div th:each="plato : ${fuertesCol1}" class="item-plato">
+                    <table class="item-header">
+                        <tr>
+                            <td class="item-nombre" th:text="${plato.nombre}">PLATO FUERTE</td>
+                            <td class="item-precio" th:text="${plato.precioFormateado}">$ 0</td>
+                        </tr>
+                    </table>
+                    <div class="item-descripcion" th:text="${plato.descripcion}">Descripción del plato.</div>
+                </div>
+            </td>
+            <td class="col-items">
+                <div th:each="plato : ${fuertesCol2}" class="item-plato">
+                    <table class="item-header">
+                        <tr>
+                            <td class="item-nombre" th:text="${plato.nombre}">PLATO FUERTE</td>
+                            <td class="item-precio" th:text="${plato.precioFormateado}">$ 0</td>
+                        </tr>
+                    </table>
+                    <div class="item-descripcion" th:text="${plato.descripcion}">Descripción del plato.</div>
+                </div>
+            </td>
+            <td class="col-items">
+                <div th:each="plato : ${fuertesCol3}" class="item-plato">
+                    <table class="item-header">
+                        <tr>
+                            <td class="item-nombre" th:text="${plato.nombre}">PLATO FUERTE</td>
+                            <td class="item-precio" th:text="${plato.precioFormateado}">$ 0</td>
+                        </tr>
+                    </table>
+                    <div class="item-descripcion" th:text="${plato.descripcion}">Descripción del plato.</div>
+                </div>
+            </td>
+        </tr>
+    </table>
 
-        <p class="introduccion">
-            Comienza tu experiencia con sabores artesanales
-            que despiertan el apetito.
-        </p>
-
-        <table class="platos"
-               th:if="${!#lists.isEmpty(items)}">
-            <tbody>
-                <tr class="fila-platos"
-                    th:each="inicio : ${#numbers.sequence(0, items.size() - 1, 3)}">
-
-                    <td th:each="plato : ${items.subList(inicio, inicio + 3 > items.size() ? items.size() : inicio + 3)}">
-                        <div class="tarjeta">
-                            <div class="estado">✦ DISPONIBLE</div>
-
-                            <div class="nombre"
-                                 th:text="${plato.nombre}">Nombre del plato</div>
-
-                            <div class="descripcion"
-                                 th:text="${plato.descripcion}">Descripción del plato</div>
-
-                            <div class="precio"
-                                 th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 'POINT', 2, 'COMMA')}">
-                                $0,00
-                            </div>
-                        </div>
-                    </td>
-
-                    <td th:if="${items.size() % 3 == 1 and inicio == items.size() - 1}"
-                        style="border: none;"></td>
-                    <td th:if="${items.size() % 3 == 1 and inicio == items.size() - 1}"
-                        style="border: none;"></td>
-                    <td th:if="${items.size() % 3 == 2 and inicio == items.size() - 2}"
-                        style="border: none;"></td>
-                </tr>
-            </tbody>
+    <!-- Galería de Fotos de Platos Fuertes (Centrada y con Ancho Fijo, NUNCA estirada) -->
+    <div class="contenedor-fotos-centrado" th:if="${!#lists.isEmpty(fuertesFotos)}">
+        <table class="tabla-fotos-centrada">
+            <tr>
+                <td class="celda-foto-fija" th:each="plato : ${fuertesFotos}">
+                    <div class="tarjeta-foto">
+                        <img class="img-plato-fija" th:src="${plato.imagenUrl}" alt="Plato Fuerte" />
+                        <table class="foto-info-tabla">
+                            <tr>
+                                <td class="foto-info-nombre" th:text="${plato.nombre}">NOMBRE</td>
+                                <td class="foto-info-precio" th:text="${plato.precioFormateado}">$ 0</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
         </table>
-
-        <p class="vacio" th:if="${#lists.isEmpty(items)}">
-            No hay entradas disponibles en este momento.
-        </p>
     </div>
 
-    <!-- PLATOS FUERTES -->
-    <div class="categoria categoria-pagina"
-         th:with="items=${platos.?[categoria == 'PLATOS_FUERTES']}">
+    <!-- =========================================
+         SECCIÓN 2: ENTRADAS & APERITIVOS
+         ========================================= -->
+    <div class="separador-seccion">
+        <span class="adorno-rama">&#10086; &#10048;</span>
+        <span class="titulo-seccion">Entradas &amp; Aperitivos</span>
+        <span class="adorno-rama">&#10048; &#10086;</span>
+    </div>
 
-        <div class="capitulo">✦ CAPÍTULO II &#160; ✦ &#160; ESPECIALIDADES ✦</div>
-        <h1 class="titulo-categoria">Platos Fuertes</h1>
+    <!-- Lista de Entradas a Texto (3 Columnas) -->
+    <table class="tabla-items-3col">
+        <tr>
+            <td class="col-items">
+                <div th:each="plato : ${entradasCol1}" class="item-plato">
+                    <table class="item-header">
+                        <tr>
+                            <td class="item-nombre" th:text="${plato.nombre}">ENTRADA</td>
+                            <td class="item-precio" th:text="${plato.precioFormateado}">$ 0</td>
+                        </tr>
+                    </table>
+                    <div class="item-descripcion" th:text="${plato.descripcion}">Descripción de la entrada.</div>
+                </div>
+            </td>
+            <td class="col-items">
+                <div th:each="plato : ${entradasCol2}" class="item-plato">
+                    <table class="item-header">
+                        <tr>
+                            <td class="item-nombre" th:text="${plato.nombre}">ENTRADA</td>
+                            <td class="item-precio" th:text="${plato.precioFormateado}">$ 0</td>
+                        </tr>
+                    </table>
+                    <div class="item-descripcion" th:text="${plato.descripcion}">Descripción de la entrada.</div>
+                </div>
+            </td>
+            <td class="col-items">
+                <div th:each="plato : ${entradasCol3}" class="item-plato">
+                    <table class="item-header">
+                        <tr>
+                            <td class="item-nombre" th:text="${plato.nombre}">ENTRADA</td>
+                            <td class="item-precio" th:text="${plato.precioFormateado}">$ 0</td>
+                        </tr>
+                    </table>
+                    <div class="item-descripcion" th:text="${plato.descripcion}">Descripción de la entrada.</div>
+                </div>
+            </td>
+        </tr>
+    </table>
 
-        <p class="introduccion">
-            Creaciones maestras diseñadas para brindar una armonía
-            perfecta de texturas y aromas.
-        </p>
-
-        <table class="platos" th:if="${!#lists.isEmpty(items)}">
-            <tbody>
-                <tr class="fila-platos"
-                    th:each="inicio : ${#numbers.sequence(0, items.size() - 1, 3)}">
-
-                    <td th:each="plato : ${items.subList(inicio, inicio + 3 > items.size() ? items.size() : inicio + 3)}">
-                        <div class="tarjeta">
-                            <div class="estado">✦ DISPONIBLE</div>
-                            <div class="nombre" th:text="${plato.nombre}">Nombre</div>
-                            <div class="descripcion" th:text="${plato.descripcion}">Descripción</div>
-                            <div class="precio"
-                                 th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 'POINT', 2, 'COMMA')}">$0,00</div>
-                        </div>
-                    </td>
-
-                    <td th:if="${items.size() % 3 == 1 and inicio == items.size() - 1}" style="border:none;"></td>
-                    <td th:if="${items.size() % 3 == 1 and inicio == items.size() - 1}" style="border:none;"></td>
-                    <td th:if="${items.size() % 3 == 2 and inicio == items.size() - 2}" style="border:none;"></td>
-                </tr>
-            </tbody>
+    <!-- Galería de Fotos de Entradas (Centrada y con Ancho Fijo, NUNCA estirada) -->
+    <div class="contenedor-fotos-centrado" th:if="${!#lists.isEmpty(entradasFotos)}">
+        <table class="tabla-fotos-centrada">
+            <tr>
+                <td class="celda-foto-fija" th:each="plato : ${entradasFotos}">
+                    <div class="tarjeta-foto">
+                        <img class="img-plato-fija" th:src="${plato.imagenUrl}" alt="Entrada" />
+                        <table class="foto-info-tabla">
+                            <tr>
+                                <td class="foto-info-nombre" th:text="${plato.nombre}">NOMBRE</td>
+                                <td class="foto-info-precio" th:text="${plato.precioFormateado}">$ 0</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
         </table>
-
-        <p class="vacio" th:if="${#lists.isEmpty(items)}">
-            No hay platos fuertes disponibles en este momento.
-        </p>
     </div>
 
-    <!-- BEBIDAS -->
-    <div class="categoria categoria-pagina"
-         th:with="items=${platos.?[categoria != null and #strings.toLowerCase(categoria) == 'bebidas']}">
+    <!-- =========================================
+         SECCIÓN 3: BEBIDAS & POSTRES
+         ========================================= -->
+    <div class="separador-seccion">
+        <span class="adorno-rama">&#10086; &#10048;</span>
+        <span class="titulo-seccion">Bebidas &amp; Postres</span>
+        <span class="adorno-rama">&#10048; &#10086;</span>
+    </div>
 
-        <div class="capitulo">✦ CAPÍTULO III &#160; ✦ &#160; BEBIDAS ✦</div>
-        <h1 class="titulo-categoria">Bebidas</h1>
+    <!-- Lista de Bebidas y Postres a Texto (3 Columnas) -->
+    <table class="tabla-items-3col">
+        <tr>
+            <td class="col-items">
+                <div th:each="plato : ${bebidasPostresCol1}" class="item-plato">
+                    <table class="item-header">
+                        <tr>
+                            <td class="item-nombre" th:text="${plato.nombre}">BEBIDA / POSTRE</td>
+                            <td class="item-precio" th:text="${plato.precioFormateado}">$ 0</td>
+                        </tr>
+                    </table>
+                    <div class="item-descripcion" th:text="${plato.descripcion}">Descripción.</div>
+                </div>
+            </td>
+            <td class="col-items">
+                <div th:each="plato : ${bebidasPostresCol2}" class="item-plato">
+                    <table class="item-header">
+                        <tr>
+                            <td class="item-nombre" th:text="${plato.nombre}">BEBIDA / POSTRE</td>
+                            <td class="item-precio" th:text="${plato.precioFormateado}">$ 0</td>
+                        </tr>
+                    </table>
+                    <div class="item-descripcion" th:text="${plato.descripcion}">Descripción.</div>
+                </div>
+            </td>
+            <td class="col-items">
+                <div th:each="plato : ${bebidasPostresCol3}" class="item-plato">
+                    <table class="item-header">
+                        <tr>
+                            <td class="item-nombre" th:text="${plato.nombre}">BEBIDA / POSTRE</td>
+                            <td class="item-precio" th:text="${plato.precioFormateado}">$ 0</td>
+                        </tr>
+                    </table>
+                    <div class="item-descripcion" th:text="${plato.descripcion}">Descripción.</div>
+                </div>
+            </td>
+        </tr>
+    </table>
 
-        <p class="introduccion">
-            Una selección exclusiva de bebidas y creaciones
-            para acompañar tu experiencia.
-        </p>
-
-        <table class="platos" th:if="${!#lists.isEmpty(items)}">
-            <tbody>
-                <tr class="fila-platos"
-                    th:each="inicio : ${#numbers.sequence(0, items.size() - 1, 3)}">
-
-                    <td th:each="plato : ${items.subList(inicio, inicio + 3 > items.size() ? items.size() : inicio + 3)}">
-                        <div class="tarjeta">
-                            <div class="estado">✦ DISPONIBLE</div>
-                            <div class="nombre" th:text="${plato.nombre}">Nombre</div>
-                            <div class="descripcion" th:text="${plato.descripcion}">Descripción</div>
-                            <div class="precio"
-                                 th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 'POINT', 2, 'COMMA')}">$0,00</div>
-                        </div>
-                    </td>
-
-                    <td th:if="${items.size() % 3 == 1 and inicio == items.size() - 1}" style="border:none;"></td>
-                    <td th:if="${items.size() % 3 == 1 and inicio == items.size() - 1}" style="border:none;"></td>
-                    <td th:if="${items.size() % 3 == 2 and inicio == items.size() - 2}" style="border:none;"></td>
-                </tr>
-            </tbody>
+    <!-- Galería de Fotos de Bebidas y Postres (Centrada y con Ancho Fijo) -->
+    <div class="contenedor-fotos-centrado" th:if="${!#lists.isEmpty(bebidasPostresFotos)}">
+        <table class="tabla-fotos-centrada">
+            <tr>
+                <td class="celda-foto-fija" th:each="plato : ${bebidasPostresFotos}">
+                    <div class="tarjeta-foto">
+                        <img class="img-plato-fija" th:src="${plato.imagenUrl}" alt="Bebida o Postre" />
+                        <table class="foto-info-tabla">
+                            <tr>
+                                <td class="foto-info-nombre" th:text="${plato.nombre}">NOMBRE</td>
+                                <td class="foto-info-precio" th:text="${plato.precioFormateado}">$ 0</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
         </table>
-
-        <p class="vacio" th:if="${#lists.isEmpty(items)}">
-            No hay bebidas disponibles en este momento.
-        </p>
     </div>
 
-    <!-- POSTRES -->
-    <div class="categoria categoria-pagina"
-         th:with="items=${platos.?[categoria != null and #strings.toLowerCase(categoria) == 'postres']}">
+    <!-- PIE DE PÁGINA -->
+    <table class="tabla-pie">
+        <tr>
+            <td class="pie-col-izq">
+                <div><strong>RESERVAS:</strong> +57 (300) 123-4567</div>
+            </td>
+            <td class="pie-col-centro">
+                <div class="pie-destacado">PRECIOS EN PESOS COLOMBIANOS (COP) &bull; IVA INCLUIDO</div>
+                <div>Infórmenos sobre cualquier alergia o restricción alimentaria.</div>
+            </td>
+            <td class="pie-col-der">
+                <div><strong>WEB:</strong> www.gestrest.com</div>
+            </td>
+        </tr>
+    </table>
 
-        <div class="capitulo">✦ CAPÍTULO IV &#160; ✦ &#160; POSTRES ✦</div>
-        <h1 class="titulo-categoria">Postres</h1>
-
-        <p class="introduccion">
-            Cierra con broche de oro disfrutando de nuestras
-            creaciones reposteras.
-        </p>
-
-        <table class="platos" th:if="${!#lists.isEmpty(items)}">
-            <tbody>
-                <tr class="fila-platos"
-                    th:each="inicio : ${#numbers.sequence(0, items.size() - 1, 3)}">
-
-                    <td th:each="plato : ${items.subList(inicio, inicio + 3 > items.size() ? items.size() : inicio + 3)}">
-                        <div class="tarjeta">
-                            <div class="estado">✦ DISPONIBLE</div>
-                            <div class="nombre" th:text="${plato.nombre}">Nombre</div>
-                            <div class="descripcion" th:text="${plato.descripcion}">Descripción</div>
-                            <div class="precio"
-                                 th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 'POINT', 2, 'COMMA')}">$0,00</div>
-                        </div>
-                    </td>
-
-                    <td th:if="${items.size() % 3 == 1 and inicio == items.size() - 1}" style="border:none;"></td>
-                    <td th:if="${items.size() % 3 == 1 and inicio == items.size() - 1}" style="border:none;"></td>
-                    <td th:if="${items.size() % 3 == 2 and inicio == items.size() - 2}" style="border:none;"></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <p class="vacio" th:if="${#lists.isEmpty(items)}">
-            No hay postres disponibles en este momento.
-        </p>
-    </div>
-
-    <footer class="pie">
-        <div class="pie-marca">GESTREST</div>
-        <div>Precios expresados en pesos colombianos.</div>
-        <div>Si presenta alguna alergia alimentaria, informe a nuestro personal.</div>
-    </footer>
+</div>
+</div>
 
 </body>
 </html>
