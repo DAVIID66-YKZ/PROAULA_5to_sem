@@ -328,6 +328,7 @@ public class DashboardAdminController {
             @RequestParam("categoria") String categoria,
             @RequestParam("precio") BigDecimal precio,
             @RequestParam("disponible") Boolean disponible,
+            @RequestParam(value = "destacado", required = false, defaultValue = "false") Boolean destacado,
             @RequestParam("imagenPlato") MultipartFile imagenPlato) throws IOException {
 
         if (imagenPlato == null || imagenPlato.isEmpty()) {
@@ -342,6 +343,7 @@ public class DashboardAdminController {
         plato.setCategoria(categoria);
         plato.setPrecio(precio);
         plato.setDisponible(disponible);
+        plato.setDestacado(destacado != null && destacado);
         plato.setImgUrl(cloudinaryService.subirImagen(imagenPlato));
 
         PlatoEntity platoCreado = platoService.guardarPlato(plato);
@@ -357,6 +359,7 @@ public class DashboardAdminController {
             @RequestParam("categoria") String categoria,
             @RequestParam("precio") BigDecimal precio,
             @RequestParam("disponible") Boolean disponible,
+            @RequestParam(value = "destacado", required = false, defaultValue = "false") Boolean destacado,
             @RequestParam(value = "imagenPlato", required = false) MultipartFile imagenPlato)
             throws IOException {
 
@@ -375,6 +378,7 @@ public class DashboardAdminController {
         platoActual.setCategoria(categoria);
         platoActual.setPrecio(precio);
         platoActual.setDisponible(disponible);
+        platoActual.setDestacado(destacado != null && destacado);
 
         if (imagenPlato != null && !imagenPlato.isEmpty()) {
             validarImagen(imagenPlato);
@@ -384,6 +388,17 @@ public class DashboardAdminController {
 
         PlatoEntity platoActualizado = platoService.guardarPlato(platoActual);
 
+        return ResponseEntity.ok(platoActualizado);
+    }
+
+    @PatchMapping("/menu/{id}/destacado")
+    public ResponseEntity<PlatoEntity> alternarDestacadoPlato(@PathVariable String id) {
+        PlatoEntity plato = platoService.obtenerPlato(id);
+        if (plato == null) {
+            return ResponseEntity.notFound().build();
+        }
+        plato.setDestacado(!plato.isDestacado());
+        PlatoEntity platoActualizado = platoService.guardarPlato(plato);
         return ResponseEntity.ok(platoActualizado);
     }
 
