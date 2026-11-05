@@ -167,21 +167,154 @@
             </div>
 
             <div class="reserva-modal-body">
-                <label class="reserva-plato-item" th:each="plato : ${platos}">
-                    <input type="checkbox"
-                           class="reserva-plato-checkbox"
-                           th:value="${plato.id}"
-                           th:data-name="${plato.nombre}"
-                           th:data-precio="${plato.precio}"
-                           th:disabled="${!plato.disponible}">
-                    <span class="reserva-plato-info">
-                        <span>
-                            <span class="reserva-plato-nombre" th:text="${plato.nombre}" th:data-original-nombre="${plato.nombre}"></span>
-                            <small th:if="${!plato.disponible}">No disponible</small>
-                        </span>
-                        <strong th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 0)}"></strong>
-                    </span>
-                </label>
+                <th:block th:with="
+                    entradas=${platos.?[categoria != null and (#strings.toUpperCase(categoria) == 'ENTRADAS' or #strings.toUpperCase(categoria) == 'ENTRADA')]},
+                    fuertes=${platos.?[categoria != null and (#strings.toUpperCase(categoria) == 'PLATOS_FUERTES' or #strings.toUpperCase(categoria) == 'PLATO_FUERTE')]},
+                    bebidas=${platos.?[categoria != null and (#strings.toUpperCase(categoria) == 'BEBIDAS' or #strings.toUpperCase(categoria) == 'BEBIDA')]},
+                    postres=${platos.?[categoria != null and (#strings.toUpperCase(categoria) == 'POSTRES' or #strings.toUpperCase(categoria) == 'POSTRE')]},
+                    otros=${platos.?[categoria == null or (#strings.toUpperCase(categoria) != 'ENTRADAS' and #strings.toUpperCase(categoria) != 'ENTRADA' and #strings.toUpperCase(categoria) != 'PLATOS_FUERTES' and #strings.toUpperCase(categoria) != 'PLATO_FUERTE' and #strings.toUpperCase(categoria) != 'BEBIDAS' and #strings.toUpperCase(categoria) != 'BEBIDA' and #strings.toUpperCase(categoria) != 'POSTRES' and #strings.toUpperCase(categoria) != 'POSTRE')]}
+                ">
+                    <!-- ENTRADAS -->
+                    <div class="reserva-categoria-seccion" th:if="${not #lists.isEmpty(entradas)}">
+                        <div class="reserva-categoria-header">
+                            <div class="reserva-categoria-titulo-izq">
+                                <span class="reserva-categoria-icon">🥗</span>
+                                <h4 class="reserva-categoria-nombre">Entradas</h4>
+                            </div>
+                            <span class="reserva-categoria-badge" th:text="${#lists.size(entradas) + ' opciones'}"></span>
+                        </div>
+                        <div class="reserva-categoria-grid">
+                            <label class="reserva-plato-item" th:each="plato : ${entradas}">
+                                <input type="checkbox"
+                                       class="reserva-plato-checkbox"
+                                       th:value="${plato.id}"
+                                       th:data-name="${plato.nombre}"
+                                       th:data-precio="${plato.precio}"
+                                       th:disabled="${!plato.disponible}">
+                                <span class="reserva-plato-info">
+                                    <span>
+                                        <span class="reserva-plato-nombre" th:text="${plato.nombre}" th:data-original-nombre="${plato.nombre}"></span>
+                                        <small th:if="${!plato.disponible}">No disponible</small>
+                                    </span>
+                                    <strong th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 0)}"></strong>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- PLATOS FUERTES -->
+                    <div class="reserva-categoria-seccion" th:if="${not #lists.isEmpty(fuertes)}">
+                        <div class="reserva-categoria-header">
+                            <div class="reserva-categoria-titulo-izq">
+                                <span class="reserva-categoria-icon">🥩</span>
+                                <h4 class="reserva-categoria-nombre">Platos Fuertes</h4>
+                            </div>
+                            <span class="reserva-categoria-badge" th:text="${#lists.size(fuertes) + ' opciones'}"></span>
+                        </div>
+                        <div class="reserva-categoria-grid">
+                            <label class="reserva-plato-item" th:each="plato : ${fuertes}">
+                                <input type="checkbox"
+                                       class="reserva-plato-checkbox"
+                                       th:value="${plato.id}"
+                                       th:data-name="${plato.nombre}"
+                                       th:data-precio="${plato.precio}"
+                                       th:disabled="${!plato.disponible}">
+                                <span class="reserva-plato-info">
+                                    <span>
+                                        <span class="reserva-plato-nombre" th:text="${plato.nombre}" th:data-original-nombre="${plato.nombre}"></span>
+                                        <small th:if="${!plato.disponible}">No disponible</small>
+                                    </span>
+                                    <strong th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 0)}"></strong>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- BEBIDAS -->
+                    <div class="reserva-categoria-seccion" th:if="${not #lists.isEmpty(bebidas)}">
+                        <div class="reserva-categoria-header">
+                            <div class="reserva-categoria-titulo-izq">
+                                <span class="reserva-categoria-icon">🍷</span>
+                                <h4 class="reserva-categoria-nombre">Bebidas</h4>
+                            </div>
+                            <span class="reserva-categoria-badge" th:text="${#lists.size(bebidas) + ' opciones'}"></span>
+                        </div>
+                        <div class="reserva-categoria-grid">
+                            <label class="reserva-plato-item" th:each="plato : ${bebidas}">
+                                <input type="checkbox"
+                                       class="reserva-plato-checkbox"
+                                       th:value="${plato.id}"
+                                       th:data-name="${plato.nombre}"
+                                       th:data-precio="${plato.precio}"
+                                       th:disabled="${!plato.disponible}">
+                                <span class="reserva-plato-info">
+                                    <span>
+                                        <span class="reserva-plato-nombre" th:text="${plato.nombre}" th:data-original-nombre="${plato.nombre}"></span>
+                                        <small th:if="${!plato.disponible}">No disponible</small>
+                                    </span>
+                                    <strong th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 0)}"></strong>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- POSTRES -->
+                    <div class="reserva-categoria-seccion" th:if="${not #lists.isEmpty(postres)}">
+                        <div class="reserva-categoria-header">
+                            <div class="reserva-categoria-titulo-izq">
+                                <span class="reserva-categoria-icon">🍨</span>
+                                <h4 class="reserva-categoria-nombre">Postres</h4>
+                            </div>
+                            <span class="reserva-categoria-badge" th:text="${#lists.size(postres) + ' opciones'}"></span>
+                        </div>
+                        <div class="reserva-categoria-grid">
+                            <label class="reserva-plato-item" th:each="plato : ${postres}">
+                                <input type="checkbox"
+                                       class="reserva-plato-checkbox"
+                                       th:value="${plato.id}"
+                                       th:data-name="${plato.nombre}"
+                                       th:data-precio="${plato.precio}"
+                                       th:disabled="${!plato.disponible}">
+                                <span class="reserva-plato-info">
+                                    <span>
+                                        <span class="reserva-plato-nombre" th:text="${plato.nombre}" th:data-original-nombre="${plato.nombre}"></span>
+                                        <small th:if="${!plato.disponible}">No disponible</small>
+                                    </span>
+                                    <strong th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 0)}"></strong>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- OTROS -->
+                    <div class="reserva-categoria-seccion" th:if="${not #lists.isEmpty(otros)}">
+                        <div class="reserva-categoria-header">
+                            <div class="reserva-categoria-titulo-izq">
+                                <span class="reserva-categoria-icon">🍽️</span>
+                                <h4 class="reserva-categoria-nombre">Otras Opciones</h4>
+                            </div>
+                            <span class="reserva-categoria-badge" th:text="${#lists.size(otros) + ' opciones'}"></span>
+                        </div>
+                        <div class="reserva-categoria-grid">
+                            <label class="reserva-plato-item" th:each="plato : ${otros}">
+                                <input type="checkbox"
+                                       class="reserva-plato-checkbox"
+                                       th:value="${plato.id}"
+                                       th:data-name="${plato.nombre}"
+                                       th:data-precio="${plato.precio}"
+                                       th:disabled="${!plato.disponible}">
+                                <span class="reserva-plato-info">
+                                    <span>
+                                        <span class="reserva-plato-nombre" th:text="${plato.nombre}" th:data-original-nombre="${plato.nombre}"></span>
+                                        <small th:if="${!plato.disponible}">No disponible</small>
+                                    </span>
+                                    <strong th:text="${'$' + #numbers.formatDecimal(plato.precio, 1, 0)}"></strong>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </th:block>
+
                 <p class="reserva-menu-vacio" th:if="${#lists.isEmpty(platos)}">
                     No hay platos disponibles en el menú por el momento.
                 </p>
