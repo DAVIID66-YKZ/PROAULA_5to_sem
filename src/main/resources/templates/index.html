@@ -38,40 +38,79 @@
             <h2 class="platillos-titulo">LA COLECCIÓN</h2>
             <h3 class="platillos-subtitulo">Nuestros Platillos Destacados</h3>
         </div>
-        <div class="platillos-contenedor">
-            <div class="platillo-uno platillo-card">
-                <div class="platillo-info">
-                    <p class="platillo-precio">$78k</p>
-                    <h3 class="platillo-nombre">Aged Wagyu Prime</h3>
-                    <p class="platillo-descripcion">Corte premium madurado por 45 días, servido con puré de ajo negro
-                        fermentado y mantequilla de tuétano ahumada.</p>
+        <div class="platillos-contenedor"
+             th:with="destacadosManuales=${platos != null ? platos.?[destacado == true and disponible == true] : null},
+                      destacados=${(destacadosManuales != null and !#lists.isEmpty(destacadosManuales)) ? destacadosManuales : (platos != null ? platos.?[disponible == true] : null)}">
+
+            <!-- CASO 1: Si hay platos destacados configurados desde la nube -->
+            <th:block th:if="${destacados != null and not #lists.isEmpty(destacados)}">
+                <div th:each="plato, iterStat : ${destacados}"
+                     th:if="${iterStat.index < 4}"
+                     th:classappend="${iterStat.index == 0 ? 'platillo-uno' : (iterStat.index == 1 ? 'platillo-dos' : (iterStat.index == 2 ? 'platillo-tres' : 'platillo-cuatro'))}"
+                     class="platillo-card"
+                     th:style="${plato.imgUrl != null and !plato.imgUrl.isEmpty()} ? |background-image: url('${plato.imgUrl}');| : ''">
+                    <div class="platillo-info">
+                        <p class="platillo-precio" th:text="${plato.precio != null ? '$' + #numbers.formatDecimal(plato.precio, 1, 0) : ''}">$0</p>
+                        <h3 class="platillo-nombre" th:text="${plato.nombre}">Nombre</h3>
+                        <p class="platillo-descripcion" th:text="${plato.descripcion}">Descripción</p>
+                    </div>
                 </div>
-            </div>
-            <div class="platillo-dos platillo-card">
-                <div class="platillo-info">
-                    <p class="platillo-precio">$42k</p>
-                    <h3 class="platillo-nombre">Truffle Tagliatelle</h3>
-                    <p class="platillo-descripcion">Pasta artesanal hecha a mano, bañada en crema de queso Parmigiano
-                        Reggiano de 36 meses y láminas de trufa negra fresca.</p>
+
+                <!-- Relleno para conservar el mosaico de 4 bloques si hay menos de 4 destacados -->
+                <div th:if="${#lists.size(destacados) < 2}" class="platillo-dos platillo-card">
+                    <div class="platillo-info">
+                        <p class="platillo-precio">$42.000</p>
+                        <h3 class="platillo-nombre">Truffle Tagliatelle</h3>
+                        <p class="platillo-descripcion">Pasta artesanal hecha a mano, bañada en crema de queso Parmigiano Reggiano de 36 meses y láminas de trufa negra fresca.</p>
+                    </div>
                 </div>
-            </div>
-            <div class="platillo-tres platillo-card">
-                <div class="platillo-info">
-                    <p class="platillo-precio">$55k</p>
-                    <h3 class="platillo-nombre">Imperial Omakase</h3>
-                    <p class="platillo-descripcion">Selección del chef de nigiris y rolls con pescados de grado sashimi,
-                        decorado con láminas de oro comestible y bonito seco.</p>
+                <div th:if="${#lists.size(destacados) < 3}" class="platillo-tres platillo-card">
+                    <div class="platillo-info">
+                        <p class="platillo-precio">$55.000</p>
+                        <h3 class="platillo-nombre">Imperial Omakase</h3>
+                        <p class="platillo-descripcion">Selección del chef de nigiris y rolls con pescados de grado sashimi, decorado con láminas de oro comestible y bonito seco.</p>
+                    </div>
                 </div>
-            </div>
-            <div class="platillo-cuatro platillo-card">
-                <div class="platillo-info">
-                    <p class="platillo-precio">$22k</p>
-                    <h3 class="platillo-nombre">Midnight Gold Ganache</h3>
-                    <p class="platillo-descripcion">Domo de chocolate amargo 70% de origen único, con pétalos de
-                        chocolate
-                        blanco y negro, sales marinas y hoja de oro.</p>
+                <div th:if="${#lists.size(destacados) < 4}" class="platillo-cuatro platillo-card">
+                    <div class="platillo-info">
+                        <p class="platillo-precio">$22.000</p>
+                        <h3 class="platillo-nombre">Midnight Gold Ganache</h3>
+                        <p class="platillo-descripcion">Domo de chocolate amargo 70% de origen único, con pétalos de chocolate blanco y negro, sales marinas y hoja de oro.</p>
+                    </div>
                 </div>
-            </div>
+            </th:block>
+
+            <!-- CASO 2: Fallback si no hay ningún plato marcado como destacado -->
+            <th:block th:if="${destacados == null or #lists.isEmpty(destacados)}">
+                <div class="platillo-uno platillo-card">
+                    <div class="platillo-info">
+                        <p class="platillo-precio">$78.000</p>
+                        <h3 class="platillo-nombre">Aged Wagyu Prime</h3>
+                        <p class="platillo-descripcion">Corte premium madurado por 45 días, servido con puré de ajo negro fermentado y mantequilla de tuétano ahumada.</p>
+                    </div>
+                </div>
+                <div class="platillo-dos platillo-card">
+                    <div class="platillo-info">
+                        <p class="platillo-precio">$42.000</p>
+                        <h3 class="platillo-nombre">Truffle Tagliatelle</h3>
+                        <p class="platillo-descripcion">Pasta artesanal hecha a mano, bañada en crema de queso Parmigiano Reggiano de 36 meses y láminas de trufa negra fresca.</p>
+                    </div>
+                </div>
+                <div class="platillo-tres platillo-card">
+                    <div class="platillo-info">
+                        <p class="platillo-precio">$55.000</p>
+                        <h3 class="platillo-nombre">Imperial Omakase</h3>
+                        <p class="platillo-descripcion">Selección del chef de nigiris y rolls con pescados de grado sashimi, decorado con láminas de oro comestible y bonito seco.</p>
+                    </div>
+                </div>
+                <div class="platillo-cuatro platillo-card">
+                    <div class="platillo-info">
+                        <p class="platillo-precio">$22.000</p>
+                        <h3 class="platillo-nombre">Midnight Gold Ganache</h3>
+                        <p class="platillo-descripcion">Domo de chocolate amargo 70% de origen único, con pétalos de chocolate blanco y negro, sales marinas y hoja de oro.</p>
+                    </div>
+                </div>
+            </th:block>
         </div>
     </section>
 

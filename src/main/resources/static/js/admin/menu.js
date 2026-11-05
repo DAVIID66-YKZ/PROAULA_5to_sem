@@ -48,6 +48,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 editarPlato(button.dataset.id);
             } else if (button.dataset.accion === "eliminar-plato") {
                 eliminarPlato(button.dataset.id);
+            } else if (button.dataset.accion === "toggle-destacado") {
+                alternarDestacadoPlato(button.dataset.id);
             }
         });
     }
@@ -215,8 +217,35 @@ function renderizarListaPlatos(listaFiltrada) {
 
         let metadatos = document.createElement("div");
         metadatos.className = "plato-metadatos";
-        metadatos.append(categoria, precioPlato, badge);
+
+        if (plato.destacado) {
+            let badgeDestacado = document.createElement("span");
+            badgeDestacado.className = "status-badge status-destacado";
+            badgeDestacado.style.background = "rgba(212, 175, 55, 0.15)";
+            badgeDestacado.style.color = "#d4af37";
+            badgeDestacado.style.border = "1px solid rgba(212, 175, 55, 0.4)";
+            badgeDestacado.style.fontWeight = "700";
+            badgeDestacado.textContent = isEn ? "⭐ FEATURED" : "⭐ PORTADA";
+            metadatos.append(categoria, precioPlato, badge, badgeDestacado);
+        } else {
+            metadatos.append(categoria, precioPlato, badge);
+        }
         contenido.append(nombrePlato, descripcion, metadatos);
+
+        let starButton = document.createElement("button");
+        starButton.type = "button";
+        starButton.className = "action-btn mesa-star-btn";
+        starButton.title = plato.destacado
+            ? fnT("menu.quitarDestacado", "Quitar de la portada principal")
+            : fnT("menu.hacerDestacado", "Destacar en la portada principal");
+        starButton.dataset.accion = "toggle-destacado";
+        starButton.dataset.id = String(plato.id || plato._id || "");
+        starButton.disabled = !starButton.dataset.id;
+        starButton.style.color = plato.destacado ? "#d4af37" : "#888888";
+        let iconoStar = document.createElement("span");
+        iconoStar.className = "material-symbols-outlined action-icon";
+        iconoStar.textContent = plato.destacado ? "star" : "star_outline";
+        starButton.appendChild(iconoStar);
 
         let editarButton = document.createElement("button");
         editarButton.type = "button";
@@ -244,7 +273,7 @@ function renderizarListaPlatos(listaFiltrada) {
 
         let acciones = document.createElement("div");
         acciones.className = "plato-acciones";
-        acciones.append(editarButton, eliminarButton);
+        acciones.append(starButton, editarButton, eliminarButton);
         item.append(imagen, contenido, acciones);
         container.appendChild(item);
     });
@@ -358,6 +387,7 @@ function configurarFormularioPlato() {
         let precio = Number(document.getElementById("precioPlato").value);
         let archivo = document.getElementById("imagenPlato").files[0];
         let disponible = document.getElementById("disponiblePlato").checked;
+        let destacado = Boolean(document.getElementById("destacadoPlato")?.checked);
 
         if (
             !nombre ||
@@ -398,6 +428,7 @@ function configurarFormularioPlato() {
             datos.append("categoria", categoria);
             datos.append("precio", String(precio));
             datos.append("disponible", String(disponible));
+            datos.append("destacado", String(destacado));
 
             if (archivo) {
                 datos.append("imagenPlato", archivo);
@@ -448,6 +479,8 @@ function configurarFormularioPlato() {
     if (botonLimpiar) {
         botonLimpiar.addEventListener("click", function () {
             platoEnEdicion = null;
+            let checkDestacado = document.getElementById("destacadoPlato");
+            if (checkDestacado) checkDestacado.checked = false;
 
             const botonGuardar = form.querySelector('[type="submit"]');
             if (botonGuardar) botonGuardar.textContent = fnT("menu.guardar", "AÑADIR PLATO");
@@ -498,6 +531,8 @@ async function editarPlato(id) {
     document.getElementById("categoriaPlato").value = plato.categoria || "";
     document.getElementById("precioPlato").value = plato.precio ?? "";
     document.getElementById("disponiblePlato").checked = Boolean(plato.disponible);
+    let checkDestacado = document.getElementById("destacadoPlato");
+    if (checkDestacado) checkDestacado.checked = Boolean(plato.destacado);
 
     // Los navegadores no permiten rellenar un input file
     // con una imagen guardada anteriormente.
@@ -512,6 +547,28 @@ async function editarPlato(id) {
         behavior: "smooth",
         block: "start"
     });
+}
+
+async function alternarDestacadoPlato(id) {
+    if (!id) return;
+    let token = obtenerTokenAdmin();
+    try {
+        let resp = await fetch(`/api/admin/menu/${encodeURIComponent(id)}/destacado`, {
+            method: "PATCH",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (!resp.ok) {
+            console.error("Error al cambiar estado destacado:", resp.status);
+            alert(fnT("menu.errorDestacado", "No se pudo actualizar el estado de portada del plato."));
+            return;
+        }
+        await cargarPlatos();
+    } catch (e) {
+        console.error("Error de red al alternar destacado:", e);
+        alert(fnT("menu.errorDestacadoRed", "Error de conexión al actualizar estado de portada."));
+    }
 }
 
 // ===== EXPOSICIÓN GLOBAL Y EVENTOS =====

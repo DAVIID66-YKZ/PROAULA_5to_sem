@@ -24,4 +24,5 @@ public class PlatoEntity {
     private String categoria;
     private String imgUrl;
     private boolean disponible;
+    private boolean destacado;
 }

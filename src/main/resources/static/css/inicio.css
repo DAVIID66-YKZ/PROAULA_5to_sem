@@ -153,26 +153,26 @@ h1 {
 .platillo-uno {
     grid-column: span 2 / span 2;
     grid-row: span 3 / span 3;
-    background: url('../imagenes/carne.webp') no-repeat center center/cover;
+    background-image: url('../imagenes/carne.webp');
 }
 
 .platillo-dos {
     grid-row: span 3 / span 3;
     grid-column-start: 3;
-    background: url('../imagenes/pastas.webp') no-repeat center center/cover;
+    background-image: url('../imagenes/pastas.webp');
 }
 
 .platillo-tres {
     grid-row: span 2 / span 2;
     grid-row-start: 4;
-    background: url('../imagenes/sushi.webp') no-repeat center center/cover;
+    background-image: url('../imagenes/sushi.webp');
 }
 
 .platillo-cuatro {
     grid-column: span 2 / span 2;
     grid-row: span 2 / span 2;
     grid-row-start: 4;
-    background: url('../imagenes/postre.webp') no-repeat center center/cover;
+    background-image: url('../imagenes/postre.webp');
 }
 
 .platillo-card {
@@ -184,6 +184,15 @@ h1 {
     justify-content: flex-end;
     align-items: flex-end;
     margin: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.platillo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
 }
 
 .platillo-card::before {
