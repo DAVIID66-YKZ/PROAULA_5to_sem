@@ -396,19 +396,34 @@ function filtrarCategoriaModalIndex(categoriaKey, boton) {
     const contenedor = document.getElementById("modalIndexPlatosBody");
     if (!contenedor) return;
 
-    contenedor.querySelectorAll(".reserva-cat-pill").forEach(p => p.classList.remove("active"));
-    if (boton) {
-        boton.classList.add("active");
+    const pills = contenedor.querySelectorAll(".reserva-cat-pill");
+    pills.forEach(p => p.classList.remove("active"));
+
+    // Determinar el botón activo correcto
+    let botonActivo = boton ? (boton.closest ? boton.closest(".reserva-cat-pill") : boton) : null;
+    if (!botonActivo && pills.length > 0) {
+        botonActivo = Array.from(pills).find(b => b.dataset.catKey === categoriaKey) || pills[0];
+    }
+
+    if (botonActivo) {
+        botonActivo.classList.add("active");
+        if (typeof botonActivo.scrollIntoView === "function") {
+            botonActivo.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        }
     }
 
     const secciones = contenedor.querySelectorAll(".reserva-categoria-seccion");
     secciones.forEach(sec => {
-        if (categoriaKey === "TODOS" || sec.getAttribute("data-categoria") === categoriaKey) {
+        const catSec = sec.getAttribute("data-categoria");
+        if (categoriaKey === "TODOS" || catSec === categoriaKey) {
             sec.style.display = "flex";
         } else {
             sec.style.display = "none";
         }
     });
+
+    // Resetear el scroll para que la sección filtrada sea visible de inmediato
+    contenedor.scrollTop = 0;
 }
 
 function renderizarCheckboxesPlatosIndex(platos) {
@@ -457,14 +472,14 @@ function renderizarCheckboxesPlatosIndex(platos) {
     // Píldoras de filtrado rápido superior
     let navPillsHtml = `
         <div class="reserva-categoria-nav" role="tablist" aria-label="Filtrar por categoría">
-            <button type="button" class="reserva-cat-pill active" onclick="filtrarCategoriaModalIndex('TODOS', this)">
+            <button type="button" class="reserva-cat-pill active" data-cat-key="TODOS" onclick="filtrarCategoriaModalIndex('TODOS', this)">
                 Todos (${platos.length})
             </button>
     `;
 
     categoriasActivas.forEach(g => {
         navPillsHtml += `
-            <button type="button" class="reserva-cat-pill" onclick="filtrarCategoriaModalIndex('${g.meta.key}', this)">
+            <button type="button" class="reserva-cat-pill" data-cat-key="${g.meta.key}" onclick="filtrarCategoriaModalIndex('${g.meta.key}', this)">
                 <span>${g.meta.icon}</span> ${g.meta.nombre} (${g.items.length})
             </button>
         `;
@@ -533,6 +548,9 @@ function abrirModalMenuIndex() {
         modal.style.display = "flex";
         modal.classList.remove("hidden");
         modal.setAttribute("aria-hidden", "false");
+        filtrarCategoriaModalIndex("TODOS");
+        const contenedor = document.getElementById("modalIndexPlatosBody");
+        if (contenedor) contenedor.scrollTop = 0;
     };
 
     const checkboxes = document.querySelectorAll(".modal-index-plato-checkbox");

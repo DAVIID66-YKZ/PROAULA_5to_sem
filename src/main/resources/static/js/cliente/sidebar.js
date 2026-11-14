@@ -20,6 +20,7 @@ function inicializarSidebar() {
     marcarRutaActiva();
     configurarToggleSidebar();
     configurarLogoutSidebar();
+    configurarScrollNavbarCliente();
 }
 
 function marcarRutaActiva() {
@@ -129,5 +130,46 @@ function configurarLogoutSidebar() {
             }
         });
     }
+}
+
+// Ocultamiento / Desaparición del Navbar Principal al hacer scroll (Efecto Landing Page)
+function configurarScrollNavbarCliente() {
+    const header = document.querySelector(".header");
+    if (!header) return;
+
+    let ultimoScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+    let ticking = false;
+
+    function sincronizarNavbarPrincipal() {
+        const actualScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+
+        if (actualScrollY > 40) {
+            // Scroll hacia abajo: ocultar
+            if (actualScrollY > ultimoScrollY + 4) {
+                header.classList.add("header-hidden-menu");
+                document.body.classList.add("header-is-hidden");
+            } else if (actualScrollY < ultimoScrollY - 6) {
+                // Scroll hacia arriba: mostrar
+                header.classList.remove("header-hidden-menu");
+                document.body.classList.remove("header-is-hidden");
+            }
+        } else {
+            // Cerca de la parte superior: siempre visible
+            header.classList.remove("header-hidden-menu");
+            document.body.classList.remove("header-is-hidden");
+        }
+
+        ultimoScrollY = Math.max(0, actualScrollY);
+        ticking = false;
+    }
+
+    window.addEventListener("scroll", function () {
+        if (!ticking) {
+            window.requestAnimationFrame(sincronizarNavbarPrincipal);
+            ticking = true;
+        }
+    }, { passive: true });
+
+    sincronizarNavbarPrincipal();
 }
 

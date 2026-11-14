@@ -26,7 +26,7 @@
             width: 100%;
             max-width: 1300px;
             margin: 0 auto;
-            padding: 40px 24px;
+            padding: 20px 24px 60px;
         }
 
         .section-header-inline {
@@ -34,39 +34,137 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 15px;
         }
 
-        .menu-nav-inline {
+        /* Barra de Filtros Sticky (Idéntica en estilo al Landing Page) */
+        .menu-filtro-sticky-wrapper {
+            position: sticky;
+            top: 75px;
+            z-index: 100;
+            background: rgba(18, 18, 18, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-top: 1px solid rgba(212, 175, 55, 0.22);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+            padding: 12px 18px;
+            margin: 0 auto 35px;
+            width: 100%;
+            box-sizing: border-box;
             display: flex;
             justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 36px;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.18);
-            padding-bottom: 18px;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: top 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .menu-nav-inline a {
-            color: #d4ccbf;
-            text-decoration: none;
-            font-size: 0.82rem;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 8px 18px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.03);
+        /* Cuando el navbar principal se oculta en el scroll, el sticky sube a la parte superior */
+        body.header-is-hidden .menu-filtro-sticky-wrapper,
+        body:has(.header.header-hidden-menu) .menu-filtro-sticky-wrapper {
+            top: 15px;
+        }
+
+        .menu-nav-pills {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
+            max-width: 100%;
+            padding: 2px 4px;
+            overscroll-behavior-x: contain;
+            width: auto;
+        }
+
+        .menu-nav-pills::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .menu-nav-pills::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 4px;
+        }
+
+        .menu-nav-pills .reserva-cat-pill {
+            flex-shrink: 0 !important;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(212, 175, 55, 0.25);
-            transition: all 0.25s ease;
+            color: #c5bba8;
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 40px;
+            box-sizing: border-box;
         }
 
-        .menu-nav-inline a:hover {
-            color: #12100d;
-            background: #d4af37;
-            border-color: #d4af37;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+        .menu-nav-pills .reserva-cat-pill span {
+            pointer-events: none;
+        }
+
+        .menu-nav-pills .reserva-cat-pill:hover {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: rgba(212, 175, 55, 0.5);
+            color: #ffffff;
             transform: translateY(-1px);
+        }
+
+        .menu-nav-pills .reserva-cat-pill.active {
+            background: var(--color-primary, #d4af37) !important;
+            color: #0b0b0b !important;
+            font-weight: 700 !important;
+            border-color: var(--color-primary, #d4af37) !important;
+            box-shadow: 0 0 14px rgba(212, 175, 55, 0.4);
+        }
+
+        .menu-categoria-bloque {
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        @media (max-width: 768px) {
+            .menu-page-container {
+                padding: 15px 12px 50px;
+            }
+
+            .section-header-inline .serif-title {
+                font-size: 2.3rem !important;
+            }
+
+            .menu-filtro-sticky-wrapper {
+                top: 65px;
+                padding: 10px 10px;
+                margin-bottom: 25px;
+                border-radius: 10px;
+                justify-content: flex-start;
+            }
+
+            body.header-is-hidden .menu-filtro-sticky-wrapper,
+            body:has(.header.header-hidden-menu) .menu-filtro-sticky-wrapper {
+                top: 8px;
+            }
+
+            .menu-nav-pills {
+                justify-content: flex-start;
+                width: 100%;
+                gap: 8px;
+            }
+
+            .menu-nav-pills .reserva-cat-pill {
+                padding: 7px 14px;
+                font-size: 12px;
+                min-height: 36px;
+            }
         }
     </style>
 </head>
@@ -83,7 +181,14 @@
 
             <main class="dashboard-container">
 
-                <div class="menu-page-container">
+                <div class="menu-page-container" th:with="
+                    totalPlatos=${#lists.size(platos)},
+                    entradas=${platos.?[categoria != null and (#strings.toUpperCase(categoria) == 'ENTRADAS' or #strings.toUpperCase(categoria) == 'ENTRADA')]},
+                    fuertes=${platos.?[categoria != null and (#strings.toUpperCase(categoria) == 'PLATOS_FUERTES' or #strings.toUpperCase(categoria) == 'PLATO_FUERTE')]},
+                    bebidas=${platos.?[categoria != null and (#strings.toUpperCase(categoria) == 'BEBIDAS' or #strings.toUpperCase(categoria) == 'BEBIDA')]},
+                    postres=${platos.?[categoria != null and (#strings.toUpperCase(categoria) == 'POSTRES' or #strings.toUpperCase(categoria) == 'POSTRE')]},
+                    otros=${platos.?[categoria == null or (#strings.toUpperCase(categoria) != 'ENTRADAS' and #strings.toUpperCase(categoria) != 'ENTRADA' and #strings.toUpperCase(categoria) != 'PLATOS_FUERTES' and #strings.toUpperCase(categoria) != 'PLATO_FUERTE' and #strings.toUpperCase(categoria) != 'BEBIDAS' and #strings.toUpperCase(categoria) != 'BEBIDA' and #strings.toUpperCase(categoria) != 'POSTRES' and #strings.toUpperCase(categoria) != 'POSTRE')]}
+                ">
 
                     <header class="section-header-inline"
                         style="border-bottom: none; margin-bottom: 10px; padding-bottom: 0;">
@@ -93,109 +198,139 @@
                         </div>
                     </header>
 
-                    <div class="menu-nav-inline">
-                        <a href="#entradas">Entradas</a>
-                        <a href="#platos-fuertes">Platos Fuertes</a>
-                        <a href="#bebidas">Bebidas</a>
-                        <a href="#postres">Postres</a>
+                    <!-- NAVBAR DE FILTROS STICKY (IDÉNTICO AL LANDING PAGE) -->
+                    <div class="menu-filtro-sticky-wrapper" id="menuFiltroStickyWrapper">
+                        <nav class="menu-nav-pills" role="tablist" aria-label="Filtrar por categoría">
+                            <button type="button" class="reserva-cat-pill active" data-cat-key="TODOS" onclick="filtrarMenuVer('TODOS', this)">
+                                <span>Todos</span> <span th:text="${'(' + totalPlatos + ')'}"></span>
+                            </button>
+                            <button type="button" class="reserva-cat-pill" data-cat-key="ENTRADAS" onclick="filtrarMenuVer('ENTRADAS', this)" th:if="${not #lists.isEmpty(entradas)}">
+                                <span>Entradas</span> <span th:text="${'(' + #lists.size(entradas) + ')'}"></span>
+                            </button>
+                            <button type="button" class="reserva-cat-pill" data-cat-key="PLATOS_FUERTES" onclick="filtrarMenuVer('PLATOS_FUERTES', this)" th:if="${not #lists.isEmpty(fuertes)}">
+                                <span>Platos Fuertes</span> <span th:text="${'(' + #lists.size(fuertes) + ')'}"></span>
+                            </button>
+                            <button type="button" class="reserva-cat-pill" data-cat-key="BEBIDAS" onclick="filtrarMenuVer('BEBIDAS', this)" th:if="${not #lists.isEmpty(bebidas)}">
+                                <span>Bebidas</span> <span th:text="${'(' + #lists.size(bebidas) + ')'}"></span>
+                            </button>
+                            <button type="button" class="reserva-cat-pill" data-cat-key="POSTRES" onclick="filtrarMenuVer('POSTRES', this)" th:if="${not #lists.isEmpty(postres)}">
+                                <span>Postres</span> <span th:text="${'(' + #lists.size(postres) + ')'}"></span>
+                            </button>
+                            <button type="button" class="reserva-cat-pill" data-cat-key="OTROS" onclick="filtrarMenuVer('OTROS', this)" th:if="${not #lists.isEmpty(otros)}">
+                                <span>Otras Opciones</span> <span th:text="${'(' + #lists.size(otros) + ')'}"></span>
+                            </button>
+                        </nav>
                     </div>
 
                     <!-- ENTRADAS -->
-                    <section class="menu-title" id="entradas">
+                    <div class="menu-categoria-bloque" data-categoria="ENTRADAS" th:if="${not #lists.isEmpty(entradas)}">
+                        <section class="menu-title" id="entradas">
+                            <div class="menu-title-left">
+                                <h2>Entradas</h2>
+                            </div>
+                        </section>
 
-                        <div class="menu-title-left">
-                            <h2>Entradas</h2>
-                        </div>
-
-                    </section>
-
-                    <section class="menu-grid" aria-label="Entradas">
-                        <th:block th:each="plato : ${platos}">
-                            <th:block th:if="${plato.categoria == 'ENTRADAS'}">
+                        <section class="menu-grid" aria-label="Entradas">
+                            <th:block th:each="plato : ${entradas}">
                                 <div th:replace="~{componentes/menu-cards :: menu-cards(
-                    ${plato.nombre},
-                    ${plato.descripcion},
-                    ${plato.precio},
-                    ${plato.categoria},
-                    ${plato.imgUrl},
-                    ${plato.disponible}
-                )}"></div>
+                                    ${plato.nombre},
+                                    ${plato.descripcion},
+                                    ${plato.precio},
+                                    ${plato.categoria},
+                                    ${plato.imgUrl},
+                                    ${plato.disponible}
+                                )}"></div>
                             </th:block>
-                        </th:block>
-                    </section>
+                        </section>
+                    </div>
 
                     <!-- Platos Fuertes -->
-                    <section class="menu-title" id="platos-fuertes">
+                    <div class="menu-categoria-bloque" data-categoria="PLATOS_FUERTES" th:if="${not #lists.isEmpty(fuertes)}">
+                        <section class="menu-title" id="platos-fuertes">
+                            <div class="menu-title-left">
+                                <h2>Platos Fuertes</h2>
+                            </div>
+                        </section>
 
-                        <div class="menu-title-left">
-                            <h2>Platos Fuertes</h2>
-                        </div>
-
-                    </section>
-
-                    <section class="menu-grid" aria-label="Platos Fuertes">
-                        <th:block th:each="plato : ${platos}">
-                            <th:block th:if="${plato.categoria == 'PLATOS_FUERTES'}">
+                        <section class="menu-grid" aria-label="Platos Fuertes">
+                            <th:block th:each="plato : ${fuertes}">
                                 <div th:replace="~{componentes/menu-cards :: menu-cards(
-                    ${plato.nombre},
-                    ${plato.descripcion},
-                    ${plato.precio},
-                    ${plato.categoria},
-                    ${plato.imgUrl},
-                    ${plato.disponible}
-                )}"></div>
+                                    ${plato.nombre},
+                                    ${plato.descripcion},
+                                    ${plato.precio},
+                                    ${plato.categoria},
+                                    ${plato.imgUrl},
+                                    ${plato.disponible}
+                                )}"></div>
                             </th:block>
-                        </th:block>
-                    </section>
+                        </section>
+                    </div>
 
-                    <!--Bebidas -->
-                    <section class="menu-title" id="bebidas">
+                    <!-- Bebidas -->
+                    <div class="menu-categoria-bloque" data-categoria="BEBIDAS" th:if="${not #lists.isEmpty(bebidas)}">
+                        <section class="menu-title" id="bebidas">
+                            <div class="menu-title-left">
+                                <h2>Bebidas</h2>
+                            </div>
+                        </section>
 
-                        <div class="menu-title-left">
-                            <h2>Bebidas</h2>
-                        </div>
-
-                    </section>
-
-                    <section class="menu-grid" aria-label="Bebidas">
-                        <th:block th:each="plato : ${platos}">
-                            <th:block th:if="${plato.categoria == 'BEBIDAS'}">
+                        <section class="menu-grid" aria-label="Bebidas">
+                            <th:block th:each="plato : ${bebidas}">
                                 <div th:replace="~{componentes/menu-cards :: menu-cards(
-                    ${plato.nombre},
-                    ${plato.descripcion},
-                    ${plato.precio},
-                    ${plato.categoria},
-                    ${plato.imgUrl},
-                    ${plato.disponible}
-                )}"></div>
+                                    ${plato.nombre},
+                                    ${plato.descripcion},
+                                    ${plato.precio},
+                                    ${plato.categoria},
+                                    ${plato.imgUrl},
+                                    ${plato.disponible}
+                                )}"></div>
                             </th:block>
-                        </th:block>
-                    </section>
+                        </section>
+                    </div>
 
                     <!-- Postres -->
-                    <section class="menu-title" id="postres">
+                    <div class="menu-categoria-bloque" data-categoria="POSTRES" th:if="${not #lists.isEmpty(postres)}">
+                        <section class="menu-title" id="postres">
+                            <div class="menu-title-left">
+                                <h2>Postres</h2>
+                            </div>
+                        </section>
 
-                        <div class="menu-title-left">
-                            <h2>Postres</h2>
-
-                        </div>
-
-                    </section>
-
-                    <section class="menu-grid" aria-label="Postres">
-                        <th:block th:each="plato : ${platos}">
-                            <th:block th:if="${plato.categoria == 'POSTRES'}">
+                        <section class="menu-grid" aria-label="Postres">
+                            <th:block th:each="plato : ${postres}">
                                 <div th:replace="~{componentes/menu-cards :: menu-cards(
-                    ${plato.nombre},
-                    ${plato.descripcion},
-                    ${plato.precio},
-                    ${plato.categoria},
-                    ${plato.imgUrl},
-                    ${plato.disponible}
-                )}"></div>
+                                    ${plato.nombre},
+                                    ${plato.descripcion},
+                                    ${plato.precio},
+                                    ${plato.categoria},
+                                    ${plato.imgUrl},
+                                    ${plato.disponible}
+                                )}"></div>
                             </th:block>
-                        </th:block>
-                    </section>
+                        </section>
+                    </div>
+
+                    <!-- Otras Opciones (Fallback dinámico) -->
+                    <div class="menu-categoria-bloque" data-categoria="OTROS" th:if="${not #lists.isEmpty(otros)}">
+                        <section class="menu-title" id="otros">
+                            <div class="menu-title-left">
+                                <h2>Otras Opciones</h2>
+                            </div>
+                        </section>
+
+                        <section class="menu-grid" aria-label="Otras Opciones">
+                            <th:block th:each="plato : ${otros}">
+                                <div th:replace="~{componentes/menu-cards :: menu-cards(
+                                    ${plato.nombre},
+                                    ${plato.descripcion},
+                                    ${plato.precio},
+                                    ${plato.categoria},
+                                    ${plato.imgUrl},
+                                    ${plato.disponible}
+                                )}"></div>
+                            </th:block>
+                        </section>
+                    </div>
 
 
                     <dialog class="menu-dialog" id="menuDialog" aria-labelledby="menuDialogTitle">
@@ -232,6 +367,49 @@
                 window.location.href = "/login";
             }
         })();
+
+        function filtrarMenuVer(categoriaKey, botonClickeado) {
+            const clave = String(categoriaKey || 'TODOS').trim().toUpperCase();
+
+            // 1. Marcar píldora activa
+            const nav = document.querySelector('#menuFiltroStickyWrapper .menu-nav-pills');
+            if (nav) {
+                nav.querySelectorAll('.reserva-cat-pill').forEach(btn => {
+                    const esActivo = btn.getAttribute('data-cat-key') === clave;
+                    btn.classList.toggle('active', esActivo);
+                    btn.setAttribute('aria-selected', esActivo ? 'true' : 'false');
+                    if (esActivo && botonClickeado) {
+                        try {
+                            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        } catch (e) {
+                            btn.scrollIntoView();
+                        }
+                    }
+                });
+            }
+
+            // 2. Filtrar bloques de menú
+            const bloques = document.querySelectorAll('.menu-categoria-bloque');
+            bloques.forEach(bloque => {
+                const cat = (bloque.getAttribute('data-categoria') || '').toUpperCase();
+                if (clave === 'TODOS' || cat === clave) {
+                    bloque.style.display = 'block';
+                } else {
+                    bloque.style.display = 'none';
+                }
+            });
+
+            // 3. Scroll suave al inicio del catálogo si se clickeó un botón
+            if (botonClickeado) {
+                const wrapper = document.getElementById('menuFiltroStickyWrapper');
+                if (wrapper) {
+                    const headerOculto = document.body.classList.contains('header-is-hidden') || !!document.querySelector('.header.header-hidden-menu');
+                    const yOffset = headerOculto ? -20 : -85;
+                    const y = wrapper.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+                }
+            }
+        }
     </script>
     <script th:src="@{/js/menu.js}"></script>
     <script th:src="@{/js/cliente/sidebar.js}"></script>
