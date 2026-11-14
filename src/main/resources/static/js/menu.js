@@ -54,7 +54,8 @@ function traducirTarjetasMenu(lang) {
         }
         const navLinks = document.querySelectorAll(`.menu-nav a[href="#${item.id}"], .menu-nav-inline a[href="#${item.id}"]`);
         navLinks.forEach(link => {
-            link.textContent = isEn ? item.en : item.es;
+            const targetEl = link.querySelector(".link-text") || link;
+            targetEl.textContent = isEn ? item.en : item.es;
         });
     });
 }

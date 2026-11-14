@@ -1,4 +1,4 @@
-﻿* {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -367,14 +367,17 @@ h1, h2, h3 {
 .perfil-link {
     color: var(--color-primary, var(--primary, #d4af37));
     text-decoration: none;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0 !important;
     transition: transform 0.3s ease;
 }
 
 .perfil-link .material-symbols-outlined {
-    font-size: 30px;
+    font-size: 28px;
     color: var(--color-primary, var(--primary, #d4af37));
 }
 
@@ -1335,6 +1338,62 @@ input:checked + .slider:before {
         grid-template-columns: 1fr;
     }
 }
+
+@media (max-width: 576px) {
+    .header {
+        padding: 0 10px !important;
+    }
+
+    .nav-left-group {
+        gap: 8px !important;
+        min-width: 0;
+    }
+
+    .header h2 {
+        font-size: 0.98rem !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .perfil-contenedor {
+        gap: 8px !important;
+    }
+
+    .nav-pdf-btn {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .lang-btn {
+        padding: 5px 8px !important;
+        font-size: 11px !important;
+        gap: 4px !important;
+    }
+
+    .perfil-link {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .perfil-link .material-symbols-outlined {
+        font-size: 26px !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .header {
+        padding: 0 6px !important;
+    }
+
+    .header h2 {
+        font-size: 0.9rem !important;
+    }
+
+    .perfil-contenedor {
+        gap: 5px !important;
+    }
+}
 .stat-icon{
     width: 55px;
     height: 55px;
@@ -1467,7 +1526,8 @@ body {
 .perfil-contenedor {
     display: flex !important;
     align-items: center !important;
-    gap: 16px !important;
+    gap: 14px;
+    flex-shrink: 0 !important;
 }
 
 .lang-selector-dropdown {

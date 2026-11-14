@@ -15,7 +15,7 @@
     top: 0;
     left: 250px;
     z-index: 990;
-    transition: background-color 0.35s ease, background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease, -webkit-backdrop-filter 0.35s ease, width 0.3s ease, left 0.3s ease, height 0.3s ease;
+    transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, background-color 0.35s ease, background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease, -webkit-backdrop-filter 0.35s ease, width 0.3s ease, left 0.3s ease, height 0.3s ease;
     padding: 0 35px;
     box-sizing: border-box;
     background-color: transparent !important;
@@ -23,6 +23,14 @@
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-bottom: 1px solid transparent;
+}
+
+/* Ocultamiento del Navbar Principal en Scroll (Efecto Landing Page) */
+.header.header-hidden-menu,
+.header.header-hidden {
+    transform: translateY(-100%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 .sidebar.closed ~ .dashboard-main .header,
@@ -99,21 +107,27 @@
 }
 
 .perfil-contenedor {
-    display: flex;
-    align-items: center;
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    flex-shrink: 0 !important;
 }
 
 .perfil-link {
     color: var(--color-primary, #d4af37);
     text-decoration: none;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0 !important;
     transition: transform 0.3s ease;
 }
 
 .perfil-link .material-symbols-outlined {
-    font-size: 30px;
+    font-size: 28px;
+    color: var(--color-primary, #d4af37);
 }
 
 .perfil-link:hover {
@@ -158,15 +172,65 @@
     }
 }
 
+@media (max-width: 576px) {
+    .header {
+        padding: 0 10px !important;
+    }
+
+    .nav-left-group {
+        gap: 8px !important;
+        min-width: 0;
+    }
+
+    .header h2 {
+        font-size: 0.98rem !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .perfil-contenedor {
+        gap: 8px !important;
+    }
+
+    .nav-pdf-btn {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .lang-btn {
+        padding: 5px 8px !important;
+        font-size: 11px !important;
+        gap: 4px !important;
+    }
+
+    .perfil-link {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .perfil-link .material-symbols-outlined {
+        font-size: 26px !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .header {
+        padding: 0 6px !important;
+    }
+
+    .header h2 {
+        font-size: 0.9rem !important;
+    }
+
+    .perfil-contenedor {
+        gap: 5px !important;
+    }
+}
 
 /* ================================================================
    SELECTOR DE IDIOMA - NAVBAR CLIENTE
    ================================================================ */
-.perfil-contenedor {
-    display: flex !important;
-    align-items: center !important;
-    gap: 16px !important;
-}
 
 .nav-pdf-btn {
     display: inline-flex;

@@ -326,9 +326,88 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding: 18px 24px 22px;
+    padding: 16px 24px 22px;
     max-height: 65vh;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Barra de navegación rápida por categorías (Sticky, no squishing, scroll horizontal fluido) */
+.reserva-categoria-nav {
+    position: sticky;
+    top: -16px;
+    z-index: 20;
+    background: #111111;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 24px 12px;
+    margin: -16px -24px 4px -24px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    flex-shrink: 0;
+    width: auto;
+}
+
+.reserva-categoria-nav::-webkit-scrollbar {
+    height: 4px;
+}
+
+.reserva-categoria-nav::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.3);
+    border-radius: 4px;
+}
+
+.reserva-cat-pill {
+    flex-shrink: 0 !important;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    color: #c5bba8;
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 36px;
+    box-sizing: border-box;
+}
+
+.reserva-cat-pill span {
+    pointer-events: none;
+}
+
+.reserva-cat-pill:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.5);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.reserva-cat-pill.active {
+    background: var(--color-primary, #d4af37) !important;
+    color: #0b0b0b !important;
+    font-weight: 700 !important;
+    border-color: var(--color-primary, #d4af37) !important;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.35);
+}
+
+/* Contenedor de secciones */
+.reserva-secciones-contenedor {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 /* Sección individual de categoría */

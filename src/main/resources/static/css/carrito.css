@@ -491,14 +491,15 @@
     -webkit-backdrop-filter: blur(12px);
     z-index: 99990;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 20px;
+    padding: 24px 16px;
     box-sizing: border-box;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-reserva-index-backdrop.active {
@@ -509,7 +510,7 @@
 .modal-reserva-index-container {
     position: relative;
     width: 100%;
-    max-width: 1100px;
+    max-width: 1080px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -525,10 +526,12 @@
 
 .modal-reserva-index-container .reserva-card-full {
     width: 100%;
-    max-height: 90vh;
+    max-height: 92vh;
     overflow-y: auto;
     position: relative;
     box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
+    border-radius: 18px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-reserva-close-btn {
@@ -547,7 +550,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 30;
+    z-index: 50;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
     transition: all 0.25s ease;
 }
@@ -663,29 +666,35 @@
 }
 
 .reserva-modal {
-    width: min(680px, 100%);
+    width: min(720px, 100%);
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
     background: #141311;
     border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 18px;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 30px rgba(212, 175, 55, 0.1);
     overflow: hidden;
     color: #e5ded6;
+    margin: auto;
 }
 
 .reserva-modal-header {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 22px 24px 16px;
+    padding: 20px 24px 14px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: #141311;
 }
 
 .reserva-modal-header h3 {
     margin: 0;
     color: #fff;
     font-family: 'Noto Serif', serif;
-    font-size: 1.4rem;
+    font-size: 1.35rem;
 }
 
 .reserva-modal-header p {
@@ -715,24 +724,35 @@
 }
 
 .reserva-modal-body {
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding: 18px 24px 22px;
-    max-height: 65vh;
+    padding: 16px 24px 20px;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* Barra de navegación rápida por categorías */
+/* Barra de navegación rápida por categorías (Sticky, no squishing, scroll horizontal fluido) */
 .reserva-categoria-nav {
+    position: sticky;
+    top: -16px;
+    z-index: 20;
+    background: #141311;
     display: flex;
     align-items: center;
     gap: 8px;
     overflow-x: auto;
-    padding: 2px 2px 8px;
-    margin-bottom: 2px;
+    padding: 10px 24px 12px;
+    margin: -16px -24px 4px -24px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.18);
     scrollbar-width: thin;
     scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    flex-shrink: 0;
+    width: auto;
 }
 
 .reserva-categoria-nav::-webkit-scrollbar {
@@ -745,19 +765,28 @@
 }
 
 .reserva-cat-pill {
+    flex-shrink: 0 !important;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(212, 175, 55, 0.25);
     color: #c5bba8;
     border-radius: 20px;
-    padding: 6px 14px;
+    padding: 7px 14px;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 36px;
+    box-sizing: border-box;
+}
+
+.reserva-cat-pill span {
+    pointer-events: none;
 }
 
 .reserva-cat-pill:hover {
@@ -768,10 +797,10 @@
 }
 
 .reserva-cat-pill.active {
-    background: var(--color-primary, #d4af37);
-    color: #0b0b0b;
-    font-weight: 700;
-    border-color: var(--color-primary, #d4af37);
+    background: var(--color-primary, #d4af37) !important;
+    color: #0b0b0b !important;
+    font-weight: 700 !important;
+    border-color: var(--color-primary, #d4af37) !important;
     box-shadow: 0 0 12px rgba(212, 175, 55, 0.35);
 }
 
@@ -845,6 +874,8 @@
     border-radius: 12px;
     cursor: pointer;
     transition: border-color 0.2s ease, background-color 0.2s ease;
+    min-height: 54px;
+    box-sizing: border-box;
 }
 
 .reserva-plato-item:hover {
@@ -854,8 +885,9 @@
 
 .reserva-plato-item input {
     accent-color: #d4af37;
-    width: 17px;
-    height: 17px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
     cursor: pointer;
 }
 
@@ -866,42 +898,186 @@
     gap: 10px;
     width: 100%;
     color: #fff;
-    font-size: 12px;
+    font-size: 13px;
+    min-width: 0;
+}
+
+.reserva-plato-info > span {
+    min-width: 0;
+    flex: 1 1 auto;
 }
 
 .reserva-plato-info > span > span {
     display: block;
     font-weight: 500;
+    line-height: 1.3;
+    word-break: break-word;
 }
 
 .reserva-plato-info small {
     display: block;
     margin-top: 3px;
     color: #ff7777;
-    font-size: 10px;
+    font-size: 11px;
 }
 
 .reserva-plato-info strong {
     color: #d4af37;
-    font-size: 12px;
+    font-size: 13px;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .reserva-modal-footer {
+    flex-shrink: 0;
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    padding: 16px 24px;
+    padding: 14px 24px;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(15, 14, 12, 0.6);
+    background: rgba(18, 17, 15, 0.95);
+    backdrop-filter: blur(8px);
 }
 
-@media (max-width: 600px) {
+/* ================================================================
+   RESPONSIVE DESIGN PARA MODALES DE RESERVA Y MENÚ (INDEX)
+   ================================================================ */
+@media (max-width: 768px) {
+    /* Backdrop y contenedor del modal principal de reserva */
+    .modal-reserva-index-backdrop {
+        padding: 12px 8px;
+        align-items: flex-start;
+    }
+
+    .modal-reserva-index-container .reserva-card-full {
+        max-height: 94vh;
+        min-height: unset;
+        border-radius: 14px;
+    }
+
+    .modal-reserva-index-container .reserva-visual {
+        min-height: 110px;
+        height: 110px;
+        flex: none;
+        width: 100%;
+    }
+
+    .modal-reserva-index-container .reserva-visual-overlay {
+        padding: 14px 18px;
+    }
+
+    .modal-reserva-index-container .reserva-visual-texto {
+        display: none !important;
+    }
+
+    .modal-reserva-index-container .serif-gold {
+        font-size: 1.25rem;
+        line-height: 1.2;
+        margin: 0;
+    }
+
+    .modal-reserva-index-container .reserva-form-section {
+        padding: 20px 16px 24px;
+    }
+
+    .modal-reserva-index-container .reserva-titulo-form {
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+    }
+
+    .modal-reserva-index-container .reserva-grid-inputs {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .modal-reserva-index-container .reserva-experiencia {
+        margin-bottom: 14px;
+    }
+
+    .modal-reserva-index-container .reserva-experiencia-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .modal-reserva-index-container .exp-card .exp-ui {
+        padding: 10px 12px;
+    }
+
+    .modal-reserva-index-container .reserva-menu-selector {
+        margin-bottom: 14px;
+    }
+
+    .modal-reserva-close-btn {
+        top: 8px;
+        right: 8px;
+        width: 36px;
+        height: 36px;
+        font-size: 22px;
+        z-index: 50;
+        background: rgba(17, 17, 17, 0.95);
+    }
+
+    /* Modal de selección de platos del menú */
+    .reserva-modal-backdrop {
+        padding: 10px 8px;
+        align-items: flex-start;
+    }
+
+    .reserva-modal {
+        max-height: 94vh;
+        border-radius: 14px;
+        width: 100%;
+    }
+
+    .reserva-modal-header {
+        padding: 14px 16px 12px;
+    }
+
+    .reserva-modal-header h3 {
+        font-size: 1.15rem;
+    }
+
+    .reserva-modal-header p {
+        font-size: 12px;
+    }
+
     .reserva-modal-body {
-        padding: 14px 16px;
+        padding: 12px 14px 16px;
+    }
+
+    .reserva-categoria-nav {
+        top: -12px;
+        margin: -12px -14px 6px -14px;
+        padding: 8px 14px 10px;
+        gap: 6px;
+    }
+
+    .reserva-cat-pill {
+        padding: 6px 12px;
+        font-size: 11.5px;
+        min-height: 34px;
     }
 
     .reserva-categoria-grid {
         grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .reserva-plato-item {
+        padding: 10px 12px;
+    }
+
+    .reserva-modal-footer {
+        padding: 12px 14px;
+        gap: 8px;
+    }
+
+    .reserva-modal-footer button {
+        flex: 1;
+        padding: 12px 8px;
+        font-size: 13px;
+        justify-content: center;
+        text-align: center;
     }
 }
