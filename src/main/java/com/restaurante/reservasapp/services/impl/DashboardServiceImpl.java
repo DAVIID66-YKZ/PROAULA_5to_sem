@@ -56,8 +56,8 @@ public class DashboardServiceImpl implements DashboardAminService {
             .count();
 
         // Cálculo dinámico de ocupación:
-        // Mesas ocupadas = mesas marcadas como no disponibles por admin
-        // + mesas con reservas activas (CONFIRMADA, PENDIENTE, LLEGADA) para hoy o vigentes
+        // Mesas ocupadas = mesas marcadas como no disponibles/inactivas por admin
+        // + mesas con reservas activas (CONFIRMADA, PENDIENTE, LLEGADA) para el día de HOY
         String fechaHoyStr = LocalDate.now().toString();
         Set<String> mesasOcupadasIds = new HashSet<>();
 
@@ -72,8 +72,7 @@ public class DashboardServiceImpl implements DashboardAminService {
             if ("CONFIRMADA".equalsIgnoreCase(est) || "PENDIENTE".equalsIgnoreCase(est) || "LLEGADA".equalsIgnoreCase(est)) {
                 if (r.getMesaId() != null && !r.getMesaId().isBlank()) {
                     boolean esHoy = fechaHoyStr.equals(r.getFecha());
-                    boolean esVigente = r.getFecha() != null && r.getFecha().compareTo(fechaHoyStr) >= 0;
-                    if (esHoy || esVigente) {
+                    if (esHoy) {
                         mesasOcupadasIds.add(r.getMesaId());
                     }
                 }

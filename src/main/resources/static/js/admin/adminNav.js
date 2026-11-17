@@ -3,6 +3,62 @@
    Manejo de rutas activas, guardián de rol ADMIN y drawer responsive
    ================================================================ */
 
+// ===== SISTEMA UNIVERSAL DE CARGA EN BOTONES (ADMIN) =====
+window.AdminButtonLoading = {
+    start: function (button, customText) {
+        if (!button) return function () {};
+        if (button.classList.contains("is-loading")) return function () {};
+
+        button.disabled = true;
+        button.classList.add("is-loading");
+        button.setAttribute("data-original-html", button.innerHTML);
+
+        let isDarkBg = false;
+        try {
+            let cs = window.getComputedStyle(button);
+            let textColor = cs.color;
+            if (textColor.includes("255") || textColor.includes("212") || textColor.includes("240")) {
+                isDarkBg = true;
+            }
+        } catch (e) {}
+
+        let spinner = document.createElement("span");
+        spinner.className = isDarkBg ? "admin-btn-spinner light" : "admin-btn-spinner";
+
+        if (customText) {
+            button.innerHTML = "";
+            button.appendChild(spinner);
+            let txt = document.createElement("span");
+            txt.className = "btn-loading-text";
+            txt.textContent = " " + customText;
+            button.appendChild(txt);
+        } else {
+            let icon = button.querySelector(".material-symbols-outlined, .action-icon, svg");
+            if (icon) icon.style.display = "none";
+            button.insertBefore(spinner, button.firstChild);
+        }
+
+        return function () {
+            window.AdminButtonLoading.stop(button);
+        };
+    },
+    stop: function (button) {
+        if (!button) return;
+        button.disabled = false;
+        button.classList.remove("is-loading");
+        let originalHtml = button.getAttribute("data-original-html");
+        if (originalHtml !== null && originalHtml !== undefined) {
+            button.innerHTML = originalHtml;
+            button.removeAttribute("data-original-html");
+        } else {
+            let spinner = button.querySelector(".admin-btn-spinner");
+            if (spinner) spinner.remove();
+            let icon = button.querySelector(".material-symbols-outlined, .action-icon, svg");
+            if (icon) icon.style.display = "";
+        }
+    }
+};
+
 // 1. Guardián de sesión y rol ADMIN
 (function () {
     let token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
@@ -161,6 +217,10 @@ function mostrarNombreAdmin() {
 function cerrarSesionAdmin(event) {
     if (event) event.preventDefault();
     if (confirm("¿Cerrar sesión de administración en GestRest?")) {
+        let btnLogout = document.getElementById("btnAdminLogout") || (event && (event.currentTarget || event.target));
+        if (btnLogout && window.AdminButtonLoading) {
+            window.AdminButtonLoading.start(btnLogout, "Cerrando sesión...");
+        }
         localStorage.removeItem("token");
         localStorage.removeItem("jwtToken");
         localStorage.removeItem("usuarioId");
@@ -168,6 +228,8 @@ function cerrarSesionAdmin(event) {
         localStorage.removeItem("rol");
         localStorage.removeItem("gestrest_last_activity");
         localStorage.removeItem("gestrest_login_time");
-        window.location.href = "/login";
+        setTimeout(function () {
+            window.location.href = "/login";
+        }, 250);
     }
 }

@@ -1,4 +1,4 @@
-﻿/* ================================================================
+/* ================================================================
    PREDICCIÓN DE RESERVAS Y DEMANDA (ML) - GESTREST ADMIN
    Integración reactiva con Spring Boot, MongoDB Atlas y FastAPI
    ================================================================ */
@@ -239,7 +239,15 @@ window.actualizarTextosGraficos = actualizarTextosGraficos;
 window.reaplicarIdiomaPrediccion = actualizarTextosGraficos;
 
 // ===== CONSULTA PRINCIPAL AL BACKEND DE SPRING BOOT =====
+let prediccionAbortController = null;
+
 async function cargarPrediccion(animarBoton = false) {
+    if (prediccionAbortController) {
+        prediccionAbortController.abort();
+    }
+    prediccionAbortController = new AbortController();
+    const { signal } = prediccionAbortController;
+
     const btn = document.getElementById("btnActualizarPrediccion");
     let iconoOriginal = null;
 
@@ -282,7 +290,8 @@ async function cargarPrediccion(animarBoton = false) {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
-            }
+            },
+            signal
         });
 
         if (resp.ok) {
@@ -302,6 +311,9 @@ async function cargarPrediccion(animarBoton = false) {
             }
         }
     } catch (e) {
+        if (e.name === "AbortError") {
+            return; // Cancelada por nueva petición
+        }
         console.error("Fallo de conexión:", e);
         actualizarIndicadorLive(false);
         if (animarBoton) {
@@ -481,7 +493,9 @@ function actualizarIndicadorLive(conectado) {
 }
 
 
-// ===== SISTEMA DE NOTIFICACIONES TOAST =====
+// ===== SISTEMA DE NOTIFICACIONES TOAST (MÁXIMO 1 MENSAJE ACTIVO) =====
+let timerToastActivo = null;
+
 function mostrarToastPrediccion(mensaje, tipo = "info") {
     let container = document.getElementById("prediccionToastContainer");
     if (!container) {
@@ -490,6 +504,16 @@ function mostrarToastPrediccion(mensaje, tipo = "info") {
         container.className = "toast-container";
         document.body.appendChild(container);
     }
+
+    // Cancelar temporizador previo y limpiar cualquier toast anterior inmediatamente
+    if (timerToastActivo) {
+        clearTimeout(timerToastActivo);
+        timerToastActivo = null;
+    }
+
+    // Eliminar cualquier mensaje previo para que no se apilen
+    const toastsPrevios = container.querySelectorAll(".gestrest-toast");
+    toastsPrevios.forEach(t => t.remove());
 
     const toast = document.createElement("div");
     toast.className = `gestrest-toast ${tipo}`;
@@ -514,15 +538,19 @@ function mostrarToastPrediccion(mensaje, tipo = "info") {
     });
 
     const closeBtn = toast.querySelector(".toast-close");
-    let autoCloseTimer = null;
 
     const removerToast = () => {
-        if (autoCloseTimer) clearTimeout(autoCloseTimer);
+        if (timerToastActivo) {
+            clearTimeout(timerToastActivo);
+            timerToastActivo = null;
+        }
         toast.classList.remove("show");
         toast.classList.add("hide");
-        setTimeout(() => toast.remove(), 350);
+        setTimeout(() => {
+            if (toast.parentElement) toast.remove();
+        }, 300);
     };
 
     closeBtn.addEventListener("click", removerToast);
-    autoCloseTimer = setTimeout(removerToast, 4000);
+    timerToastActivo = setTimeout(removerToast, 3500);
 }

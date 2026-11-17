@@ -104,17 +104,35 @@ function renderizarTablaReservasTodas(listaFiltrada) {
 
         let id = r.id || r._id;
         let nombreHuesped = r.nombreHuesped || r.nombre || r.cliente || "Huésped";
-        let correoSub = r.correoHuesped || r.email || r.correo || r.tipoEvento || "";
+        let correoSub = r.correoHuesped || r.email || r.correo || "";
         let fechaHora = r.fechaHora || ((r.fecha || "") + " " + (r.hora || "")).trim() || "N/A";
         let personas = r.cantidadPersonas || r.numeroPersonas || 2;
         let mesa = r.numeroMesa || r.mesa || (r.mesaId ? "Mesa asignada" : "Sin asignar");
         let experiencia = r.tipoEvento || r.experiencia || "Cena Carta";
 
+        // Iniciales para avatar circular (igual que en gestión de usuarios)
+        let iniciales = r.iniciales || "";
+        if (!iniciales) {
+            let partes = String(nombreHuesped).trim().split(/\s+/);
+            if (partes.length >= 2) {
+                iniciales = (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+            } else if (partes.length === 1 && partes[0].length > 0) {
+                iniciales = partes[0].substring(0, Math.min(2, partes[0].length)).toUpperCase();
+            } else {
+                iniciales = "U";
+            }
+        }
+
         tr.innerHTML = `
             <td>
-                <div class="huesped-info">
-                    <span class="huesped-nombre">${nombreHuesped}</span>
-                    <span class="huesped-tipo">${correoSub}</span>
+                <div class="user-flex-cell">
+                    <div class="user-avatar-circle" title="${nombreHuesped}">
+                        ${iniciales}
+                    </div>
+                    <div style="min-width: 0;">
+                        <span class="user-name-title">${nombreHuesped}</span>
+                        <span class="user-sub-email">${correoSub || (r.tipoEvento || 'Sin correo')}</span>
+                    </div>
                 </div>
             </td>
             <td>
@@ -263,6 +281,11 @@ async function guardarEdicionReserva() {
     let nuevoEstado = document.getElementById("modalSelectEstado").value;
     let token = obtenerTokenAdmin();
 
+    let btnSave = document.querySelector("#modalEditarReserva .btn-modal-save");
+    let stopLoading = btnSave && window.AdminButtonLoading
+        ? window.AdminButtonLoading.start(btnSave, "Guardando...")
+        : null;
+
     try {
         let resp = await fetch(`/api/admin/reservas/${id}/estado`, {
             method: "PATCH",
@@ -294,6 +317,8 @@ async function guardarEdicionReserva() {
     } catch (e) {
         console.error("Error al actualizar reserva:", e);
         alert("Error de red al actualizar estado de reserva.");
+    } finally {
+        if (stopLoading) stopLoading();
     }
 }
 
@@ -301,6 +326,8 @@ async function eliminarReserva(id) {
     if (!confirm("¿Está seguro de eliminar esta reserva permanentemente de la base de datos?")) return;
 
     let token = obtenerTokenAdmin();
+    let btnDel = document.querySelector(`button[onclick*="eliminarReserva('${id}')"]`);
+    let stopLoading = btnDel && window.AdminButtonLoading ? window.AdminButtonLoading.start(btnDel) : null;
 
     try {
         let resp = await fetch(`/api/admin/reservas/${id}`, {
@@ -328,6 +355,8 @@ async function eliminarReserva(id) {
     } catch (e) {
         console.error("Error al eliminar reserva:", e);
         alert("Error de red al eliminar la reserva.");
+    } finally {
+        if (stopLoading) stopLoading();
     }
 }
 

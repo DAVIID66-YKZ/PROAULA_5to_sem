@@ -421,6 +421,12 @@ function configurarFormularioPlato() {
             return;
         }
 
+        const editando = platoEnEdicion !== null;
+        const botonGuardar = form.querySelector('[type="submit"]');
+        const stopLoading = botonGuardar && window.AdminButtonLoading
+            ? window.AdminButtonLoading.start(botonGuardar, editando ? fnT("menu.actualizando", "Actualizando...") : fnT("menu.guardando", "Guardando..."))
+            : null;
+
         try {
             const datos = new FormData();
             datos.append("nombre", nombre);
@@ -434,7 +440,6 @@ function configurarFormularioPlato() {
                 datos.append("imagenPlato", archivo);
             }
 
-            const editando = platoEnEdicion !== null;
             const url = editando
                 ? `/api/admin/menu/${encodeURIComponent(platoEnEdicion)}`
                 : "/api/admin/menu";
@@ -460,7 +465,6 @@ function configurarFormularioPlato() {
             form.reset();
             platoEnEdicion = null;
 
-            const botonGuardar = form.querySelector('[type="submit"]');
             if (botonGuardar) botonGuardar.textContent = fnT("menu.guardar", "AÑADIR PLATO");
 
             await cargarPlatos();
@@ -471,6 +475,8 @@ function configurarFormularioPlato() {
         } catch (error) {
             console.error("Error al guardar plato:", error);
             alert(fnT("menu.errorGuardarRed", "Error de red al guardar el plato."));
+        } finally {
+            if (stopLoading) stopLoading();
         }
     });
 

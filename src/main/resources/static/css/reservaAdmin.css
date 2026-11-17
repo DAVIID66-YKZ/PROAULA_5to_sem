@@ -268,39 +268,67 @@
     background-color: rgba(212, 175, 55, 0.035);
 }
 
-/* ===== CELDA DE HUÉSPED & AVATAR ===== */
-.guest-cell {
+/* ===== CELDA DE HUÉSPED & AVATAR (ESTILO MANUSCRIPT / GESTREST) ===== */
+.guest-cell,
+.user-flex-cell {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
 }
 
+.user-avatar-circle,
 .guest-avatar {
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary, #d4af37), #997519);
+    background: #222222;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    color: var(--primary, #d4af37);
+    font-weight: 700;
+    font-size: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    color: #0d0d0d;
+    text-transform: uppercase;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     flex-shrink: 0;
 }
 
+.user-name-title,
+.huesped-nombre,
 .guest-info h4 {
-    font-family: 'Noto Serif', serif;
-    font-size: 14px;
+    font-family: inherit;
+    font-size: 13.5px;
     color: #ffffff;
-    font-weight: 600;
-    margin-bottom: 3px;
+    font-weight: 700;
+    margin-bottom: 2px;
+    display: block;
+    line-height: 1.25;
 }
 
-.guest-info p {
+.user-sub-id {
     font-size: 11px;
     color: #888888;
+    font-family: monospace;
+    display: block;
+    margin-top: 3px;
+}
+
+.user-sub-email,
+.huesped-tipo,
+.guest-info p {
+    font-size: 12px;
+    color: #888888;
+    display: block;
+    margin-top: 2px;
+    line-height: 1.25;
+    word-break: break-all;
+}
+
+.huesped-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 #platosTableBody .plato-info {
