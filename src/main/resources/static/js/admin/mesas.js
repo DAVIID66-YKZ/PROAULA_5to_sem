@@ -1,10 +1,19 @@
-﻿/* ================================================================
+/* ================================================================
    GESTIÓN DE MESAS - GESTREST
    Lógica completa de administración de mesas conectada a MongoDB
    ================================================================ */
 
 let todasLasMesas = [];
+let reservasHoy = [];
 let mesaIdEnEdicion = null;
+
+function obtenerFechaHoyLocal() {
+    let d = new Date();
+    let y = d.getFullYear();
+    let m = String(d.getMonth() + 1).padStart(2, "0");
+    let day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     cargarMesas();
@@ -24,24 +33,36 @@ async function cargarMesas() {
     container.innerHTML = '<p style="color:#888;text-align:center;padding:30px;">Cargando mesas del restaurante en vivo...</p>';
 
     try {
-        let resp = await fetch("/api/admin/mesas", {
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
-        });
+        let headers = {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        };
 
-        if (!resp.ok && resp.status === 404) {
-            resp = await fetch("/mesas/listar", {
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            });
+        // Cargar mesas y reservas en paralelo
+        let [respMesas, respReservas] = await Promise.all([
+            fetch("/api/admin/mesas", { headers }),
+            fetch("/reservas/listar", { headers }).catch(function () { return null; })
+        ]);
+
+        if (!respMesas.ok && respMesas.status === 404) {
+            respMesas = await fetch("/mesas/listar", { headers });
         }
 
-        if (resp.ok) {
-            todasLasMesas = await resp.json();
+        if (respMesas.ok) {
+            todasLasMesas = await respMesas.json();
+
+            // Filtrar reservas activas de hoy (CONFIRMADA, PENDIENTE o LLEGADA)
+            if (respReservas && respReservas.ok) {
+                let todasLasRes = await respReservas.json();
+                let fechaHoy = obtenerFechaHoyLocal();
+                reservasHoy = Array.isArray(todasLasRes) ? todasLasRes.filter(function (r) {
+                    let est = String(r.estado || "").toUpperCase();
+                    return r.fecha === fechaHoy && (est === "CONFIRMADA" || est === "PENDIENTE" || est === "LLEGADA");
+                }) : [];
+            } else {
+                reservasHoy = [];
+            }
+
             renderizarListaMesas(todasLasMesas);
             actualizarBadgesMesas();
         } else {
@@ -66,12 +87,27 @@ function renderizarListaMesas(lista) {
     }
 
     lista.forEach(function (m) {
-        let activa = m.disponible !== undefined ? m.disponible : (m.activa !== undefined ? m.activa : true);
-        let badgeHtml = activa
-            ? '<span class="status-badge status-confirmed">DISPONIBLE</span>'
-            : '<span class="status-badge status-cancelada">OCUPADA</span>';
-
         let id = m.id || m._id;
+        let activa = m.disponible !== undefined ? m.disponible : (m.activa !== undefined ? m.activa : true);
+
+        // Buscar si esta mesa tiene reserva activa hoy
+        let resActiva = reservasHoy.find(function (r) {
+            return String(r.mesaId) === String(id);
+        });
+
+        let badgeHtml = "";
+        let infoReserva = "";
+
+        if (!activa) {
+            badgeHtml = '<span class="status-badge status-cancelada" title="Deshabilitada administrativamente para reservas">DESHABILITADA</span>';
+        } else if (resActiva) {
+            let hora = resActiva.hora ? ` · ${resActiva.hora}` : '';
+            badgeHtml = '<span class="status-badge" style="background:rgba(244, 67, 54, 0.2); color:#f44336; border:1px solid rgba(244, 67, 54, 0.4);" title="Mesa reservada para el servicio de hoy">OCUPADA</span>';
+            infoReserva = `<span style="font-size:11px; color:#e0aa3e; margin-left:6px; font-weight:600;">(Reserva ${resActiva.hora || 'Hoy'})</span>`;
+        } else {
+            badgeHtml = '<span class="status-badge status-confirmed">DISPONIBLE</span>';
+        }
+
         let numDisplay = m.numero !== undefined ? m.numero : (m.numeroMesa || id);
         let sectorDisplay = m.sector ? m.sector.replace("Mesa-", "") : "Comedor Principal";
         let capDisplay = m.capacidad || 4;
@@ -80,7 +116,7 @@ function renderizarListaMesas(lista) {
         div.className = "mesa-item";
         div.innerHTML = `
             <div class="mesa-info">
-                <div class="mesa-number">Mesa ${numDisplay}</div>
+                <div class="mesa-number">Mesa ${numDisplay} ${infoReserva}</div>
                 <div class="mesa-details">${sectorDisplay} · ${capDisplay} personas</div>
             </div>
             <div class="mesa-status">
@@ -99,13 +135,20 @@ function renderizarListaMesas(lista) {
 
 // ===== ACTUALIZAR CONTADORES =====
 function actualizarBadgesMesas() {
-    let activas = todasLasMesas.filter(function (m) {
-        return m.disponible !== undefined ? m.disponible : (m.activa !== undefined ? m.activa : true);
+    let ocupadasCount = todasLasMesas.filter(function (m) {
+        let id = m.id || m._id;
+        let activa = m.disponible !== undefined ? m.disponible : (m.activa !== undefined ? m.activa : true);
+        if (!activa) return true;
+        return reservasHoy.some(function (r) { return String(r.mesaId) === String(id); });
     }).length;
 
+    let disponiblesCount = Math.max(0, todasLasMesas.length - ocupadasCount);
+
     let elAct = document.getElementById("mesasActivas");
+    let elOcup = document.getElementById("mesasOcupadasHoy");
     let elTot = document.getElementById("mesasTotales");
-    if (elAct) elAct.textContent = activas;
+    if (elAct) elAct.textContent = disponiblesCount;
+    if (elOcup) elOcup.textContent = ocupadasCount;
     if (elTot) elTot.textContent = todasLasMesas.length;
 }
 
@@ -148,6 +191,11 @@ function configurarFormularioMesa() {
             disponible: activa
         };
 
+        let btnSubmit = form.querySelector('button[type="submit"]');
+        let stopLoading = btnSubmit && window.AdminButtonLoading
+            ? window.AdminButtonLoading.start(btnSubmit, mesaIdEnEdicion ? "Actualizando mesa..." : "Guardando mesa...")
+            : null;
+
         try {
             let url = mesaIdEnEdicion ? `/api/admin/mesas/${mesaIdEnEdicion}` : "/api/admin/mesas";
             let method = mesaIdEnEdicion ? "PUT" : "POST";
@@ -172,6 +220,8 @@ function configurarFormularioMesa() {
         } catch (err) {
             console.error("Error al guardar mesa:", err);
             alert("Error de red al guardar la mesa.");
+        } finally {
+            if (stopLoading) stopLoading();
         }
     });
 }
@@ -221,6 +271,8 @@ async function eliminarMesa(id) {
     if (!confirm("¿Está seguro de eliminar esta mesa de la base de datos?")) return;
 
     let token = obtenerTokenAdmin();
+    let btnDel = document.querySelector(`button[onclick*="eliminarMesa('${id}')"]`);
+    let stopLoading = btnDel && window.AdminButtonLoading ? window.AdminButtonLoading.start(btnDel) : null;
 
     try {
         let resp = await fetch(`/api/admin/mesas/${id}`, {
@@ -239,6 +291,8 @@ async function eliminarMesa(id) {
     } catch (e) {
         console.error("Error al eliminar mesa:", e);
         alert("Error de red al eliminar la mesa.");
+    } finally {
+        if (stopLoading) stopLoading();
     }
 }
 

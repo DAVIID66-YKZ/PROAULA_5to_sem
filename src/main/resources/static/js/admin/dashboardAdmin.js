@@ -1,4 +1,4 @@
-﻿// 1. Guardián de Validación Inmediata de Sesión y Rol ADMIN
+// 1. Guardián de Validación Inmediata de Sesión y Rol ADMIN
 (function () {
   let token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
   let rol = localStorage.getItem("rol");
@@ -229,8 +229,19 @@ function crearFilaReserva(r) {
   };
   let estadoKey = String(r.estado || "CONFIRMADA").trim().toUpperCase();
   let cls = statusMap[estadoKey] || "status-pending";
-  let iniciales =
-    r.iniciales || (r.nombreHuesped || "U").substring(0, 2).toUpperCase();
+  let nombreHuesped = r.nombreHuesped || r.cliente || "Cliente";
+  let correo = r.correoHuesped || r.email || r.correo || "";
+  let iniciales = r.iniciales || "";
+  if (!iniciales) {
+    let partes = String(nombreHuesped).trim().split(/\s+/);
+    if (partes.length >= 2) {
+      iniciales = (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+    } else if (partes.length === 1 && partes[0].length > 0) {
+      iniciales = partes[0].substring(0, Math.min(2, partes[0].length)).toUpperCase();
+    } else {
+      iniciales = "U";
+    }
+  }
   let personas = r.cantidadPersonas || r.numeroPersonas || 0;
   let mesa = r.numeroMesa || r.mesaId || "S/A";
   let fechaHora = r.fechaHora || ((r.fecha || "") + " " + (r.hora || "")).trim() || "N/A";
@@ -238,11 +249,11 @@ function crearFilaReserva(r) {
   let tr = document.createElement("tr");
   tr.innerHTML = `
         <td>
-            <div class="guest-cell">
-                <div class="guest-avatar">${iniciales}</div>
-                <div class="guest-info">
-                    <h4>${r.nombreHuesped || "Cliente"}</h4>
-                    <p>${r.tipoEvento || "Experiencia Estándar"}</p>
+            <div class="user-flex-cell">
+                <div class="user-avatar-circle" title="${nombreHuesped}">${iniciales}</div>
+                <div style="min-width: 0;">
+                    <span class="user-name-title">${nombreHuesped}</span>
+                    <span class="user-sub-email">${correo || (r.tipoEvento || "Experiencia Estándar")}</span>
                 </div>
             </div>
         </td>
@@ -566,8 +577,19 @@ function renderizarTablaReservasTodas(lista) {
     };
     let estadoKey = String(r.estado || "CONFIRMADA").trim().toUpperCase();
     let cls = statusMap[estadoKey] || "status-pending";
-    let iniciales =
-      r.iniciales || (r.nombreHuesped || "U").substring(0, 2).toUpperCase();
+    let nombreHuesped = r.nombreHuesped || r.cliente || "Cliente";
+    let correo = r.correoHuesped || r.email || r.correo || "";
+    let iniciales = r.iniciales || "";
+    if (!iniciales) {
+      let partes = String(nombreHuesped).trim().split(/\s+/);
+      if (partes.length >= 2) {
+        iniciales = (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+      } else if (partes.length === 1 && partes[0].length > 0) {
+        iniciales = partes[0].substring(0, Math.min(2, partes[0].length)).toUpperCase();
+      } else {
+        iniciales = "U";
+      }
+    }
     let personas = r.cantidadPersonas || r.numeroPersonas || 0;
     let mesa = r.numeroMesa || r.mesaId || "S/A";
     let fechaHora = r.fechaHora || ((r.fecha || "") + " " + (r.hora || "")).trim() || "N/A";
@@ -575,10 +597,11 @@ function renderizarTablaReservasTodas(lista) {
     let tr = document.createElement("tr");
     tr.innerHTML = `
         <td>
-            <div class="guest-cell">
-                <div class="guest-avatar">${iniciales}</div>
-                <div class="guest-info">
-                    <h4>${r.nombreHuesped || "Cliente"}</h4>
+            <div class="user-flex-cell">
+                <div class="user-avatar-circle" title="${nombreHuesped}">${iniciales}</div>
+                <div style="min-width: 0;">
+                    <span class="user-name-title">${nombreHuesped}</span>
+                    <span class="user-sub-email">${correo || (r.tipoEvento || "Experiencia Estándar")}</span>
                 </div>
             </div>
         </td>

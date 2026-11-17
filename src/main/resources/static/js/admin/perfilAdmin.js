@@ -189,7 +189,14 @@ class PerfilAdmin {
 
         };
 
-        await this.guardarEnBackend(payload);
+        const btn = this.formPerfil ? this.formPerfil.querySelector('button[type="submit"]') : null;
+        const stopLoading = btn && window.AdminButtonLoading ? window.AdminButtonLoading.start(btn, "Guardando datos...") : null;
+
+        try {
+            await this.guardarEnBackend(payload);
+        } finally {
+            if (stopLoading) stopLoading();
+        }
 
     }
 
@@ -276,6 +283,9 @@ async handleSubmitPassword(e) {
     const usuarioId = localStorage.getItem("usuarioId");
     const token = localStorage.getItem("token");
 
+    const btn = this.formPassword ? this.formPassword.querySelector('button[type="submit"]') : null;
+    const stopLoading = btn && window.AdminButtonLoading ? window.AdminButtonLoading.start(btn, "Actualizando...") : null;
+
     try {
         const response = await fetch(`/usuarios/cambiar-password/${usuarioId}`, {
             method: "PUT",
@@ -295,6 +305,8 @@ async handleSubmitPassword(e) {
         }
     } catch (error) {
         this.mostrarError("Error de conexión con el servidor.");
+    } finally {
+        if (stopLoading) stopLoading();
     }
 }
 

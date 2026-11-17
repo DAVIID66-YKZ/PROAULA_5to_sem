@@ -1,4 +1,4 @@
-﻿/* ================================================================
+/* ================================================================
    GESTIÓN DE USUARIOS - GESTREST (PANEL ADMINISTRATIVO)
    CRUD Completo: Búsqueda en vivo, edición de roles, 
    creación, activación y desactivación suave (Soft-Delete)
@@ -420,11 +420,9 @@ async function guardarNuevoUsuario(event) {
 
     const token = obtenerTokenAdmin();
     const btnSubmit = document.getElementById("btnSubmitCrearUsuario");
-    const textoOriginal = btnSubmit ? btnSubmit.textContent : "Crear Usuario";
-    if (btnSubmit) {
-        btnSubmit.disabled = true;
-        btnSubmit.textContent = "Guardando...";
-    }
+    const stopLoading = btnSubmit && window.AdminButtonLoading
+        ? window.AdminButtonLoading.start(btnSubmit, "Creando usuario...")
+        : null;
 
     try {
         const resp = await fetch("/api/admin/usuarios", {
@@ -452,10 +450,7 @@ async function guardarNuevoUsuario(event) {
         console.error("Error al crear usuario:", e);
         alert("Error de conexión con el servidor.");
     } finally {
-        if (btnSubmit) {
-            btnSubmit.disabled = false;
-            btnSubmit.textContent = textoOriginal;
-        }
+        if (stopLoading) stopLoading();
     }
 }
 
@@ -549,11 +544,9 @@ async function guardarEdicionUsuario(event) {
 
     const token = obtenerTokenAdmin();
     const btnSubmit = document.getElementById("btnSubmitEditarUsuario");
-    const textoOriginal = btnSubmit ? btnSubmit.textContent : "Guardar Cambios";
-    if (btnSubmit) {
-        btnSubmit.disabled = true;
-        btnSubmit.textContent = "Actualizando...";
-    }
+    const stopLoading = btnSubmit && window.AdminButtonLoading
+        ? window.AdminButtonLoading.start(btnSubmit, "Actualizando...")
+        : null;
 
     try {
         const resp = await fetch(`/api/admin/usuarios/${id}`, {
@@ -581,10 +574,7 @@ async function guardarEdicionUsuario(event) {
         console.error("Error al actualizar usuario:", e);
         alert("Error de conexión al actualizar usuario.");
     } finally {
-        if (btnSubmit) {
-            btnSubmit.disabled = false;
-            btnSubmit.textContent = textoOriginal;
-        }
+        if (stopLoading) stopLoading();
     }
 }
 
@@ -662,11 +652,9 @@ async function ejecutarCambioEstadoConfirmado() {
 
     const token = obtenerTokenAdmin();
     const btnAccion = document.getElementById("btnConfirmarAccionEstado");
-    const textoOriginal = btnAccion ? btnAccion.textContent : "Confirmar";
-    if (btnAccion) {
-        btnAccion.disabled = true;
-        btnAccion.textContent = "Procesando...";
-    }
+    const stopLoading = btnAccion && window.AdminButtonLoading
+        ? window.AdminButtonLoading.start(btnAccion, "Procesando...")
+        : null;
 
     try {
         const resp = await fetch(`/api/admin/usuarios/${id}/estado`, {
@@ -696,10 +684,7 @@ async function ejecutarCambioEstadoConfirmado() {
         console.error("Error al cambiar estado:", e);
         alert("Error de conexión al cambiar el estado del usuario.");
     } finally {
-        if (btnAccion) {
-            btnAccion.disabled = false;
-            btnAccion.textContent = textoOriginal;
-        }
+        if (stopLoading) stopLoading();
     }
 }
 

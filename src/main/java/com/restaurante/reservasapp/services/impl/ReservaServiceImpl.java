@@ -194,6 +194,7 @@ public class ReservaServiceImpl implements ReservaService {
         List<MesaEntity> mesasAptas = mesaRepo.findAll().stream()
                 .filter(m -> m.getSector() != null && m.getSector().equalsIgnoreCase(sector))
                 .filter(m -> m.getCapacidad() >= invitados)
+                .filter(MesaEntity::isDisponible)
                 .collect(Collectors.toList());
 
         if (mesasAptas.isEmpty()) {

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -89,8 +89,8 @@
                             </div>
                             
                             <div class="form-group">
-                                <label>Estado de Disponibilidad</label>
-                                <p style="font-size:12px; color:#888;">Habilitar para reservas en vivo</p>
+                                <label>Habilitación en el Restaurante</label>
+                                <p style="font-size:12px; color:#888;">Mesa operativa (desactivar solo para mantenimiento/bloqueo)</p>
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="activa" checked>
                                     <span class="slider"></span>
@@ -112,7 +112,8 @@
                         <div class="registry-header">
                             <h3>Registro del Piso</h3>
                             <div class="registry-stats">
-                                <span class="badge active-badge">ACTIVAS: <span id="mesasActivas">--</span></span>
+                                <span class="badge active-badge" title="Mesas disponibles para hoy">DISPONIBLES: <span id="mesasActivas">--</span></span>
+                                <span class="badge" style="background:rgba(244, 67, 54, 0.15); color:#e57373; border:1px solid rgba(244, 67, 54, 0.3);" title="Mesas ocupadas o reservadas hoy">OCUPADAS HOY: <span id="mesasOcupadasHoy">--</span></span>
                                 <span class="badge total-badge">TOTAL: <span id="mesasTotales">--</span></span>
                             </div>
                         </div>
