@@ -4,6 +4,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -14,6 +16,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 @Component
 public class GoogleGmailClient {
+
+    private static final Logger log = LoggerFactory.getLogger(GoogleGmailClient.class);
 
     private static final String TOKEN_URL = "https://oauth2.googleapis.com/token";
 
@@ -37,15 +41,17 @@ public class GoogleGmailClient {
         this.clientSecret = obtenerVariable(dotenv, "GMAIL_CLIENT_SECRET");
         this.refreshToken = obtenerVariable(dotenv, "GMAIL_REFRESH_TOKEN");
 
-        if (gmailUsername == null || gmailUsername.isBlank()
-                || clientId == null || clientId.isBlank()
-                || clientSecret == null || clientSecret.isBlank()
-                || refreshToken == null || refreshToken.isBlank()) {
-
-            throw new IllegalStateException(
-                    "Las variables de entorno de Gmail no están configuradas correctamente.");
+        if (!estaConfigurado()) {
+            log.warn("⚠️ Las variables de entorno de Gmail no están configuradas en .env (GMAIL_USERNAME, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN). El envío de correos estará inactivo hasta configurarlas.");
         }
         this.restClient = RestClient.create();
+    }
+
+    public boolean estaConfigurado() {
+        return gmailUsername != null && !gmailUsername.isBlank()
+                && clientId != null && !clientId.isBlank()
+                && clientSecret != null && !clientSecret.isBlank()
+                && refreshToken != null && !refreshToken.isBlank();
     }
 
     private String obtenerVariable(Dotenv dotenv, String nombre) {
@@ -63,6 +69,12 @@ public class GoogleGmailClient {
             String destinatario,
             String asunto,
             String contenidoHtml) {
+
+        if (!estaConfigurado()) {
+            log.error("No se pudo enviar correo a {}: Las variables de entorno de Gmail no están configuradas en .env.", destinatario);
+            throw new IllegalStateException(
+                    "Las variables de entorno de Gmail no están configuradas correctamente en .env.");
+        }
 
         try {
 

@@ -183,8 +183,7 @@ async function guardarReserva(event) {
         return;
     }
 
-    // 🔥 FLUJO DIRECTO: El usuario ya pulsó "Confirmar Reserva", se guarda como CONFIRMADA
-    // evitando la doble confirmación artificial que generaba fricción innecesaria.
+    // Registra la reserva en estado PENDIENTE para su posterior confirmación y pago desde Mis Reservas
     const reservaData = {
         fecha: fecha,
         hora: hora,
@@ -194,7 +193,7 @@ async function guardarReserva(event) {
         experiencia: experienciaRadio.value,
         platos: Array.from(document.querySelectorAll(".reserva-plato-checkbox:checked"))
             .map(checkbox => checkbox.value),
-        estado: "CONFIRMADA"
+        estado: "PENDIENTE"
     };
 
     try {
@@ -215,16 +214,22 @@ async function guardarReserva(event) {
             const formatoCOP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
 
             const platosTexto = totalPlatos > 0 ? `\n• Platos seleccionados: ${formatoCOP.format(totalPlatos)}` : "";
+            const lang = (localStorage.getItem("adminIdioma") || localStorage.getItem("appIdioma") || "es") === "en" ? "en" : "es";
+
+            const tituloMsg = lang === "en" ? "⏳ Reservation Registered (Pending)" : "⏳ Reserva Registrada (Pendiente)";
+            const textoMsg = lang === "en"
+                ? `Your booking for ${personas} guests on ${fecha} at ${hora} has been saved.${platosTexto}\nStatus: PENDING. Please confirm your table from 'My Reservations'.`
+                : `Tu velada para ${personas} personas el ${fecha} a las ${hora} ha sido registrada.${platosTexto}\nEstado: PENDIENTE. Confirma tu mesa desde 'Mis Reservas'.`;
 
             if (typeof mostrarToast === "function") {
                 mostrarToast(
-                    `Tu mesa para ${personas} personas el ${fecha} a las ${hora} está asegurada.${platosTexto}`,
-                    "exito",
-                    "✨ ¡Reserva Confirmada!",
+                    textoMsg,
+                    "info",
+                    tituloMsg,
                     5000
                 );
             } else {
-                alert(`✨ ¡Reserva Confirmada! Tu mesa para ${personas} personas el ${fecha} a las ${hora} está asegurada.`);
+                alert(`${tituloMsg}\n${textoMsg}`);
             }
 
             setTimeout(() => {

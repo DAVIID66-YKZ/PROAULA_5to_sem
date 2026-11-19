@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/reservas")
@@ -77,6 +78,56 @@ public class ReservaController {
         return ResponseEntity.ok(horas);
     }
 
+    // ── REPROGRAMACIÓN / EDICIÓN DE RESERVA ──
+
+    @PutMapping("/{id}/reprogramar")
+    public ResponseEntity<?> reprogramarReserva(
+            @PathVariable String id,
+            @RequestBody ReservaEntity datosNuevos) {
+        try {
+            ReservaEntity actualizada = reservaService.reprogramarReserva(id, datosNuevos);
+            return ResponseEntity.ok(actualizada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error al reprogramar: " + e.getMessage());
+        }
+    }
+
+    // ── ACTUALIZACIÓN DE PLATOS (HASTA 2H ANTES DE LA RESERVA) ──
+
+    @PutMapping("/{id}/platos")
+    public ResponseEntity<?> actualizarPlatosReserva(
+            @PathVariable String id,
+            @RequestBody(required = false) Object requestBody) {
+        try {
+            List<String> platos = new ArrayList<>();
+            if (requestBody instanceof List<?>) {
+                for (Object item : (List<?>) requestBody) {
+                    if (item != null) {
+                        platos.add(item.toString());
+                    }
+                }
+            } else if (requestBody instanceof java.util.Map<?, ?>) {
+                Object platosObj = ((java.util.Map<?, ?>) requestBody).get("platos");
+                if (platosObj instanceof List<?>) {
+                    for (Object item : (List<?>) platosObj) {
+                        if (item != null) {
+                            platos.add(item.toString());
+                        }
+                    }
+                }
+            }
+            ReservaEntity actualizada = reservaService.actualizarPlatosReserva(id, platos);
+            return ResponseEntity.ok(actualizada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al actualizar la selección de platos: " + e.getMessage());
+        }
+    }
+
     // ── CANCELACIÓN Y ELIMINACIÓN LÓGICA ──
 
     @PatchMapping("/{id}/cancelar")
@@ -124,12 +175,18 @@ public class ReservaController {
             @RequestBody java.util.Map<String, String> body) {
         try {
             String nuevoEstado = body.get("estado");
+            if ("CONFIRMADA".equalsIgnoreCase(nuevoEstado)) {
+                ReservaEntity confirmada = reservaService.confirmarReserva(id);
+                return ResponseEntity.ok(confirmada);
+            }
             ReservaEntity reserva = reservaService.obtenerReserva(id);
             if (reserva == null)
                 return ResponseEntity.notFound().build();
             reserva.setEstado(nuevoEstado);
             reservaService.guardarReservaDirecta(reserva);
             return ResponseEntity.ok(reserva);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error al actualizar estado: " + e.getMessage());
         }

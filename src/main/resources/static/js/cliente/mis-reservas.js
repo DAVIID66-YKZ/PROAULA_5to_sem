@@ -24,8 +24,34 @@ const formatoCOP = new Intl.NumberFormat("es-CO", {
 
 // Cache local de platos y reservas cargadas
 let catalogoPlatosMap = {};
+let catalogoPlatosLista = [];
 let listaReservasActuales = [];
 let filtroEstadoActual = "TODAS";
+let reservaActualViendoPlatos = null;
+let idReservaEditandoPlatos = null;
+let platosSeleccionadosTemp = new Set();
+
+/**
+ * Valida si una reserva permite edición de platos (Regla: hasta 2 horas antes de la hora de la reserva)
+ */
+function puedeEditarPlatosReserva(reserva) {
+    if (!reserva) return false;
+    const est = String(reserva.estado || "").toUpperCase().trim();
+    if (est === "CANCELADA" || est === "COMPLETADA") return false;
+
+    if (!reserva.fecha || !reserva.hora) return false;
+
+    const horaNorm = reserva.hora.trim().length === 5 ? `${reserva.hora.trim()}:00` : reserva.hora.trim();
+    const fechaHoraReserva = new Date(`${reserva.fecha.trim()}T${horaNorm}`);
+
+    if (isNaN(fechaHoraReserva.getTime())) return false;
+
+    const ahora = new Date();
+    // Límite: exactamente 2 horas antes del inicio de la reserva
+    const dosHorasAntes = new Date(fechaHoraReserva.getTime() - (2 * 60 * 60 * 1000));
+
+    return ahora < dosHorasAntes;
+}
 
 function getIdiomaMisReservas() {
     return (localStorage.getItem("adminIdioma") || localStorage.getItem("appIdioma") || "es") === "en" ? "en" : "es";
@@ -77,6 +103,7 @@ async function cargarPlatosYReservas() {
         const resMenu = await fetch("/menu/api/listar");
         if (resMenu.ok) {
             const platos = await resMenu.json();
+            catalogoPlatosLista = Array.isArray(platos) ? platos : [];
             catalogoPlatosMap = {};
             platos.forEach(p => {
                 catalogoPlatosMap[p.id] = p;
@@ -218,11 +245,14 @@ function renderizarTablaReservas() {
 
         // Columna de platos
         let platosHtml = "";
+        const puedeEditarEste = puedeEditarPlatosReserva(res);
         if (platosIds.length > 0) {
             const textoPlato = lang === "en"
                 ? `${platosIds.length} ${platosIds.length > 1 ? "dishes" : "dish"}`
                 : `${platosIds.length} plato${platosIds.length > 1 ? "s" : ""}`;
-            const tooltipPlatos = lang === "en" ? "View selected dishes" : "Ver platos seleccionados";
+            const tooltipPlatos = puedeEditarEste
+                ? (lang === "en" ? "View or edit selected dishes" : "Ver o modificar platos seleccionados")
+                : (lang === "en" ? "View selected dishes" : "Ver platos seleccionados");
             platosHtml = `
                 <button type="button" class="btn-ver-platos" onclick="verDetallePlatos('${res.id}')" title="${tooltipPlatos}">
                     <span>🍽️ ${textoPlato}</span>
@@ -231,7 +261,14 @@ function renderizarTablaReservas() {
             `;
         } else {
             const textoSinPlatos = lang === "en" ? "No dishes (Base table $10k)" : "Sin platos (Mesa base $10k)";
-            platosHtml = `<span class="sin-platos-tag">${textoSinPlatos}</span>`;
+            const tooltipSin = puedeEditarEste
+                ? (lang === "en" ? "Click to add dishes to your reservation (available until 2h before)" : "Haz clic para agregar platos a tu reserva (disponible hasta 2h antes)")
+                : (lang === "en" ? "No dishes selected" : "Sin platos seleccionados");
+            platosHtml = `
+                <button type="button" class="btn-sin-platos" onclick="verDetallePlatos('${res.id}')" title="${tooltipSin}">
+                    <span class="sin-platos-tag">${textoSinPlatos} ${puedeEditarEste ? '➕' : ''}</span>
+                </button>
+            `;
         }
 
         const estadoRes = String(res.estado || "PENDIENTE").toUpperCase();
@@ -266,6 +303,7 @@ function renderizarTablaReservas() {
             const labelPendiente = `${lang === "en" ? "Pending" : "Pendiente"} (${formatoCOP.format(anticipo)})`;
             const tooltipConfirmar = lang === "en" ? "Confirm this reservation" : "Confirmar esta reserva";
             const btnConfirmarTexto = lang === "en" ? "Confirm" : "Confirmar";
+            const tooltipReprogramar = lang === "en" ? "Reschedule / Edit" : "Reprogramar o Modificar";
             const tooltipCancelar = lang === "en" ? "Cancel Reservation" : "Cancelar Reserva";
 
             estadoBadge = `
@@ -279,12 +317,16 @@ function renderizarTablaReservas() {
                     <span class="material-symbols-outlined">check_circle</span>
                     <span>${btnConfirmarTexto}</span>
                 </button>
+                <button class="btn-icon-table btn-reprogramar" onclick="abrirModalReprogramar('${res.id}')" title="${tooltipReprogramar}">
+                    <span class="material-symbols-outlined">edit_calendar</span>
+                </button>
                 <button class="btn-icon-table btn-cancel" onclick="cancelarReserva('${res.id}')" title="${tooltipCancelar}">
                     <span class="material-symbols-outlined">delete</span>
                 </button>
             `;
         } else {
             // CONFIRMADA
+            const tooltipReprogramar = lang === "en" ? "Reschedule / Edit" : "Reprogramar o Modificar";
             const tooltipCancelar = lang === "en" ? "Cancel Reservation" : "Cancelar Reserva";
             estadoBadge = `
                 <span class="status-pill" style="background:rgba(46, 204, 113, 0.15); color:#2ecc71; border:1px solid rgba(46, 204, 113, 0.4);">
@@ -293,6 +335,9 @@ function renderizarTablaReservas() {
             `;
 
             botonesAcciones = `
+                <button class="btn-icon-table btn-reprogramar" onclick="abrirModalReprogramar('${res.id}')" title="${tooltipReprogramar}">
+                    <span class="material-symbols-outlined">edit_calendar</span>
+                </button>
                 <button class="btn-icon-table btn-cancel" onclick="cancelarReserva('${res.id}')" title="${tooltipCancelar}">
                     <span class="material-symbols-outlined">delete</span>
                 </button>
@@ -320,10 +365,15 @@ function verDetallePlatos(idReserva) {
     const reserva = listaReservasActuales.find(r => r.id === idReserva);
     if (!reserva) return;
 
+    reservaActualViendoPlatos = idReserva;
+
     const listaEl = document.getElementById("modalPlatosLista");
     const totalEl = document.getElementById("modalPlatosTotalProductos");
     const anticipoEl = document.getElementById("modalPlatosAnticipo");
     const modalEl = document.getElementById("modalDetallePlatos");
+    const avisoTiempoEl = document.getElementById("modalPlatosAvisoTiempo");
+    const btnEditarPlatos = document.getElementById("btnIrAEditarPlatos");
+    const langActual = getIdiomaMisReservas();
 
     if (!listaEl || !totalEl || !anticipoEl || !modalEl) return;
 
@@ -331,48 +381,101 @@ function verDetallePlatos(idReserva) {
     const platosIds = Array.isArray(reserva.platos) ? reserva.platos : [];
     let totalPlatos = 0;
 
-    platosIds.forEach(id => {
-        const plato = catalogoPlatosMap[id];
-        const nombre = plato ? plato.nombre : `Plato #${id.substring(0, 6)}`;
-        const precio = plato && plato.precio ? Number(plato.precio) : 0;
-        totalPlatos += precio;
-
-        const fila = document.createElement("div");
-        fila.className = "modal-plato-fila";
-
-        const nombreSpan = document.createElement("span");
-        nombreSpan.className = "plato-nombre";
-
-        const langActual = getIdiomaMisReservas();
-        if (langActual === "en" && typeof window.traducirDinamico === "function") {
-            const cached = typeof window.obtenerTraduccionCacheada === "function" ? window.obtenerTraduccionCacheada(nombre, "es", "en") : null;
-            nombreSpan.textContent = cached || nombre;
-            if (!cached && plato && plato.nombre) {
-                window.traducirDinamico(nombre, "es", "en").then(res => {
-                    if (nombreSpan.isConnected && getIdiomaMisReservas() === "en") {
-                        nombreSpan.textContent = res;
-                    }
-                });
-            }
+        if (platosIds.length === 0) {
+            const vacioMsg = langActual === "en"
+                ? "No dishes pre-ordered for this reservation yet."
+                : "Aún no has preordenado platos para esta velada.";
+            listaEl.innerHTML = `
+            <div style="text-align: center; padding: 25px 10px; color: #888;">
+                <span class="material-symbols-outlined notranslate" style="font-size: 38px; display: block; margin-bottom: 8px; color: #d4af37;">restaurant</span>
+                <span>${vacioMsg}</span>
+            </div>
+        `;
         } else {
-            nombreSpan.textContent = nombre;
-        }
+            platosIds.forEach(id => {
+                const plato = catalogoPlatosMap[id];
+                const nombre = plato ? plato.nombre : `Plato #${id.substring(0, 6)}`;
+                const precio = plato && plato.precio ? Number(plato.precio) : 0;
+                totalPlatos += precio;
 
-        const precioSpan = document.createElement("span");
-        precioSpan.className = "plato-precio";
-        precioSpan.textContent = formatoCOP.format(precio);
+                const fila = document.createElement("div");
+                fila.className = "modal-plato-fila";
 
-        fila.appendChild(nombreSpan);
-        fila.appendChild(precioSpan);
-        listaEl.appendChild(fila);
-    });
+                const nombreSpan = document.createElement("span");
+                nombreSpan.className = "plato-nombre";
 
-    const anticipo = Math.max(10000, Math.round(totalPlatos * 0.05));
+                        if (langActual === "en" && typeof window.traducirDinamico === "function") {
+                            const cached = typeof window.obtenerTraduccionCacheada === "function" ? window.obtenerTraduccionCacheada(nombre, "es", "en") : null;
+                            nombreSpan.textContent = cached || nombre;
+                            if (!cached && plato && plato.nombre) {
+                                window.traducirDinamico(nombre, "es", "en").then(res => {
+                                    if (nombreSpan.isConnected && getIdiomaMisReservas() === "en") {
+                                        nombreSpan.textContent = res;
+                                    }
+                                });
+                            }
+                        } else {
+                            nombreSpan.textContent = nombre;
+                        }
 
-    totalEl.textContent = formatoCOP.format(totalPlatos);
-    anticipoEl.textContent = formatoCOP.format(anticipo);
+                    const precioSpan = document.createElement("span");
+                    precioSpan.className = "plato-precio";
+                    precioSpan.textContent = formatoCOP.format(precio);
 
-    modalEl.style.display = "flex";
+            fila.appendChild(nombreSpan);
+            fila.appendChild(precioSpan);
+            listaEl.appendChild(fila);
+        });
+}
+
+const anticipo = Math.max(10000, Math.round(totalPlatos * 0.05));
+totalEl.textContent = formatoCOP.format(totalPlatos);
+anticipoEl.textContent = formatoCOP.format(anticipo);
+
+// Validación de la regla de 2 horas para edición de platos
+const puedeEditar = puedeEditarPlatosReserva(reserva);
+
+if (avisoTiempoEl) {
+    if (puedeEditar) {
+        const textoHabilitado = langActual === "en"
+            ? "Dishes can be modified up to 2 hours before your booking time."
+            : "Puedes modificar o agregar platos a tu velada hasta 2 horas antes de la reserva.";
+        avisoTiempoEl.innerHTML = `
+                <div class="aviso-regla-tiempo habilitado">
+                    <span class="material-symbols-outlined notranslate" style="font-size: 20px;">timer</span>
+                    <span>${textoHabilitado}</span>
+                </div>
+            `;
+    } else {
+        const textoBloqueado = langActual === "en"
+            ? "Dishes locked: Less than 2 hours remain or the event ended (kitchen in preparation)."
+            : "Platos bloqueados: Faltan menos de 2 horas para la reserva o la velada culminó (cocina en preparación).";
+        avisoTiempoEl.innerHTML = `
+                <div class="aviso-regla-tiempo bloqueado">
+                    <span class="material-symbols-outlined notranslate" style="font-size: 20px;">lock_clock</span>
+                    <span>${textoBloqueado}</span>
+                </div>
+            `;
+    }
+}
+
+if (btnEditarPlatos) {
+    if (puedeEditar) {
+        btnEditarPlatos.style.display = "inline-flex";
+        btnEditarPlatos.onclick = () => abrirModalEditarPlatos(reserva.id);
+        const btnTexto = platosIds.length > 0
+            ? (langActual === "en" ? "Edit Dishes" : "Modificar Platos")
+            : (langActual === "en" ? "Select Dishes" : "Seleccionar Platos");
+        btnEditarPlatos.innerHTML = `
+                <span class="material-symbols-outlined notranslate" style="font-size: 18px; vertical-align: middle; margin-right: 6px;">restaurant_menu</span>
+                <span>${btnTexto}</span>
+            `;
+    } else {
+        btnEditarPlatos.style.display = "none";
+    }
+}
+
+modalEl.style.display = "flex";
 }
 
 function cerrarModalPlatos() {
@@ -560,5 +663,538 @@ async function guardarComentarioServidor() {
         } else {
             alert("Error de conexión.");
         }
+    }
+}
+
+// ================================================================
+// GESTIÓN DE REPROGRAMACIÓN / EDICIÓN DE RESERVA
+// ================================================================
+
+const MAPA_HORAS_AMPM = {
+    "10:00": "10:00 AM",
+    "11:00": "11:00 AM",
+    "12:00": "12:00 PM",
+    "13:00": "01:00 PM",
+    "14:00": "02:00 PM",
+    "15:00": "03:00 PM",
+    "16:00": "04:00 PM",
+    "17:00": "05:00 PM",
+    "18:00": "06:00 PM",
+    "19:00": "07:00 PM",
+    "20:00": "08:00 PM",
+    "21:00": "09:00 PM",
+    "22:00": "10:00 PM"
+};
+
+/**
+ * Abre el modal de reprogramación prellenado con los datos de la reserva seleccionada
+ */
+function abrirModalReprogramar(id) {
+    const reserva = listaReservasActuales.find(r => r.id === id);
+    if (!reserva) return;
+
+    const lang = getIdiomaMisReservas();
+    const idInput = document.getElementById("reprogramarReservaId");
+    const fechaInput = document.getElementById("reprogramarFecha");
+    const horaSelect = document.getElementById("reprogramarHora");
+    const invitadosInput = document.getElementById("reprogramarInvitados");
+    const sectorSelect = document.getElementById("reprogramarSector");
+    const avisoPlatos = document.getElementById("reprogramarAvisoPlatos");
+    const modalEl = document.getElementById("modalReprogramar");
+
+    if (!modalEl || !idInput || !fechaInput || !horaSelect || !invitadosInput || !sectorSelect) return;
+
+    idInput.value = reserva.id;
+    fechaInput.value = reserva.fecha || "";
+
+    // Restringir a fechas desde hoy
+    const hoyStr = new Date().toISOString().split("T")[0];
+    fechaInput.min = hoyStr;
+
+    invitadosInput.value = reserva.numeroPersonas || 2;
+    sectorSelect.value = reserva.experiencia || "Mesa-Estandar";
+    horaSelect.value = reserva.hora || "19:00";
+
+    const cantPlatos = Array.isArray(reserva.platos) ? reserva.platos.length : 0;
+    const puedeEditar = puedeEditarPlatosReserva(reserva);
+    const btnEditarPlatosReprog = document.getElementById("btnEditarPlatosDesdeReprogramar");
+
+    if (btnEditarPlatosReprog) {
+        btnEditarPlatosReprog.style.display = puedeEditar ? "inline-block" : "none";
+    }
+
+    if (avisoPlatos) {
+        if (cantPlatos > 0) {
+            avisoPlatos.textContent = lang === "en"
+                ? `Your ${cantPlatos} pre-ordered dish(es) will be safely preserved for this booking.`
+                : `Tus ${cantPlatos} plato(s) preordenados se mantendrán intactos para esta velada.`;
+        } else {
+            avisoPlatos.textContent = lang === "en"
+                ? "This reservation has no pre-ordered dishes."
+                : "Esta reserva no contiene platos preordenados.";
+        }
+    }
+
+    // Vincular reactividad para comprobar disponibilidad en tiempo real
+    if (!fechaInput.dataset.listenersBound) {
+        fechaInput.addEventListener("change", () => recalcularHorasReprogramar());
+        invitadosInput.addEventListener("input", () => recalcularHorasReprogramar());
+        sectorSelect.addEventListener("change", () => recalcularHorasReprogramar());
+        fechaInput.dataset.listenersBound = "true";
+    }
+
+    recalcularHorasReprogramar(reserva.hora);
+    modalEl.style.display = "flex";
+}
+
+/**
+ * Cierra el modal de reprogramación
+ */
+function cerrarModalReprogramar() {
+    const modalEl = document.getElementById("modalReprogramar");
+    if (modalEl) modalEl.style.display = "none";
+}
+
+/**
+ * Consulta la disponibilidad de mesas en el backend para la fecha, invitados y sector elegidos,
+ * deshabilitando los turnos sin mesas y manteniendo la hora actual del usuario si no entra en conflicto.
+ */
+async function recalcularHorasReprogramar(horaPreferida) {
+    const id = document.getElementById("reprogramarReservaId") ? document.getElementById("reprogramarReservaId").value : null;
+    const reserva = listaReservasActuales.find(r => r.id === id);
+    const fechaInput = document.getElementById("reprogramarFecha");
+    const horaSelect = document.getElementById("reprogramarHora");
+    const invitadosInput = document.getElementById("reprogramarInvitados");
+    const sectorSelect = document.getElementById("reprogramarSector");
+
+    if (!fechaInput || !horaSelect || !invitadosInput || !sectorSelect) return;
+
+    const fecha = fechaInput.value;
+    const invitados = parseInt(invitadosInput.value, 10) || 1;
+    const sector = sectorSelect.value;
+    const lang = getIdiomaMisReservas();
+
+    if (!fecha) return;
+
+    const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
+    const ahora = new Date();
+    const hoyStr = ahora.toISOString().split("T")[0];
+    const horaActualStr = ahora.toTimeString().substring(0, 5);
+    const esMismoDia = (fecha === hoyStr);
+    const esPasado = (fecha < hoyStr);
+
+    try {
+        const url = `/reservas/ocupadas?fecha=${fecha}&sector=${encodeURIComponent(sector)}&mesaId=${encodeURIComponent(sector)}&invitados=${invitados}`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        const horasOcupadas = response.ok ? await response.json() : [];
+
+        Array.from(horaSelect.options).forEach(opt => {
+            const esSuHoraActual = reserva && (reserva.fecha === fecha) && (reserva.hora === opt.value) && (reserva.experiencia === sector);
+            const estaOcupada = horasOcupadas.includes(opt.value) && !esSuHoraActual;
+            const esHoraPasada = esMismoDia && (opt.value <= horaActualStr);
+            const noDisponible = estaOcupada || esHoraPasada || esPasado;
+
+            opt.disabled = noDisponible;
+
+            const baseLabel = MAPA_HORAS_AMPM[opt.value] || opt.value;
+            let sufijo = "";
+            if (esPasado) {
+                sufijo = lang === "en" ? " (Past date)" : " (Fecha pasada)";
+            } else if (esHoraPasada) {
+                sufijo = lang === "en" ? " (Past time)" : " (Hora pasada)";
+            } else if (estaOcupada) {
+                sufijo = lang === "en" ? " (Full)" : " (Ocupado)";
+            } else if (esSuHoraActual) {
+                sufijo = lang === "en" ? " (Current)" : " (Actual)";
+            }
+
+            opt.text = `${baseLabel}${sufijo}`;
+            opt.style.color = noDisponible ? "#666" : "#fff";
+        });
+
+        // Intentar preservar la hora deseada si sigue disponible
+        const objetivo = horaPreferida || horaSelect.value;
+        const optObjetivo = Array.from(horaSelect.options).find(o => o.value === objetivo && !o.disabled);
+        if (optObjetivo) {
+            horaSelect.value = objetivo;
+        } else if (horaSelect.selectedOptions[0] && horaSelect.selectedOptions[0].disabled) {
+            const primeraLibre = Array.from(horaSelect.options).find(o => !o.disabled);
+            if (primeraLibre) horaSelect.value = primeraLibre.value;
+        }
+    } catch (e) {
+        console.error("Error al recalcular horas disponibles:", e);
+    }
+}
+
+/**
+ * Envía la solicitud PUT al servidor para reprogramar la reserva con reasignación Best-Fit
+ */
+async function guardarReprogramacion(event) {
+    if (event) event.preventDefault();
+
+    const id = document.getElementById("reprogramarReservaId").value;
+    const fecha = document.getElementById("reprogramarFecha").value;
+    const hora = document.getElementById("reprogramarHora").value;
+    const numeroPersonas = parseInt(document.getElementById("reprogramarInvitados").value, 10);
+    const experiencia = document.getElementById("reprogramarSector").value;
+    const btnGuardar = document.getElementById("btnGuardarReprogramacion");
+    const lang = getIdiomaMisReservas();
+
+    if (!id || !fecha || !hora || !numeroPersonas || !experiencia) {
+        const advertencia = lang === "en" ? "Please fill in all fields." : "Por favor completa todos los campos requeridos.";
+        if (typeof mostrarToast === "function") {
+            mostrarToast(advertencia, "advertencia");
+        } else {
+            alert(advertencia);
+        }
+        return;
+    }
+
+    const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
+    if (!token) {
+        window.location.href = "/login";
+        return;
+    }
+
+    if (btnGuardar) {
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = lang === "en" ? "Saving..." : "Guardando...";
+    }
+
+    try {
+        const response = await fetch(`/reservas/${id}/reprogramar`, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                fecha: fecha,
+                hora: hora,
+                numeroPersonas: numeroPersonas,
+                experiencia: experiencia
+            })
+        });
+
+        if (response.ok) {
+            cerrarModalReprogramar();
+            const exitoMsg = lang === "en"
+                ? "Reservation rescheduled successfully! Your table was updated and your dishes preserved."
+                : "¡Reserva reprogramada con éxito! Tu mesa fue reasignada y tus platos preordenados se mantuvieron intactos.";
+            if (typeof mostrarToast === "function") {
+                mostrarToast(exitoMsg, "exito", "✨ Reprogramación Exitosa");
+            } else {
+                alert(exitoMsg);
+            }
+            await cargarMisReservas();
+        } else {
+            const errorMsg = await response.text();
+            if (typeof mostrarToast === "function") {
+                mostrarToast(errorMsg, "advertencia", "No fue posible reprogramar");
+            } else {
+                alert(errorMsg);
+            }
+        }
+    } catch (e) {
+        console.error("Error al reprogramar la reserva:", e);
+        const errRed = lang === "en" ? "Connection error while updating reservation." : "Error de conexión al actualizar la reserva.";
+        if (typeof mostrarToast === "function") {
+            mostrarToast(errRed, "error");
+        } else {
+            alert(errRed);
+        }
+    } finally {
+        if (btnGuardar) {
+            btnGuardar.disabled = false;
+            btnGuardar.textContent = lang === "en" ? "Save Changes" : "Guardar Cambios";
+        }
+    }
+}
+
+// ================================================================
+// GESTIÓN DE MODIFICACIÓN DE PLATOS (REGLA DE 2 HORAS)
+// ================================================================
+
+function formatearCategoriaPlato(cat, lang) {
+    const map = {
+        "ENTRADAS": lang === "en" ? "Appetizer" : "Entrada",
+        "PLATOS_FUERTES": lang === "en" ? "Main Course" : "Plato Fuerte",
+        "BEBIDAS": lang === "en" ? "Beverage" : "Bebida",
+        "POSTRES": lang === "en" ? "Dessert" : "Postre",
+        "OTROS": lang === "en" ? "Special" : "Especial"
+    };
+    return map[cat] || cat;
+}
+
+/**
+ * Abre el editor interactivo de platos permitiendo seleccionar/deseleccionar platos de la carta
+ */
+function abrirModalEditarPlatos(idReserva) {
+    const id = idReserva || reservaActualViendoPlatos;
+    const reserva = listaReservasActuales.find(r => r.id === id);
+    if (!reserva) return;
+
+    const lang = getIdiomaMisReservas();
+
+    if (!puedeEditarPlatosReserva(reserva)) {
+        const msgBloqueo = lang === "en"
+            ? "Cannot edit dishes: Less than 2 hours remain for this reservation."
+            : "No es posible modificar los platos: Faltan menos de 2 horas para la reserva (la cocina ya está preparando el servicio).";
+        if (typeof mostrarToast === "function") {
+            mostrarToast(msgBloqueo, "advertencia", "Tiempo límite superado");
+        } else {
+            alert(msgBloqueo);
+        }
+        return;
+    }
+
+    cerrarModalPlatos();
+    cerrarModalReprogramar();
+
+    idReservaEditandoPlatos = id;
+    platosSeleccionadosTemp = new Set(Array.isArray(reserva.platos) ? reserva.platos : []);
+
+    const modalEditar = document.getElementById("modalEditarPlatos");
+    const contenedor = document.getElementById("contenedorPlatosEditor");
+    const subtitulo = document.getElementById("subtituloEditarPlatos");
+
+    if (!modalEditar || !contenedor) return;
+
+    if (subtitulo) {
+        const infoReserva = lang === "en"
+            ? `Reservation on ${reserva.fecha} at ${reserva.hora} • Editable until 2h before event`
+            : `Reserva para el ${reserva.fecha} a las ${reserva.hora} • Modificable hasta 2h antes de la velada`;
+        subtitulo.textContent = infoReserva;
+    }
+
+    contenedor.innerHTML = "";
+
+    const platosList = (catalogoPlatosLista && catalogoPlatosLista.length > 0)
+        ? catalogoPlatosLista
+        : Object.values(catalogoPlatosMap);
+
+    if (platosList.length === 0) {
+        contenedor.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; color: #888; padding: 30px;">${lang === "en" ? "Unable to load menu." : "No se pudo cargar la carta de platos."}</p>`;
+    } else {
+        platosList.forEach(plato => {
+            const estaSeleccionado = platosSeleccionadosTemp.has(plato.id);
+            const precioNum = Number(plato.precio || 0);
+            const cat = (plato.categoria || "OTROS").toUpperCase();
+
+            const card = document.createElement("label");
+            card.className = `editor-plato-card ${estaSeleccionado ? "checked" : ""}`;
+            card.dataset.categoria = cat;
+            card.dataset.id = plato.id;
+
+            const check = document.createElement("input");
+            check.type = "checkbox";
+            check.value = plato.id;
+            check.checked = estaSeleccionado;
+            check.disabled = (plato.disponible === false);
+
+            check.addEventListener("change", (e) => {
+                if (e.target.checked) {
+                    platosSeleccionadosTemp.add(plato.id);
+                    card.classList.add("checked");
+                } else {
+                    platosSeleccionadosTemp.delete(plato.id);
+                    card.classList.remove("checked");
+                }
+                actualizarTotalesEditor();
+            });
+
+            const info = document.createElement("div");
+            info.className = "editor-plato-info";
+
+            const nombreSpan = document.createElement("span");
+            nombreSpan.className = "editor-plato-nombre";
+            nombreSpan.textContent = plato.nombre;
+
+            if (lang === "en" && typeof window.traducirDinamico === "function") {
+                const cached = typeof window.obtenerTraduccionCacheada === "function" ? window.obtenerTraduccionCacheada(plato.nombre, "es", "en") : null;
+                nombreSpan.textContent = cached || plato.nombre;
+                if (!cached && plato.nombre) {
+                    window.traducirDinamico(plato.nombre, "es", "en").then(res => {
+                        if (nombreSpan.isConnected && getIdiomaMisReservas() === "en") nombreSpan.textContent = res;
+                    });
+                }
+            }
+
+            const subSpan = document.createElement("span");
+            subSpan.className = "editor-plato-sub";
+            subSpan.textContent = formatearCategoriaPlato(cat, lang);
+
+            info.appendChild(nombreSpan);
+            info.appendChild(subSpan);
+
+            const precioSpan = document.createElement("span");
+            precioSpan.className = "editor-plato-precio";
+            precioSpan.textContent = formatoCOP.format(precioNum);
+
+            card.appendChild(check);
+            card.appendChild(info);
+            card.appendChild(precioSpan);
+
+            contenedor.appendChild(card);
+        });
+    }
+
+    // Resetear filtros
+    document.querySelectorAll(".btn-cat-plato").forEach(b => b.classList.remove("active"));
+    const primerFiltro = document.querySelector(".btn-cat-plato");
+    if (primerFiltro) primerFiltro.classList.add("active");
+
+    actualizarTotalesEditor();
+    modalEditar.style.display = "flex";
+}
+
+/**
+ * Cierra el modal del editor de platos
+ */
+function cerrarModalEditarPlatos() {
+    const modalEditar = document.getElementById("modalEditarPlatos");
+    if (modalEditar) modalEditar.style.display = "none";
+}
+
+/**
+ * Filtra los platos mostrados en el editor según la categoría seleccionada
+ */
+function filtrarCategoriaEditor(catKey, btn) {
+    document.querySelectorAll(".btn-cat-plato").forEach(b => b.classList.remove("active"));
+    if (btn) btn.classList.add("active");
+
+    const cards = document.querySelectorAll("#contenedorPlatosEditor .editor-plato-card");
+    cards.forEach(card => {
+        if (catKey === "TODOS" || card.dataset.categoria === catKey) {
+            card.style.display = "flex";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+
+/**
+ * Actualiza en tiempo real los contadores y anticipo del editor
+ */
+function actualizarTotalesEditor() {
+    let total = 0;
+    platosSeleccionadosTemp.forEach(id => {
+        const plato = catalogoPlatosMap[id];
+        if (plato && plato.precio) {
+            total += Number(plato.precio);
+        }
+    });
+
+    const cant = platosSeleccionadosTemp.size;
+    const anticipo = Math.max(10000, Math.round(total * 0.05));
+    const lang = getIdiomaMisReservas();
+
+    const contadorEl = document.getElementById("contadorPlatosSeleccionados");
+    const totalEl = document.getElementById("editorTotalProductos");
+    const anticipoEl = document.getElementById("editorAnticipo");
+
+    if (contadorEl) {
+        contadorEl.textContent = lang === "en"
+            ? `${cant} dish${cant === 1 ? "" : "es"} selected`
+            : `${cant} plato${cant === 1 ? "" : "s"} seleccionado${cant === 1 ? "" : "s"}`;
+    }
+    if (totalEl) totalEl.textContent = formatoCOP.format(total);
+    if (anticipoEl) anticipoEl.textContent = formatoCOP.format(anticipo);
+}
+
+/**
+ * Guarda los platos modificados en el servidor vía PUT /reservas/{id}/platos
+ */
+async function guardarEdicionPlatos() {
+    if (!idReservaEditandoPlatos) return;
+
+    const reserva = listaReservasActuales.find(r => r.id === idReservaEditandoPlatos);
+    const lang = getIdiomaMisReservas();
+
+    if (!puedeEditarPlatosReserva(reserva)) {
+        const msg = lang === "en"
+            ? "Cannot edit dishes: Less than 2 hours remain for this reservation."
+            : "Los platos ya no se pueden modificar porque faltan menos de 2 horas para la velada.";
+        if (typeof mostrarToast === "function") {
+            mostrarToast(msg, "advertencia", "Tiempo límite superado");
+        } else {
+            alert(msg);
+        }
+        cerrarModalEditarPlatos();
+        return;
+    }
+
+    const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
+    if (!token) {
+        window.location.href = "/login";
+        return;
+    }
+
+    const btnGuardar = document.getElementById("btnGuardarPlatos");
+    if (btnGuardar) {
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = lang === "en" ? "Saving..." : "Guardando...";
+    }
+
+    try {
+        const platosArray = Array.from(platosSeleccionadosTemp);
+        const response = await fetch(`/reservas/${idReservaEditandoPlatos}/platos`, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(platosArray)
+        });
+
+        if (response.ok) {
+            cerrarModalEditarPlatos();
+            const exitoMsg = lang === "en"
+                ? "Dishes updated successfully!"
+                : "¡Selección de platos actualizada con éxito!";
+            if (typeof mostrarToast === "function") {
+                mostrarToast(exitoMsg, "exito", "✨ Carta Actualizada");
+            } else {
+                alert(exitoMsg);
+            }
+            await cargarMisReservas();
+        } else {
+            const errorMsg = await response.text();
+            if (typeof mostrarToast === "function") {
+                mostrarToast(errorMsg, "advertencia", "Atención");
+            } else {
+                alert(errorMsg);
+            }
+        }
+    } catch (e) {
+        console.error("Error al actualizar platos:", e);
+        const errRed = lang === "en" ? "Connection error while updating dishes." : "Error de conexión al actualizar platos.";
+        if (typeof mostrarToast === "function") {
+            mostrarToast(errRed, "error");
+        } else {
+            alert(errRed);
+        }
+    } finally {
+        if (btnGuardar) {
+            btnGuardar.disabled = false;
+            btnGuardar.textContent = lang === "en" ? "Save Dishes" : "Guardar Platos";
+        }
+    }
+}
+
+/**
+ * Permite saltar desde el modal de reprogramación al editor de platos
+ */
+function editarPlatosDesdeReprogramar() {
+    const id = document.getElementById("reprogramarReservaId") ? document.getElementById("reprogramarReservaId").value : null;
+    if (id) {
+        abrirModalEditarPlatos(id);
     }
 }

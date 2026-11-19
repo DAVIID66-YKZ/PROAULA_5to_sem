@@ -10,7 +10,7 @@
 
     if (window._gestrestTranslateScriptLoaded) {
         if (typeof window.inicializarSelector === "function") {
-            try { window.inicializarSelector(); } catch(e) {}
+            try { window.inicializarSelector(); } catch (e) { }
         }
         return;
     }
@@ -179,7 +179,7 @@
             "user.todosRoles": "Todos los roles",
             "user.rolClientes": "Clientes",
             "user.rolAdmins": "Administradores",
-                        "user.rolMeseros": "Meseros",
+            "user.rolMeseros": "Meseros",
             "user.rolCliente": "CLIENTE",
             "user.rolAdmin": "ADMINISTRADOR",
             "user.rolMesero": "MESERO",
@@ -293,6 +293,13 @@
             "clientBookings.modalComentarioDesc": "Cuéntanos tu experiencia culinaria en este evento.",
             "clientBookings.modalComentarioPlaceholder": "Escribe tu reseña aquí...",
             "clientBookings.guardarComentario": "Guardar en Manuscrito",
+            "clientBookings.reprogramarBadge": "Modificar Velada",
+            "clientBookings.reprogramarTitulo": "Reprogramar Reserva",
+            "clientBookings.btnModificarPlatos": "Modificar Platos",
+            "clientBookings.editarPlatosBadge": "Carta del Manuscrito",
+            "clientBookings.editarPlatosTitulo": "Modificar Selección de Platos",
+            "clientBookings.editarPlatosDesc": "Modifica los platos para tu velada (disponible hasta 2 horas antes de la reserva)",
+            "clientBookings.platosSeleccionadosLabel": "Platos seleccionados:",
 
             // Cliente - Calendario
             "clientCalendar.badge": "Agenda de Experiencias",
@@ -518,7 +525,7 @@
             "user.todosRoles": "All roles",
             "user.rolClientes": "Clients",
             "user.rolAdmins": "Administrators",
-                        "user.rolMeseros": "Waiters",
+            "user.rolMeseros": "Waiters",
             "user.rolCliente": "CLIENT",
             "user.rolAdmin": "ADMINISTRATOR",
             "user.rolMesero": "WAITER",
@@ -632,6 +639,13 @@
             "clientBookings.modalComentarioDesc": "Tell us about your culinary experience at this event.",
             "clientBookings.modalComentarioPlaceholder": "Write your review here...",
             "clientBookings.guardarComentario": "Save in Manuscript",
+            "clientBookings.reprogramarBadge": "Modify Evening",
+            "clientBookings.reprogramarTitulo": "Reschedule Reservation",
+            "clientBookings.btnModificarPlatos": "Modify Dishes",
+            "clientBookings.editarPlatosBadge": "Manuscript Menu",
+            "clientBookings.editarPlatosTitulo": "Modify Dish Selection",
+            "clientBookings.editarPlatosDesc": "Modify dishes for your evening (available up to 2 hours before booking)",
+            "clientBookings.platosSeleccionadosLabel": "Selected dishes:",
 
             // Client - Calendar
             "clientCalendar.badge": "Experience Schedule",
@@ -1113,10 +1127,12 @@
         { regex: /^DISPONIBLES:\s*(\d+)$/i, repl: "AVAILABLE: $1" },
         { regex: /^Mostrando\s+(\d+)\s+de\s+(\d+)\s+páginas$/i, repl: "Showing $1 of $2 pages" },
         { regex: /^Mostrando\s+(\d+)\s+a\s+(\d+)\s+de\s+(\d+)\s+usuarios$/i, repl: "Showing $1 to $2 of $3 users" },
-        { regex: /^(\w+)\s*·\s*(\d+)\s*personas?$/i, repl: function (m, p1, p2) {
-            let sector = PHRASES_ES_TO_EN[p1] || p1;
-            return sector + " · " + p2 + " guests";
-        }}
+        {
+            regex: /^(\w+)\s*·\s*(\d+)\s*personas?$/i, repl: function (m, p1, p2) {
+                let sector = PHRASES_ES_TO_EN[p1] || p1;
+                return sector + " · " + p2 + " guests";
+            }
+        }
     ];
 
     const PATTERNS_EN_TO_ES = [
@@ -1133,10 +1149,12 @@
         { regex: /^AVAILABLE:\s*(\d+)$/i, repl: "DISPONIBLES: $1" },
         { regex: /^Showing\s+(\d+)\s+of\s+(\d+)\s+pages$/i, repl: "Mostrando $1 de $2 páginas" },
         { regex: /^Showing\s+(\d+)\s+to\s+(\d+)\s+of\s+(\d+)\s+users$/i, repl: "Mostrando $1 a $2 de $3 usuarios" },
-        { regex: /^(\w+)\s*·\s*(\d+)\s*guests?$/i, repl: function (m, p1, p2) {
-            let sector = PHRASES_EN_TO_ES[p1] || p1;
-            return sector + " · " + p2 + " personas";
-        }}
+        {
+            regex: /^(\w+)\s*·\s*(\d+)\s*guests?$/i, repl: function (m, p1, p2) {
+                let sector = PHRASES_EN_TO_ES[p1] || p1;
+                return sector + " · " + p2 + " personas";
+            }
+        }
     ];
 
     // ===== 3. OBTENER / CAMBIAR IDIOMA =====
@@ -1158,7 +1176,7 @@
         // Notificar a componentes dinámicos
         try {
             window.dispatchEvent(new CustomEvent("idiomaCambiado", { detail: nuevoIdioma }));
-        } catch (e) {}
+        } catch (e) { }
 
         // Sincronizar scripts si están presentes
         if (typeof window.renderizarTablaUsuarios === "function") {
@@ -1568,7 +1586,7 @@
                 CACHE_DINAMICO.set(key, guardado);
                 return guardado;
             }
-        } catch (e) {}
+        } catch (e) { }
         return null;
     }
 
@@ -1597,7 +1615,7 @@
                         CACHE_DINAMICO.set(key, resultado);
                         try {
                             sessionStorage.setItem(key, resultado);
-                        } catch (e) {}
+                        } catch (e) { }
                         return resultado;
                     }
                 }
