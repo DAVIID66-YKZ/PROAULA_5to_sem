@@ -31,7 +31,6 @@ public class ReservaController {
         }
     }
 
-
     // 🔥 NUEVO ENDPOINT: CARGA MASIVA DE RESERVAS DEL DATASET
     @PostMapping("/guardar-bulk")
     public ResponseEntity<String> guardarReservasBulk(@RequestBody List<ReservaEntity> reservas) {
@@ -39,7 +38,7 @@ public class ReservaController {
             int creadas = 0;
             // Listamos las existentes una sola vez para optimizar el rendimiento del bucle
             List<ReservaEntity> existentes = reservaService.listarReservas();
-            
+
             for (ReservaEntity r : reservas) {
                 // Si el ID viene informado y no se encuentra ya registrado en Mongo
                 if (r.getId() != null && existentes.stream().noneMatch(e -> e.getId().equals(r.getId()))) {
@@ -57,7 +56,9 @@ public class ReservaController {
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<ReservaEntity>> listarPorUsuario(@PathVariable String usuarioId) {
         List<ReservaEntity> reservas = reservaService.listarPorUsuario(usuarioId);
-        return ResponseEntity.ok(reservas);}
+        return ResponseEntity.ok(reservas);
+    }
+
     @GetMapping("/listar")
     public List<ReservaEntity> listarTodas() {
         return reservaService.listarReservas();
@@ -73,17 +74,27 @@ public class ReservaController {
         return ResponseEntity.ok(horas);
     }
 
-    // ── UN SOLO endpoint DELETE ──
+    // ── CANCELACIÓN Y ELIMINACIÓN LÓGICA ──
+
+    @PatchMapping("/{id}/cancelar")
+    public ResponseEntity<?> cancelarReservaEndpoint(@PathVariable String id) {
+        try {
+            reservaService.cancelarReserva(id);
+            return ResponseEntity.ok().body("Reserva cancelada correctamente.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al cancelar: " + e.getMessage());
+        }
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarReserva(@PathVariable String id) {
         try {
             reservaService.eliminarReserva(id);
-            return ResponseEntity.ok().body("Reserva eliminada correctamente.");
+            return ResponseEntity.ok().body("Reserva cancelada correctamente.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-
-                    .body("Error al eliminar: " + e.getMessage());
+                    .body("Error al eliminar/cancelar: " + e.getMessage());
         }
     }
 
@@ -93,7 +104,8 @@ public class ReservaController {
             String comentarioLimpio = comentario.replace("\"", "").trim();
             ReservaEntity reserva = reservaService.obtenerReserva(id);
 
-            if (reserva == null) return ResponseEntity.notFound().build();
+            if (reserva == null)
+                return ResponseEntity.notFound().build();
             reserva.setComentario(comentarioLimpio);
             reservaService.guardarReservaDirecta(reserva);
             return ResponseEntity.ok().body("Comentario guardado.");
@@ -110,7 +122,8 @@ public class ReservaController {
         try {
             String nuevoEstado = body.get("estado");
             ReservaEntity reserva = reservaService.obtenerReserva(id);
-            if (reserva == null) return ResponseEntity.notFound().build();
+            if (reserva == null)
+                return ResponseEntity.notFound().build();
             reserva.setEstado(nuevoEstado);
             reservaService.guardarReservaDirecta(reserva);
             return ResponseEntity.ok(reserva);

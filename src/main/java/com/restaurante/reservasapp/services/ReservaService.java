@@ -8,6 +8,7 @@ public interface ReservaService {
     public ReservaEntity guardarReserva(ReservaEntity reserva);
     public ReservaEntity obtenerReserva(String id);
     public void eliminarReserva(String id);
+    public void cancelarReserva(String id);
     public List<ReservaEntity> listarReservas();
     // Nuevo método:
     public List<ReservaEntity> listarPorUsuario(String usuarioId);

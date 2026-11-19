@@ -178,7 +178,14 @@ async function cargarMisReservas() {
 
                 const textoPersonas = `${res.numeroPersonas} ${lang === "en" ? (res.numeroPersonas === 1 ? "guest" : "guests") : (res.numeroPersonas === 1 ? "persona" : "personas")}`;
 
-                if (yaPaso) {
+                if (estadoRes === "CANCELADA") {
+                    estadoBadge = `
+                        <span class="status-pill" style="background:rgba(231, 76, 60, 0.15); color:#e74c3c; border:1px solid rgba(231, 76, 60, 0.4);">
+                            ${lang === "en" ? "Cancelled" : "Cancelada"}
+                        </span>
+                    `;
+                    botonesAcciones = `<span style="color:#777; font-size: 13px;">—</span>`;
+                } else if (yaPaso) {
                     estadoBadge = `<span class="status-pill pill-past">${lang === "en" ? "Completed" : "Completada"}</span>`;
 
                     const tieneComentario = res.comentario && res.comentario !== "null" && res.comentario.trim() !== "";

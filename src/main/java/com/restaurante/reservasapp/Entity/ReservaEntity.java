@@ -25,4 +25,5 @@ public class ReservaEntity {
     private String experiencia; 
     private String comentario; // 🔥 NUEVO: Almacenará la reseña del manuscrito
     private String estado;     // 🔥 NUEVO: Almacena el estado (CONFIRMADA, PENDIENTE, LLEGADA, etc.)
+    private String fechaCreacion; // 🔥 Fecha y hora ISO de creación para control de expiración
 }
