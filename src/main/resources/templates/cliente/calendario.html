@@ -45,6 +45,52 @@
         </main>
     </div>
 
+    <!-- MODAL DETALLE DE RESERVA EN CALENDARIO -->
+    <div id="modalDetalleCalendario" class="modal-manuscript" style="display: none;">
+        <div class="modal-content modal-platos-content">
+            <div class="modal-platos-header">
+                <div>
+                    <span class="reserva-badge" id="modalCalBadge" data-i18n="clientCalendar.detalleBadge">Detalle de Experiencia</span>
+                    <h2 class="serif-title" id="modalCalTitulo" style="color: #d4af37; margin: 4px 0 0; font-size: 1.5rem;">Cena Reservada</h2>
+                </div>
+                <button type="button" class="modal-close-icon" onclick="cerrarModalCalendario()">&times;</button>
+            </div>
+
+            <div style="padding: 15px 0; border-top: 1px solid rgba(212,175,55,0.2); border-bottom: 1px solid rgba(212,175,55,0.2); margin: 15px 0;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; display: block;" data-i18n="clientBookings.thFecha">Fecha</span>
+                        <strong id="modalCalFecha" style="color: #fff; font-size: 14px;">-</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; display: block;" data-i18n="clientBookings.thHora">Hora</span>
+                        <strong id="modalCalHora" style="color: #d4af37; font-size: 14px;">-</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; display: block;" data-i18n="clientBookings.thInvitados">Invitados</span>
+                        <strong id="modalCalInvitados" style="color: #fff; font-size: 14px;">-</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; display: block;" data-i18n="clientBookings.thEstado">Estado</span>
+                        <span id="modalCalEstado" class="status-pill" style="font-size: 12px;">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-buttons" style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
+                <button type="button" class="btn-modal-cancel" onclick="cerrarModalCalendario()" data-i18n="common.cerrar">Cerrar</button>
+                <a href="/cliente/mis-reservas" class="btn-modal-confirm" style="text-decoration: none; padding: 10px 18px; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">receipt_long</span>
+                    <span data-i18n="clientNav.misReservas">Mis Reservas</span>
+                </a>
+                <button type="button" id="btnGoogleCalendar" class="btn-modal-confirm" style="background: #d4af37; color: #000; font-weight: 700; padding: 10px 18px; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; border: none; cursor: pointer;">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">event</span>
+                    <span data-i18n="clientCalendar.sincronizarGoogle">Sincronizar con Google</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script th:src="@{/js/cliente/sidebar.js}"></script>
     <script th:src="@{/js/cliente/calendario.js}"></script>
 </body>

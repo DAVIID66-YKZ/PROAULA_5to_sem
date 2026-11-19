@@ -96,7 +96,11 @@ async function actualizarDatosUsuario(token, idUsuario) {
     const direccion = (document.getElementById("perfilDireccion")?.value || "").trim();
 
     if (!nombre || !apellido) {
-        alert("El nombre y el apellido son obligatorios.");
+        if (typeof mostrarToast === "function") {
+            mostrarToast("El nombre y el apellido son obligatorios.", "advertencia");
+        } else {
+            alert("El nombre y el apellido son obligatorios.");
+        }
         return;
     }
 
@@ -120,14 +124,26 @@ async function actualizarDatosUsuario(token, idUsuario) {
             const navUser = document.getElementById("userName");
             if (navUser) navUser.textContent = nombre;
 
-            alert("✅ Información de perfil actualizada con éxito.");
+            if (typeof mostrarToast === "function") {
+                mostrarToast("Información de perfil actualizada con éxito.", "exito", "✨ Perfil Actualizado");
+            } else {
+                alert("✅ Información de perfil actualizada con éxito.");
+            }
         } else {
             const errorMsg = await response.text();
-            alert("❌ No se pudo actualizar el perfil: " + errorMsg);
+            if (typeof mostrarToast === "function") {
+                mostrarToast(errorMsg, "error", "No se pudo actualizar");
+            } else {
+                alert("❌ No se pudo actualizar el perfil: " + errorMsg);
+            }
         }
     } catch (error) {
         console.error("Error al guardar datos:", error);
-        alert("Ocurrió un error de conexión con el servidor.");
+        if (typeof mostrarToast === "function") {
+            mostrarToast("Ocurrió un error de conexión con el servidor.", "error");
+        } else {
+            alert("Ocurrió un error de conexión con el servidor.");
+        }
     } finally {
         if (btn) {
             btn.disabled = false;
@@ -188,7 +204,11 @@ async function cambiarPasswordCliente(token, idUsuario) {
         });
 
         if (response.ok) {
-            alert("✨ ¡Contraseña actualizada exitosamente! Tu cuenta ahora cuenta con nuevas credenciales.");
+            if (typeof mostrarToast === "function") {
+                mostrarToast("Tu contraseña ha sido actualizada con éxito.", "exito", "✨ Contraseña Actualizada");
+            } else {
+                alert("✨ ¡Contraseña actualizada exitosamente! Tu cuenta ahora cuenta con nuevas credenciales.");
+            }
             limpiarFormularioPasswordCliente();
         } else {
             const errorMsg = await response.text();

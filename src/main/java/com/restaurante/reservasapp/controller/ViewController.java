@@ -89,6 +89,12 @@ public class ViewController {
         return "cliente/perfil";
     }
 
+    @GetMapping({"/ver-menu", "/cliente/ver-menu"})
+    public String verMenu(Model model) {
+        model.addAttribute("platos", obtenerPlatosSeguro());
+        return "cliente/ver-menu";
+    }
+
     // Vistas de Administrador
     @GetMapping({"/admin/dashboard", "/dashboardAdmin", "/admin/dashboardAdmin"})
     public String adminDashboard() {

@@ -113,10 +113,72 @@ async function cargarEstructuraDashboard(token, idUsuario) {
 
         if (response.ok) {
             const todasLasReservas = await response.json();
+            const listaSegura = Array.isArray(todasLasReservas) ? todasLasReservas : [];
 
-            // Filtrar ÚNICAMENTE las reservas a futuro (excluyendo todas las pasadas)
-            const reservasFuturas = (Array.isArray(todasLasReservas) ? todasLasReservas : [])
-                .filter(res => esReservaFutura(res));
+            // ── CÁLCULO DE MÉTRICAS PERSONALES ──
+            const ahora = new Date();
+            let veladasCompletadas = 0;
+            const conteoSectores = {};
+
+            listaSegura.forEach(r => {
+                const est = String(r.estado || "").toUpperCase();
+                if (est === "CANCELADA") return;
+
+                // Contar sectores favoritos
+                const sectorNorm = r.experiencia || "Mesa-Estandar";
+                conteoSectores[sectorNorm] = (conteoSectores[sectorNorm] || 0) + 1;
+
+                // Evaluar si es una velada completada (asistida o pasada)
+                if (est === "COMPLETADA" || est === "LLEGADA") {
+                    veladasCompletadas++;
+                } else if (r.fecha) {
+                    const horaFmt = r.hora ? (r.hora.length === 5 ? r.hora : r.hora.padStart(5, '0')) : "00:00";
+                    const fRes = new Date(`${r.fecha}T${horaFmt}:00`);
+                    if (!isNaN(fRes.getTime()) && fRes < ahora) {
+                        veladasCompletadas++;
+                    }
+                }
+            });
+
+            // Sector favorito
+            let sectorFavKey = "Mesa-Estandar";
+            let maxConteo = 0;
+            for (const [sec, count] of Object.entries(conteoSectores)) {
+                if (count > maxConteo) {
+                    maxConteo = count;
+                    sectorFavKey = sec;
+                }
+            }
+
+            // Población de Métricas en el DOM
+            const elStatVeladas = document.getElementById("statVeladas");
+            const elStatProxima = document.getElementById("statProximaCita");
+            const elStatSector = document.getElementById("statSectorFav");
+
+            if (elStatVeladas) elStatVeladas.textContent = veladasCompletadas;
+            if (elStatSector) elStatSector.textContent = formatearNombreExperiencia(sectorFavKey, lang);
+
+            // Filtrar reservas a futuro
+            const reservasFuturas = listaSegura.filter(res => esReservaFutura(res));
+
+            // Ordenar cronológicamente (la reserva futura más próxima va primero)
+            reservasFuturas.sort((a, b) => {
+                const dateA = new Date(`${a.fecha}T${(a.hora || "00:00")}:00`);
+                const dateB = new Date(`${b.fecha}T${(b.hora || "00:00")}:00`);
+                return dateA - dateB;
+            });
+
+            // Actualizar métrica de Próxima Cita
+            if (elStatProxima) {
+                if (reservasFuturas.length > 0) {
+                    const prox = reservasFuturas[0];
+                    elStatProxima.textContent = `${prox.fecha} • ${prox.hora}`;
+                    elStatProxima.style.color = "#2ecc71";
+                } else {
+                    elStatProxima.textContent = lang === "en" ? "None scheduled" : "Ninguna programada";
+                    elStatProxima.style.color = "#888888";
+                }
+            }
 
             if (!reservasFuturas || reservasFuturas.length === 0) {
                 const tituloVacio = lang === "en"
@@ -150,13 +212,6 @@ async function cargarEstructuraDashboard(token, idUsuario) {
                 `;
                 return;
             }
-
-            // Ordenar cronológicamente (la reserva futura más próxima va primero)
-            reservasFuturas.sort((a, b) => {
-                const dateA = new Date(`${a.fecha}T${(a.hora || "00:00")}:00`);
-                const dateB = new Date(`${b.fecha}T${(b.hora || "00:00")}:00`);
-                return dateA - dateB;
-            });
 
             // 1. Renderizar la Reserva Más Cercana en el Futuro (Featured)
             const masCercana = reservasFuturas[0];

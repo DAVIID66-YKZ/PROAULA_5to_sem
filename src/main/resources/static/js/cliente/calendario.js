@@ -1,9 +1,14 @@
+// ================================================================
+// LÓGICA DE CALENDARIO CLIENTE - GESTREST
+// ================================================================
+
 // 1. Guardián de navegación inmediato
 (function() {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
     const rol = localStorage.getItem("rol");
+    const rolUpper = String(rol || "").trim().toUpperCase();
 
-    if (!token || String(rol).trim().toUpperCase() !== "CLIENTE") {
+    if (!token || (rolUpper !== "CLIENTE" && rolUpper !== "ROLE_CLIENTE" && rolUpper !== "ADMIN" && rolUpper !== "ROLE_ADMIN")) {
         window.location.href = "/login";
     }
 })();
@@ -29,10 +34,48 @@ function traducirExperienciaCalendario(exp, lang) {
     return map[exp] || exp;
 }
 
+let googleCalendarUrlActual = "";
+
+function cerrarModalCalendario() {
+    const modal = document.getElementById("modalDetalleCalendario");
+    if (modal) modal.style.display = "none";
+}
+
+function generarGoogleCalendarUrl(tituloText, fechaStr, horaStr, invitados, lang) {
+    const baseGoogleUrl = "https://www.google.com/calendar/render?action=TEMPLATE";
+    const titulo = encodeURIComponent(tituloText);
+
+    // Parseo seguro de fecha y hora local con objeto Date para evitar desbordamientos
+    const [hh, mm] = (horaStr || "20:00").split(":").map(Number);
+    const [anio, mes, dia] = (fechaStr || new Date().toISOString().split("T")[0]).split("-").map(Number);
+
+    const fechaInicio = new Date(anio, mes - 1, dia, hh, mm || 0, 0);
+    const fechaFin = new Date(fechaInicio.getTime() + 2 * 60 * 60 * 1000); // 2 horas después
+
+    const formatoGoogleUTC = (d) => {
+        const y = d.getUTCFullYear();
+        const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+        const diaNum = String(d.getUTCDate()).padStart(2, "0");
+        const h = String(d.getUTCHours()).padStart(2, "0");
+        const min = String(d.getUTCMinutes()).padStart(2, "0");
+        const s = String(d.getUTCSeconds()).padStart(2, "0");
+        return `${y}${m}${diaNum}T${h}${min}${s}Z`;
+    };
+
+    const fechasParam = `${formatoGoogleUTC(fechaInicio)}/${formatoGoogleUTC(fechaFin)}`;
+
+    const detallesText = lang === "en"
+        ? `Your table for ${invitados} guests is coordinated under your GestRest reservations.`
+        : `Tu mesa para ${invitados} personas ya se encuentra coordinada bajo tus reservas en GestRest.`;
+    const detalles = encodeURIComponent(detallesText);
+
+    return `${baseGoogleUrl}&text=${titulo}&dates=${fechasParam}&details=${detalles}&sf=true&output=xml`;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
     const idUsuario = localStorage.getItem("usuarioId");
-    
+
     const calendarEl = document.getElementById('calendar');
     if (!calendarEl) return;
 
@@ -67,49 +110,106 @@ document.addEventListener('DOMContentLoaded', async () => {
         contentHeight: isMobile ? 650 : 'auto',
         expandRows: true,
         handleWindowResize: true,
-        // Evento gatillado al hacer clic en una reserva del calendario
+
+        // 🔥 MODAL NO INVASIVO AL HACER CLIC EN UN EVENTO
         eventClick: function(info) {
             const extProps = info.event.extendedProps;
             const lang = getIdiomaActualCalendario();
-            
-            // Generación de URL formateada para Google Calendar API
-            const baseGoogleUrl = "https://www.google.com/calendar/render?action=TEMPLATE";
-            const tituloText = lang === "en"
-                ? `Dinner: Experience ${info.event.title} - GestRest`
-                : `Cena: Experiencia ${info.event.title} - GestRest`;
-            const titulo = encodeURIComponent(tituloText);
-            
-            // Re-formatear fecha y hora para el estándar de Google Calendar (YYYYMMDDTHHMMSSZ)
-            const fechaLimpia = info.event.startStr.replace(/-/g, "").split("T")[0]; // YYYYMMDD
-            const horaLimpia = (extProps.hora || "20:00").replace(/:/g, "") + "00"; // HHMMSS
-            const fechasParam = `${fechaLimpia}T${horaLimpia}/${fechaLimpia}T${parseInt(horaLimpia.substring(0,2))+2}${horaLimpia.substring(2)}`; 
 
-            const detallesText = lang === "en"
-                ? `Your table for ${extProps.invitados} guests is coordinated under your manuscript records.`
-                : `Tu mesa para ${extProps.invitados} personas ya se encuentra coordinada bajo los archivos de tu manuscrito.`;
-            const detalles = encodeURIComponent(detallesText);
-            
-            const googleCalendarUrl = `${baseGoogleUrl}&text=${titulo}&dates=${fechasParam}&details=${detalles}&sf=true&output=xml`;
-            
-            // Redirección directa en pestaña externa
-            window.open(googleCalendarUrl, '_blank');
+            const expNombre = info.event.title;
+            const fecha = info.event.startStr ? info.event.startStr.split("T")[0] : "-";
+            const hora = extProps.hora || "-";
+            const invitados = extProps.invitados || 2;
+            const estado = (extProps.estado || "PENDIENTE").toUpperCase();
+
+            // Llenar datos en el modal
+            const elTitulo = document.getElementById("modalCalTitulo");
+            const elFecha = document.getElementById("modalCalFecha");
+            const elHora = document.getElementById("modalCalHora");
+            const elInvitados = document.getElementById("modalCalInvitados");
+            const elEstado = document.getElementById("modalCalEstado");
+            const modal = document.getElementById("modalDetalleCalendario");
+
+            if (elTitulo) elTitulo.textContent = expNombre;
+            if (elFecha) elFecha.textContent = fecha;
+            if (elHora) elHora.textContent = hora;
+            if (elInvitados) elInvitados.textContent = `${invitados} ${lang === "en" ? (invitados === 1 ? "guest" : "guests") : (invitados === 1 ? "persona" : "personas")}`;
+
+            if (elEstado) {
+                let badgeClass = "status-pill";
+                let badgeStyle = "background:rgba(224,170,62,0.15); color:#e0aa3e; border:1px solid rgba(224,170,62,0.4);";
+                let textoEstado = estado;
+
+                if (estado === "CONFIRMADA") {
+                    badgeStyle = "background:rgba(46, 204, 113, 0.15); color:#2ecc71; border:1px solid rgba(46, 204, 113, 0.4);";
+                    textoEstado = lang === "en" ? "Confirmed" : "Confirmada";
+                } else if (estado === "CANCELADA") {
+                    badgeStyle = "background:rgba(231, 76, 60, 0.15); color:#e74c3c; border:1px solid rgba(231, 76, 60, 0.4);";
+                    textoEstado = lang === "en" ? "Cancelled" : "Cancelada";
+                } else if (estado === "COMPLETADA") {
+                    badgeStyle = "background:rgba(150, 150, 150, 0.15); color:#bbb; border:1px solid rgba(150, 150, 150, 0.4);";
+                    textoEstado = lang === "en" ? "Completed" : "Completada";
+                } else {
+                    textoEstado = lang === "en" ? "Pending" : "Pendiente";
+                }
+
+                elEstado.style.cssText = badgeStyle;
+                elEstado.textContent = textoEstado;
+            }
+
+            // Preparar el enlace de Google Calendar seguro
+            const tituloGoogle = lang === "en"
+                ? `Dinner: Experience ${expNombre} - GestRest`
+                : `Cena: Experiencia ${expNombre} - GestRest`;
+            googleCalendarUrlActual = generarGoogleCalendarUrl(tituloGoogle, fecha, hora, invitados, lang);
+
+            const btnGoogle = document.getElementById("btnGoogleCalendar");
+            if (btnGoogle) {
+                btnGoogle.onclick = function() {
+                    if (googleCalendarUrlActual) {
+                        window.open(googleCalendarUrlActual, '_blank');
+                    }
+                };
+            }
+
+            if (modal) {
+                modal.style.display = "flex";
+            }
         }
     });
 
-    // Renderizado inmediato
     calendar.render();
 
     function refrescarEventos(lang) {
-        // Remover eventos existentes
         calendar.removeAllEvents();
 
         const eventosMapeados = reservasCache.map(reserva => {
+            const expNombre = traducirExperienciaCalendario(reserva.experiencia, lang);
+            const est = String(reserva.estado || "PENDIENTE").toUpperCase();
+
+            // Colores temáticos acordes al estado de la reserva
+            let colorFondo = "rgba(224, 170, 62, 0.25)";
+            let colorBorde = "#e0aa3e";
+            if (est === "CONFIRMADA") {
+                colorFondo = "rgba(46, 204, 113, 0.25)";
+                colorBorde = "#2ecc71";
+            } else if (est === "CANCELADA") {
+                colorFondo = "rgba(231, 76, 60, 0.2)";
+                colorBorde = "#e74c3c";
+            }
+
             return {
-                title: traducirExperienciaCalendario(reserva.experiencia, lang),
+                title: `${reserva.hora || ''} ${expNombre}`,
                 start: reserva.fecha,
+                backgroundColor: colorFondo,
+                borderColor: colorBorde,
+                textColor: "#ffffff",
                 extendedProps: {
                     hora: reserva.hora,
-                    invitados: reserva.invitados || reserva.numeroPersonas || 2
+                    invitados: reserva.invitados || reserva.numeroPersonas || 2,
+                    estado: reserva.estado,
+                    experiencia: reserva.experiencia,
+                    id: reserva.id
                 }
             };
         });
@@ -133,7 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         refrescarEventos(nuevoLang);
     });
 
-    // 2. Fetch asíncrono pasándole el token por cabecera de seguridad
+    // Cargar reservas del usuario
     try {
         const response = await fetch(`/reservas/usuario/${idUsuario}`, {
             method: "GET",
@@ -146,7 +246,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (response.ok) {
             reservasCache = await response.json();
             refrescarEventos(langInicial);
-        } else if (response.status === 403) {
+        } else if (response.status === 403 || response.status === 401) {
             console.error("No autorizado para descargar el payload del calendario.");
         }
     } catch (error) {
