@@ -66,11 +66,14 @@ public class ReservaController {
 
     @GetMapping("/ocupadas")
     public ResponseEntity<List<String>> obtenerOcupadas(
-
             @RequestParam String fecha,
-            @RequestParam String mesaId,
+            @RequestParam(required = false) String sector,
+            @RequestParam(required = false) String mesaId,
             @RequestParam int invitados) {
-        List<String> horas = reservaService.obtenerHorasCompletamenteOcupadas(fecha, mesaId, invitados);
+        // 🔥 DESACOPLAMIENTO: Acepta tanto 'sector' como 'mesaId' para total
+        // compatibilidad
+        String sectorConsultado = (sector != null && !sector.isBlank()) ? sector : mesaId;
+        List<String> horas = reservaService.obtenerHorasCompletamenteOcupadas(fecha, sectorConsultado, invitados);
         return ResponseEntity.ok(horas);
     }
 

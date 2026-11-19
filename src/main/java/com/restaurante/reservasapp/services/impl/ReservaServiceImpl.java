@@ -33,144 +33,154 @@ public class ReservaServiceImpl implements ReservaService {
     @Autowired
     private PlatoRepository platoRepo;
 
+    // 🔥 PREVENCIÓN DE CONDICIÓN DE CARRERA (Race Condition): Cerrojo justo con fairness para atomizar
+    // la evaluación de disponibilidad y asignación de mesas en peticiones concurrentes.
+    private final java.util.concurrent.locks.ReentrantLock reservaLock = new java.util.concurrent.locks.ReentrantLock(true);
+
     @Override
     @Transactional
     public ReservaEntity guardarReserva(ReservaEntity reserva) {
-
-        if (reserva.getPlatos() == null) {
-            reserva.setPlatos(List.of());
-        }
-
-        Set<String> platosUnicos = new HashSet<>();
-        for (String platoId : reserva.getPlatos()) {
-            if (platoId == null || platoId.isBlank() || !platosUnicos.add(platoId)) {
-                throw new RuntimeException("La selección de platos no es válida.");
+        reservaLock.lock();
+        try {
+            if (reserva.getPlatos() == null) {
+                reserva.setPlatos(List.of());
             }
 
-            PlatoEntity plato = platoRepo.findById(platoId).orElse(null);
-            if (plato == null || !plato.isDisponible()) {
-                throw new RuntimeException("Uno de los platos seleccionados ya no está disponible.");
-            }
-        }
+            Set<String> platosUnicos = new HashSet<>();
+            for (String platoId : reserva.getPlatos()) {
+                if (platoId == null || platoId.isBlank() || !platosUnicos.add(platoId)) {
+                    throw new RuntimeException("La selección de platos no es válida.");
+                }
 
-        LocalDate hoy = LocalDate.now();
-        LocalDate fechaNueva = parsearFecha(reserva.getFecha());
-
-        if (fechaNueva != null) {
-            if (fechaNueva.isBefore(hoy)) {
-                throw new RuntimeException("No se pueden realizar reservas para fechas pasadas.");
-            }
-            if (fechaNueva.isEqual(hoy)) {
-                LocalTime horaNueva = parsearHora(reserva.getHora());
-                if (horaNueva != null && horaNueva.isBefore(LocalTime.now())) {
-                    throw new RuntimeException("La hora seleccionada para el día de hoy ya ha pasado.");
+                PlatoEntity plato = platoRepo.findById(platoId).orElse(null);
+                if (plato == null || !plato.isDisponible()) {
+                    throw new RuntimeException("Uno de los platos seleccionados ya no está disponible.");
                 }
             }
-        }
 
-        // ── REGISTRO DE FECHA DE CREACIÓN ──
-        if (reserva.getFechaCreacion() == null || reserva.getFechaCreacion().isBlank()) {
-            reserva.setFechaCreacion(LocalDateTime.now().toString());
-        }
+            LocalDate hoy = LocalDate.now();
+            LocalDate fechaNueva = parsearFecha(reserva.getFecha());
 
-        String sectorBuscado = reserva.getMesaId();
-        int cantidadInvitados = reserva.getNumeroPersonas();
-
-        List<ReservaEntity> todasLasReservasDelUsuario = reservaRepo
-                .findByUsuarioId(reserva.getUsuarioId());
-
-        // ── REGLA 1: Evitar reservas activas en conflicto de horario para la misma
-        // fecha ──
-        LocalTime horaSolicitada = LocalTime.parse(reserva.getHora());
-        LocalTime limiteInferior = horaSolicitada.minusHours(2).plusMinutes(1);
-        LocalTime limiteSuperior = horaSolicitada.plusHours(2).minusMinutes(1);
-
-        boolean conflictoMismoDia = todasLasReservasDelUsuario.stream()
-                .filter(this::esReservaActiva)
-                .filter(r -> r.getFecha() != null && r.getFecha().equals(reserva.getFecha()))
-                .anyMatch(r -> {
-                    LocalTime hExistente = parsearHora(r.getHora());
-                    return hExistente != null && hExistente.isAfter(limiteInferior)
-                            && hExistente.isBefore(limiteSuperior);
-                });
-
-        if (conflictoMismoDia) {
-            throw new RuntimeException(
-                    "Ya tienes una reserva activa el " + reserva.getFecha() +
-                            " en un horario cercano. Se requiere un intervalo mínimo de 2 horas entre tus reservas.");
-        }
-
-        // ── REGLA 2: Límite de máximo 3 reservas cuando sea después del día de hoy ──
-        if (fechaNueva != null && fechaNueva.isAfter(hoy)) {
-            long reservasDespuesDeHoy = todasLasReservasDelUsuario.stream()
-                    .filter(this::esReservaDespuesDeHoy)
-                    .count();
-
-            if (reservasDespuesDeHoy >= 3) {
-                throw new RuntimeException(
-                        "Has alcanzado el límite de 3 reservas a futuro. " +
-                                "Cancela una reserva existente para hacer una nueva.");
-            }
-        }
-
-        // ── REGLA 3: Buscar mesas del sector que soporten la cantidad de personas
-        // (Best-Fit) ──
-        List<MesaEntity> mesasAptasDelSector = mesaRepo.findAll().stream()
-                .filter(m -> m.getSector() != null && m.getSector().equalsIgnoreCase(sectorBuscado))
-                .filter(m -> m.getCapacidad() >= cantidadInvitados)
-                .filter(MesaEntity::isDisponible)
-                .sorted(Comparator.comparingInt(MesaEntity::getCapacidad))
-                .collect(Collectors.toList());
-
-        if (mesasAptasDelSector.isEmpty()) {
-            throw new RuntimeException(
-                    "No hay mesas en el sector " + sectorBuscado +
-                            " con capacidad para " + cantidadInvitados + " personas.");
-        }
-
-        // ── REGLA 4: Buscar mesa libre en esa fecha con bloqueo de ±2 horas ──
-        List<ReservaEntity> reservasDelDia = reservaRepo.findAll().stream()
-                .filter(r -> r.getFecha() != null && r.getFecha().equals(reserva.getFecha()))
-                .filter(this::reservaBloqueaMesa)
-                .collect(Collectors.toList());
-
-        MesaEntity mesaAsignada = null;
-
-        for (MesaEntity mesa : mesasAptasDelSector) {
-            boolean tieneConflicto = false;
-
-            for (ReservaEntity resExistente : reservasDelDia) {
-                if (resExistente.getMesaId() != null &&
-                        resExistente.getMesaId().equals(mesa.getId())) {
-                    LocalTime horaExistente = LocalTime.parse(resExistente.getHora());
-                    if (horaExistente.isAfter(limiteInferior) &&
-                            horaExistente.isBefore(limiteSuperior)) {
-                        tieneConflicto = true;
-                        break;
+            if (fechaNueva != null) {
+                if (fechaNueva.isBefore(hoy)) {
+                    throw new RuntimeException("No se pueden realizar reservas para fechas pasadas.");
+                }
+                if (fechaNueva.isEqual(hoy)) {
+                    LocalTime horaNueva = parsearHora(reserva.getHora());
+                    if (horaNueva != null && horaNueva.isBefore(LocalTime.now())) {
+                        throw new RuntimeException("La hora seleccionada para el día de hoy ya ha pasado.");
                     }
                 }
             }
 
-            if (!tieneConflicto) {
-                mesaAsignada = mesa;
-                break;
+            // ── REGISTRO DE FECHA DE CREACIÓN ──
+            if (reserva.getFechaCreacion() == null || reserva.getFechaCreacion().isBlank()) {
+                reserva.setFechaCreacion(LocalDateTime.now().toString());
             }
-        }
 
-        if (mesaAsignada == null) {
-            throw new RuntimeException(
-                    "No hay mesas disponibles en el sector " + sectorBuscado +
-                            " para la fecha y hora seleccionada. Intenta otra hora.");
-        }
+            // 🔥 DESACOPLAMIENTO SECTOR / MESA: Prioriza 'experiencia' sobre 'mesaId' si este último fue usado como sector
+            String sectorBuscado = (reserva.getExperiencia() != null && !reserva.getExperiencia().isBlank())
+                    ? reserva.getExperiencia().trim()
+                    : (reserva.getMesaId() != null && !reserva.getMesaId().isBlank() ? reserva.getMesaId().trim() : "Mesa-Estandar");
 
-        // ── ASIGNAR mesa y experiencia ──
-        reserva.setMesaId(mesaAsignada.getId());
-        reserva.setExperiencia(sectorBuscado);
-        if (reserva.getEstado() == null || reserva.getEstado().isBlank()) {
-            reserva.setEstado("PENDIENTE");
-        }
+            int cantidadInvitados = reserva.getNumeroPersonas();
 
-        return reservaRepo.save(reserva);
+            List<ReservaEntity> todasLasReservasDelUsuario = reservaRepo
+                    .findByUsuarioId(reserva.getUsuarioId());
+
+            // ── REGLA 1: Evitar reservas activas en conflicto de horario para la misma fecha ──
+            LocalTime horaSolicitada = LocalTime.parse(reserva.getHora());
+            LocalTime limiteInferior = horaSolicitada.minusHours(2).plusMinutes(1);
+            LocalTime limiteSuperior = horaSolicitada.plusHours(2).minusMinutes(1);
+
+            boolean conflictoMismoDia = todasLasReservasDelUsuario.stream()
+                    .filter(this::esReservaActiva)
+                    .filter(r -> r.getFecha() != null && r.getFecha().equals(reserva.getFecha()))
+                    .anyMatch(r -> {
+                        LocalTime hExistente = parsearHora(r.getHora());
+                        return hExistente != null && hExistente.isAfter(limiteInferior)
+                                && hExistente.isBefore(limiteSuperior);
+                    });
+
+            if (conflictoMismoDia) {
+                throw new RuntimeException(
+                        "Ya tienes una reserva activa el " + reserva.getFecha() +
+                                " en un horario cercano. Se requiere un intervalo mínimo de 2 horas entre tus reservas.");
+            }
+
+            // ── REGLA 2: Límite de máximo 3 reservas cuando sea después del día de hoy ──
+            if (fechaNueva != null && fechaNueva.isAfter(hoy)) {
+                long reservasDespuesDeHoy = todasLasReservasDelUsuario.stream()
+                        .filter(this::esReservaDespuesDeHoy)
+                        .count();
+
+                if (reservasDespuesDeHoy >= 3) {
+                    throw new RuntimeException(
+                            "Has alcanzado el límite de 3 reservas a futuro. " +
+                                    "Cancela una reserva existente para hacer una nueva.");
+                }
+            }
+
+            // ── REGLA 3: Buscar mesas del sector que soporten la cantidad de personas (Best-Fit) ──
+            List<MesaEntity> mesasAptasDelSector = mesaRepo.findAll().stream()
+                    .filter(m -> m.getSector() != null && m.getSector().equalsIgnoreCase(sectorBuscado))
+                    .filter(m -> m.getCapacidad() >= cantidadInvitados)
+                    .filter(MesaEntity::isDisponible)
+                    .sorted(Comparator.comparingInt(MesaEntity::getCapacidad))
+                    .collect(Collectors.toList());
+
+            if (mesasAptasDelSector.isEmpty()) {
+                throw new RuntimeException(
+                        "No hay mesas en el sector " + sectorBuscado +
+                                " con capacidad para " + cantidadInvitados + " personas.");
+            }
+
+            // ── REGLA 4: Buscar mesa libre en esa fecha con bloqueo de ±2 horas ──
+            List<ReservaEntity> reservasDelDia = reservaRepo.findAll().stream()
+                    .filter(r -> r.getFecha() != null && r.getFecha().equals(reserva.getFecha()))
+                    .filter(this::reservaBloqueaMesa)
+                    .collect(Collectors.toList());
+
+            MesaEntity mesaAsignada = null;
+
+            for (MesaEntity mesa : mesasAptasDelSector) {
+                boolean tieneConflicto = false;
+
+                for (ReservaEntity resExistente : reservasDelDia) {
+                    if (resExistente.getMesaId() != null &&
+                            resExistente.getMesaId().equals(mesa.getId())) {
+                        LocalTime horaExistente = LocalTime.parse(resExistente.getHora());
+                        if (horaExistente.isAfter(limiteInferior) &&
+                                horaExistente.isBefore(limiteSuperior)) {
+                            tieneConflicto = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!tieneConflicto) {
+                    mesaAsignada = mesa;
+                    break;
+                }
+            }
+
+            if (mesaAsignada == null) {
+                throw new RuntimeException(
+                        "No hay mesas disponibles en el sector " + sectorBuscado +
+                                " para la fecha y hora seleccionada. Intenta otra hora.");
+            }
+
+            // ── ASIGNAR ID real de mesa física y experiencia ──
+            reserva.setMesaId(mesaAsignada.getId());
+            reserva.setExperiencia(sectorBuscado);
+            if (reserva.getEstado() == null || reserva.getEstado().isBlank()) {
+                reserva.setEstado("PENDIENTE");
+            }
+
+            return reservaRepo.save(reserva);
+        } finally {
+            reservaLock.unlock();
+        }
     }
 
     @Override
@@ -179,6 +189,8 @@ public class ReservaServiceImpl implements ReservaService {
                 "10:00", "11:00", "12:00", "13:00", "14:00",
                 "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"
         };
+
+        String sectorConsultado = (sector != null && !sector.isBlank()) ? sector.trim() : "Mesa-Estandar";
 
         LocalDate hoy = LocalDate.now();
         LocalDate fechaConsultada = parsearFecha(fecha);
@@ -191,10 +203,12 @@ public class ReservaServiceImpl implements ReservaService {
 
         List<String> horasBloqueadas = new java.util.ArrayList<>();
 
+        // 🔥 BEST-FIT en cálculo de disponibilidad horaria
         List<MesaEntity> mesasAptas = mesaRepo.findAll().stream()
-                .filter(m -> m.getSector() != null && m.getSector().equalsIgnoreCase(sector))
+                .filter(m -> m.getSector() != null && m.getSector().equalsIgnoreCase(sectorConsultado))
                 .filter(m -> m.getCapacidad() >= invitados)
                 .filter(MesaEntity::isDisponible)
+                .sorted(Comparator.comparingInt(MesaEntity::getCapacidad))
                 .collect(Collectors.toList());
 
         if (mesasAptas.isEmpty()) {

@@ -321,7 +321,7 @@ async function comprobarHorariosIndex() {
     const esPasado = (fecha < fechaHoy);
 
     try {
-        const res = await fetch(`/reservas/ocupadas?fecha=${fecha}&mesaId=${mesaId}&invitados=${personas}`);
+        const res = await fetch(`/reservas/ocupadas?fecha=${fecha}&sector=${encodeURIComponent(mesaId)}&mesaId=${encodeURIComponent(mesaId)}&invitados=${personas}`);
         if (res.ok) {
             const ocupadas = await res.json();
 
@@ -770,7 +770,8 @@ async function confirmarReservaCarrito() {
 
     try {
         // PASO 2: Verificar en tiempo real si aún no la han tomado
-        const resCheck = await fetch(`/reservas/ocupadas?fecha=${reserva.fecha}&mesaId=${reserva.experiencia}&invitados=${reserva.personas}`);
+        const sectorCheck = reserva.experiencia || "Mesa-Estandar";
+        const resCheck = await fetch(`/reservas/ocupadas?fecha=${reserva.fecha}&sector=${encodeURIComponent(sectorCheck)}&mesaId=${encodeURIComponent(sectorCheck)}&invitados=${reserva.personas}`);
         if (resCheck.ok) {
             const ocupadas = await resCheck.json();
             if (ocupadas.includes(reserva.hora)) {

@@ -18,6 +18,39 @@
     <link rel="stylesheet" th:href="@{/css/cliente/mis-reservas.css}">
     <link rel="stylesheet" th:href="@{/css/cliente/sidebar.css}">
     <link rel="stylesheet" th:href="@{/css/cliente/navCliente.css}">
+
+    <style>
+        .filtros-reservas-pills {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .btn-filtro-reserva {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            color: #bbb;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+        .btn-filtro-reserva:hover {
+            background: rgba(212, 175, 55, 0.15);
+            color: #fff;
+        }
+        .btn-filtro-reserva.active {
+            background: #d4af37;
+            color: #000;
+            border-color: #d4af37;
+            font-weight: 700;
+        }
+    </style>
 </head>
 
 <body class="dashboard-layout">
@@ -37,6 +70,15 @@
                     <span data-i18n="clientNav.nuevaReserva">+ Nueva Reserva</span>
                 </button>
             </header>
+
+            <!-- FILTROS POR ESTADO -->
+            <div class="filtros-reservas-pills">
+                <button type="button" class="btn-filtro-reserva active" onclick="filtrarReservasPorEstado('TODAS', this)">Todas</button>
+                <button type="button" class="btn-filtro-reserva" onclick="filtrarReservasPorEstado('CONFIRMADA', this)">Confirmadas</button>
+                <button type="button" class="btn-filtro-reserva" onclick="filtrarReservasPorEstado('PENDIENTE', this)">Pendientes</button>
+                <button type="button" class="btn-filtro-reserva" onclick="filtrarReservasPorEstado('COMPLETADA', this)">Completadas</button>
+                <button type="button" class="btn-filtro-reserva" onclick="filtrarReservasPorEstado('CANCELADA', this)">Canceladas</button>
+            </div>
 
             <div class="tabla-reservas-wrapper">
                 <table class="tabla-manuscript">

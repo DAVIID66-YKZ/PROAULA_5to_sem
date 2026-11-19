@@ -75,8 +75,8 @@ async function comprobarHorariosDisponibles() {
     const esPasado = (fecha < fechaHoy);
 
     try {
-        // Consultamos al nuevo endpoint que evalúa la ocupación total real por capacidad
-        const response = await fetch(`/reservas/ocupadas?fecha=${fecha}&mesaId=${experienciaRadio.value}&invitados=${personas}`, {
+        // Consultamos al endpoint que evalúa la ocupación total real por capacidad y sector
+        const response = await fetch(`/reservas/ocupadas?fecha=${fecha}&sector=${encodeURIComponent(experienciaRadio.value)}&mesaId=${encodeURIComponent(experienciaRadio.value)}&invitados=${personas}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -128,7 +128,11 @@ async function guardarReserva(event) {
     const idUsuarioActual = localStorage.getItem("usuarioId");
 
     if (!token || !idUsuarioActual) {
-        alert("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
+        if (typeof mostrarToast === "function") {
+            mostrarToast("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.", "advertencia", "Sesión Caducada");
+        } else {
+            alert("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
+        }
         window.location.href = "/login";
         return;
     }
@@ -140,7 +144,11 @@ async function guardarReserva(event) {
 
     // Validación de seguridad de Front
     if (!fecha || !hora || !personas || !experienciaRadio) {
-        alert("Por favor, completa todos los campos del manuscrito.");
+        if (typeof mostrarToast === "function") {
+            mostrarToast("Por favor, completa todos los campos del formulario.", "advertencia");
+        } else {
+            alert("Por favor, completa todos los campos del manuscrito.");
+        }
         return;
     }
 
@@ -148,32 +156,45 @@ async function guardarReserva(event) {
 
     // Validación 1: Fecha no inferior a hoy
     if (fecha < fechaHoy) {
-        alert("No se pueden realizar reservas para fechas pasadas.");
+        if (typeof mostrarToast === "function") {
+            mostrarToast("No se pueden realizar reservas para fechas pasadas.", "error");
+        } else {
+            alert("No se pueden realizar reservas para fechas pasadas.");
+        }
         return;
     }
 
     // Validación 2: Si es el mismo día, hora no inferior a la actual
     if (fecha === fechaHoy && hora <= horaActual) {
-        alert("La hora seleccionada para el día de hoy ya ha pasado. Por favor selecciona una hora posterior.");
+        if (typeof mostrarToast === "function") {
+            mostrarToast("La hora seleccionada para hoy ya ha pasado. Selecciona una hora posterior.", "advertencia");
+        } else {
+            alert("La hora seleccionada para el día de hoy ya ha pasado. Por favor selecciona una hora posterior.");
+        }
         return;
     }
 
     if (personas > 12 || personas < 1) {
-        alert("Nuestras mesas están diseñadas para un rango de 1 a 12 invitados.");
+        if (typeof mostrarToast === "function") {
+            mostrarToast("Nuestras mesas están diseñadas para un rango de 1 a 12 invitados.", "advertencia");
+        } else {
+            alert("Nuestras mesas están diseñadas para un rango de 1 a 12 invitados.");
+        }
         return;
     }
 
-    // Estructura JSON mapeada con precisión para evitar que llegue en '0' a MongoDB
+    // 🔥 FLUJO DIRECTO: El usuario ya pulsó "Confirmar Reserva", se guarda como CONFIRMADA
+    // evitando la doble confirmación artificial que generaba fricción innecesaria.
     const reservaData = {
         fecha: fecha,
         hora: hora,
-        numeroPersonas: personas, // Mapea directo con el int de Java
+        numeroPersonas: personas,
         usuarioId: idUsuarioActual,
-        mesaId: experienciaRadio.value,   // Enviado inicialmente como sector para evaluación
+        mesaId: experienciaRadio.value,
         experiencia: experienciaRadio.value,
         platos: Array.from(document.querySelectorAll(".reserva-plato-checkbox:checked"))
             .map(checkbox => checkbox.value),
-        estado: "PENDIENTE"
+        estado: "CONFIRMADA"
     };
 
     try {
@@ -191,33 +212,54 @@ async function guardarReserva(event) {
             document.querySelectorAll(".reserva-plato-checkbox:checked").forEach(cb => {
                 totalPlatos += parseFloat(cb.dataset.precio || 0);
             });
-            const anticipo = Math.max(10000, Math.round(totalPlatos * 0.05));
             const formatoCOP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
 
-            const aviso =
-                `✨ ¡SOLICITUD DE RESERVA REGISTRADA! ✨\n\n` +
-                `• Estado: PENDIENTE\n` +
-                `• Total en productos: ${formatoCOP.format(totalPlatos)}\n` +
-                `• Anticipo para apartar mesa: ${formatoCOP.format(anticipo)} (5% con tarifa base mínima de $10.000 COP)\n\n` +
-                `Tu reserva ha quedado guardada en estado PENDIENTE. En "Mis Reservas" podrás ver tus platos y confirmarla.`;
+            const platosTexto = totalPlatos > 0 ? `\n• Platos seleccionados: ${formatoCOP.format(totalPlatos)}` : "";
 
-            alert(aviso);
-            window.location.href = "/cliente/mis-reservas";
+            if (typeof mostrarToast === "function") {
+                mostrarToast(
+                    `Tu mesa para ${personas} personas el ${fecha} a las ${hora} está asegurada.${platosTexto}`,
+                    "exito",
+                    "✨ ¡Reserva Confirmada!",
+                    5000
+                );
+            } else {
+                alert(`✨ ¡Reserva Confirmada! Tu mesa para ${personas} personas el ${fecha} a las ${hora} está asegurada.`);
+            }
+
+            setTimeout(() => {
+                window.location.href = "/cliente/mis-reservas";
+            }, 1200);
         } else {
             const errorMsg = await response.text();
 
-            // Captura de excepciones controladas de lógica de negocio (409 Conflict)
             if (response.status === 409) {
-                alert("Lo sentimos: " + errorMsg);
+                if (typeof mostrarToast === "function") {
+                    mostrarToast(errorMsg, "advertencia", "Horario no disponible");
+                } else {
+                    alert("Lo sentimos: " + errorMsg);
+                }
             } else if (response.status === 401 || response.status === 403) {
-                alert("Sesión inválida. Reingresa a tu cuenta.");
-                window.location.href = "/login";
+                if (typeof mostrarToast === "function") {
+                    mostrarToast("Sesión inválida. Reingresa a tu cuenta.", "error");
+                } else {
+                    alert("Sesión inválida. Reingresa a tu cuenta.");
+                }
+                setTimeout(() => { window.location.href = "/login"; }, 1500);
             } else {
-                alert("Atención del Manuscrito: " + errorMsg);
+                if (typeof mostrarToast === "function") {
+                    mostrarToast(errorMsg, "error", "Atención del Manuscrito");
+                } else {
+                    alert("Atención del Manuscrito: " + errorMsg);
+                }
             }
         }
     } catch (error) {
         console.error("Error crítico de conexión:", error);
-        alert("Error de conexión con el servidor. Inténtalo más tarde.");
+        if (typeof mostrarToast === "function") {
+            mostrarToast("Error de conexión con el servidor. Inténtalo más tarde.", "error");
+        } else {
+            alert("Error de conexión con el servidor. Inténtalo más tarde.");
+        }
     }
 }

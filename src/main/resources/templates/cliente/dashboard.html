@@ -43,6 +43,39 @@
                     </button>
                 </section>
 
+                <!-- TARJETAS DE ESTADÍSTICAS DEL CLIENTE -->
+                <section class="client-stats-grid" id="clientStatsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 35px;">
+                    <div class="card" style="padding: 22px; display: flex; flex-direction: row; align-items: center; gap: 18px; border-color: rgba(212, 175, 55, 0.25);">
+                        <div style="width: 52px; height: 52px; border-radius: 12px; background: rgba(212, 175, 55, 0.12); display: flex; align-items: center; justify-content: center; color: #d4af37;">
+                            <span class="material-symbols-outlined notranslate" style="font-size: 28px;">dinner_dining</span>
+                        </div>
+                        <div>
+                            <span style="font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; display: block;" data-i18n="clientDash.veladasDisfrutadas">VELADAS DISFRUTADAS</span>
+                            <span id="statVeladas" class="serif-title" style="font-size: 1.8rem; margin: 0; color: #ffffff;">0</span>
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding: 22px; display: flex; flex-direction: row; align-items: center; gap: 18px; border-color: rgba(212, 175, 55, 0.25);">
+                        <div style="width: 52px; height: 52px; border-radius: 12px; background: rgba(46, 204, 113, 0.12); display: flex; align-items: center; justify-content: center; color: #2ecc71;">
+                            <span class="material-symbols-outlined notranslate" style="font-size: 28px;">event_available</span>
+                        </div>
+                        <div>
+                            <span style="font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; display: block;" data-i18n="clientDash.proximaCita">PRÓXIMA CITA</span>
+                            <span id="statProximaCita" style="font-size: 1.05rem; font-weight: 700; color: #2ecc71; margin-top: 4px; display: block;">Ninguna</span>
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding: 22px; display: flex; flex-direction: row; align-items: center; gap: 18px; border-color: rgba(212, 175, 55, 0.25);">
+                        <div style="width: 52px; height: 52px; border-radius: 12px; background: rgba(224, 170, 62, 0.12); display: flex; align-items: center; justify-content: center; color: #e0aa3e;">
+                            <span class="material-symbols-outlined notranslate" style="font-size: 28px;">stars</span>
+                        </div>
+                        <div>
+                            <span style="font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; display: block;" data-i18n="clientDash.ambienteFavorito">AMBIENTE FAVORITO</span>
+                            <span id="statSectorFav" style="font-size: 1.05rem; font-weight: 700; color: #ffffff; margin-top: 4px; display: block;">Salón Principal</span>
+                        </div>
+                    </div>
+                </section>
+
                 <div class="booking-grid-functional">
                     <div id="featuredBookingContainer" class="w-100">
                         <div class="card-loading" data-i18n="clientDash.consultando">Consultando reservas...</div>
