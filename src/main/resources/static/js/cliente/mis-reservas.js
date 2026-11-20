@@ -204,8 +204,8 @@ function renderizarTablaReservas() {
         const fechaReserva = new Date(`${res.fecha}T${res.hora || "00:00"}`);
         const yaPaso = fechaReserva < ahora;
 
-        if (filtroEstadoActual === "CANCELADA") return est === "CANCELADA";
-        if (filtroEstadoActual === "COMPLETADA") return est === "COMPLETADA" || (yaPaso && est !== "CANCELADA");
+        if (filtroEstadoActual === "CANCELADA") return est === "CANCELADA" || est === "EXPIRADA";
+        if (filtroEstadoActual === "COMPLETADA") return est === "COMPLETADA" || (yaPaso && est !== "CANCELADA" && est !== "EXPIRADA");
         if (filtroEstadoActual === "PENDIENTE") return est === "PENDIENTE" && !yaPaso;
         if (filtroEstadoActual === "CONFIRMADA") return est === "CONFIRMADA" && !yaPaso;
 
@@ -277,10 +277,14 @@ function renderizarTablaReservas() {
 
         const textoPersonas = `${res.numeroPersonas} ${lang === "en" ? (res.numeroPersonas === 1 ? "guest" : "guests") : (res.numeroPersonas === 1 ? "persona" : "personas")}`;
 
-        if (estadoRes === "CANCELADA") {
+        if (estadoRes === "CANCELADA" || estadoRes === "EXPIRADA") {
+            const esExpirada = estadoRes === "EXPIRADA";
+            const textoBadge = esExpirada
+                ? (lang === "en" ? "Expired" : "Expirada")
+                : (lang === "en" ? "Cancelled" : "Cancelada");
             estadoBadge = `
                 <span class="status-pill" style="background:rgba(231, 76, 60, 0.15); color:#e74c3c; border:1px solid rgba(231, 76, 60, 0.4);">
-                    ${lang === "en" ? "Cancelled" : "Cancelada"}
+                    ${textoBadge}
                 </span>
             `;
             botonesAcciones = `<span style="color:#777; font-size: 13px;">—</span>`;

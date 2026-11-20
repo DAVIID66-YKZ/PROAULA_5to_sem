@@ -825,11 +825,11 @@ async function confirmarReservaCarrito() {
             cerrarCarrito();
 
             alert(
-                "✨ ¡SOLICITUD DE RESERVA REGISTRADA! ✨\n\n" +
-                "• Estado: PENDIENTE\n" +
+                "✨ ¡MESA APARTADA EXITOSAMENTE! ✨\n\n" +
+                "• Estado: PENDIENTE (Mesa apartada temporalmente)\n" +
                 (total > 0 ? `• Total en productos: ${formatoCOP.format(total)}\n` : "") +
                 `• Anticipo para apartar mesa: ${formatoCOP.format(anticipo)} (5% con tarifa base mínima de $10.000 COP)\n\n` +
-                "Tu reserva ha quedado guardada en estado PENDIENTE. En 'Mis Reservas' podrás consultar tus detalles y confirmarla."
+                "Tu mesa ha quedado apartada exclusivamente para ti durante 2 horas. Ingresa a 'Mis Reservas' para confirmar tu velada."
             );
             window.location.href = "/cliente/mis-reservas";
         } else {

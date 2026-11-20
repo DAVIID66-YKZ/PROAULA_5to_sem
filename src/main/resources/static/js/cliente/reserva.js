@@ -124,6 +124,9 @@ async function comprobarHorariosDisponibles() {
 async function guardarReserva(event) {
     event.preventDefault();
 
+    const submitBtn = event.target ? event.target.querySelector('button[type="submit"]') : document.querySelector('.reserva-btn-confirmar');
+    const originalBtnText = submitBtn ? submitBtn.innerHTML : "";
+
     const token = localStorage.getItem("token");
     const idUsuarioActual = localStorage.getItem("usuarioId");
 
@@ -183,7 +186,13 @@ async function guardarReserva(event) {
         return;
     }
 
-    // Registra la reserva en estado PENDIENTE para su posterior confirmación y pago desde Mis Reservas
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.7";
+        submitBtn.style.cursor = "not-allowed";
+    }
+
+    // Registra la reserva en estado PENDIENTE con apartado temporal de mesa
     const reservaData = {
         fecha: fecha,
         hora: hora,
@@ -216,10 +225,10 @@ async function guardarReserva(event) {
             const platosTexto = totalPlatos > 0 ? `\n• Platos seleccionados: ${formatoCOP.format(totalPlatos)}` : "";
             const lang = (localStorage.getItem("adminIdioma") || localStorage.getItem("appIdioma") || "es") === "en" ? "en" : "es";
 
-            const tituloMsg = lang === "en" ? "⏳ Reservation Registered (Pending)" : "⏳ Reserva Registrada (Pendiente)";
+            const tituloMsg = lang === "en" ? "⏳ Table Held (Pending Confirmation)" : "⏳ Mesa Apartada (Pendiente de Confirmación)";
             const textoMsg = lang === "en"
-                ? `Your booking for ${personas} guests on ${fecha} at ${hora} has been saved.${platosTexto}\nStatus: PENDING. Please confirm your table from 'My Reservations'.`
-                : `Tu velada para ${personas} personas el ${fecha} a las ${hora} ha sido registrada.${platosTexto}\nEstado: PENDIENTE. Confirma tu mesa desde 'Mis Reservas'.`;
+                ? `Your table for ${personas} guests on ${fecha} at ${hora} has been exclusively held.${platosTexto}\nStatus: PENDING. You have 2 hours to confirm your table from 'My Reservations'.`
+                : `Tu mesa para ${personas} personas el ${fecha} a las ${hora} ha sido apartada de forma exclusiva.${platosTexto}\nEstado: PENDIENTE. Tienes un plazo de 2 horas para confirmarla desde 'Mis Reservas'.`;
 
             if (typeof mostrarToast === "function") {
                 mostrarToast(
@@ -236,6 +245,11 @@ async function guardarReserva(event) {
                 window.location.href = "/cliente/mis-reservas";
             }, 1200);
         } else {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = "";
+                submitBtn.style.cursor = "";
+            }
             const errorMsg = await response.text();
 
             if (response.status === 409) {
@@ -260,6 +274,11 @@ async function guardarReserva(event) {
             }
         }
     } catch (error) {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "";
+            submitBtn.style.cursor = "";
+        }
         console.error("Error crítico de conexión:", error);
         if (typeof mostrarToast === "function") {
             mostrarToast("Error de conexión con el servidor. Inténtalo más tarde.", "error");

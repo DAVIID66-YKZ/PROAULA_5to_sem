@@ -226,6 +226,7 @@ function crearFilaReserva(r) {
     LLEGADA: "status-arrived",
     CANCELADA: "status-cancelada",
     COMPLETADA: "status-completada",
+    EXPIRADA: "status-cancelada",
   };
   let estadoKey = String(r.estado || "CONFIRMADA").trim().toUpperCase();
   let cls = statusMap[estadoKey] || "status-pending";

@@ -34,6 +34,9 @@ public class ReservaServiceImpl implements ReservaService {
     @Autowired
     private PlatoRepository platoRepo;
 
+    // Duración estándar estimada del servicio por velada (2 horas = 120 minutos)
+    private static final int DURACION_RESERVA_MINUTOS = 120;
+
     // 🔥 PREVENCIÓN DE CONDICIÓN DE CARRERA (Race Condition): Cerrojo justo con
     // fairness para atomizar
     // la evaluación de disponibilidad y asignación de mesas en peticiones
@@ -94,25 +97,23 @@ public class ReservaServiceImpl implements ReservaService {
             List<ReservaEntity> todasLasReservasDelUsuario = reservaRepo
                     .findByUsuarioId(reserva.getUsuarioId());
 
-            // ── REGLA 1: Evitar reservas activas en conflicto de horario para la misma
-            // fecha ──
-            LocalTime horaSolicitada = LocalTime.parse(reserva.getHora());
-            LocalTime limiteInferior = horaSolicitada.minusHours(2).plusMinutes(1);
-            LocalTime limiteSuperior = horaSolicitada.plusHours(2).minusMinutes(1);
+            // ── REGLA 1: Evitar reservas activas en conflicto de horario para el mismo usuario ──
+            LocalDateTime inicioSolicitado = obtenerInicio(reserva.getFecha(), reserva.getHora());
+            if (inicioSolicitado == null) {
+                throw new RuntimeException("La fecha u hora de la reserva no es válida.");
+            }
 
-            boolean conflictoMismoDia = todasLasReservasDelUsuario.stream()
+            boolean conflictoUsuario = todasLasReservasDelUsuario.stream()
                     .filter(this::esReservaActiva)
-                    .filter(r -> r.getFecha() != null && r.getFecha().equals(reserva.getFecha()))
                     .anyMatch(r -> {
-                        LocalTime hExistente = parsearHora(r.getHora());
-                        return hExistente != null && hExistente.isAfter(limiteInferior)
-                                && hExistente.isBefore(limiteSuperior);
+                        LocalDateTime inicioExistente = obtenerInicio(r.getFecha(), r.getHora());
+                        return colisionanHorarios(inicioSolicitado, inicioExistente);
                     });
 
-            if (conflictoMismoDia) {
+            if (conflictoUsuario) {
                 throw new RuntimeException(
-                        "Ya tienes una reserva activa el " + reserva.getFecha() +
-                                " en un horario cercano. Se requiere un intervalo mínimo de 2 horas entre tus reservas.");
+                        "Ya tienes una reserva activa o apartada el " + reserva.getFecha() +
+                                " en un horario que se solapa con esta velada. Se requiere un intervalo de 2 horas entre reservas.");
             }
 
             // ── REGLA 2: Límite de máximo 3 reservas cuando sea después del día de hoy ──
@@ -143,30 +144,20 @@ public class ReservaServiceImpl implements ReservaService {
                                 " con capacidad para " + cantidadInvitados + " personas.");
             }
 
-            // ── REGLA 4: Buscar mesa libre en esa fecha con bloqueo de ±2 horas ──
-            List<ReservaEntity> reservasDelDia = reservaRepo.findAll().stream()
-                    .filter(r -> r.getFecha() != null && r.getFecha().equals(reserva.getFecha()))
-                    .filter(this::reservaBloqueaMesa)
-                    .collect(Collectors.toList());
+            // ── REGLA 4: Buscar mesa libre con evaluación exacta de colisión de intervalos ──
+            List<ReservaEntity> reservasCandidatas = obtenerReservasCandidatas(fechaNueva);
 
             MesaEntity mesaAsignada = null;
 
             for (MesaEntity mesa : mesasAptasDelSector) {
-                boolean tieneConflicto = false;
+                boolean mesaOcupada = reservasCandidatas.stream()
+                        .filter(r -> mesa.getId().equals(r.getMesaId()))
+                        .anyMatch(r -> {
+                            LocalDateTime inicioExistente = obtenerInicio(r.getFecha(), r.getHora());
+                            return colisionanHorarios(inicioSolicitado, inicioExistente);
+                        });
 
-                for (ReservaEntity resExistente : reservasDelDia) {
-                    if (resExistente.getMesaId() != null &&
-                            resExistente.getMesaId().equals(mesa.getId())) {
-                        LocalTime horaExistente = LocalTime.parse(resExistente.getHora());
-                        if (horaExistente.isAfter(limiteInferior) &&
-                                horaExistente.isBefore(limiteSuperior)) {
-                            tieneConflicto = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!tieneConflicto) {
+                if (!mesaOcupada) {
                     mesaAsignada = mesa;
                     break;
                 }
@@ -175,7 +166,7 @@ public class ReservaServiceImpl implements ReservaService {
             if (mesaAsignada == null) {
                 throw new RuntimeException(
                         "No hay mesas disponibles en el sector " + sectorBuscado +
-                                " para la fecha y hora seleccionada. Intenta otra hora.");
+                                " para la fecha y hora seleccionada (" + reserva.getHora() + "). Intenta otra hora.");
             }
 
             // ── ASIGNAR ID real de mesa física, experiencia y estado inicial PENDIENTE ──
@@ -221,40 +212,32 @@ public class ReservaServiceImpl implements ReservaService {
             return java.util.Arrays.asList(todosLosTurnos);
         }
 
-        List<ReservaEntity> reservasDelDia = reservaRepo.findAll().stream()
-                .filter(r -> r.getFecha() != null && r.getFecha().equals(fecha))
-                .filter(this::reservaBloqueaMesa)
-                .collect(Collectors.toList());
+        List<ReservaEntity> reservasCandidatas = obtenerReservasCandidatas(fechaConsultada);
 
         LocalTime horaActual = LocalTime.now();
 
         for (String turno : todosLosTurnos) {
-            LocalTime horaEvaluar = LocalTime.parse(turno);
+            LocalTime horaEvaluar = parsearHora(turno);
+            if (horaEvaluar == null) continue;
 
-            // Si es el mismo día y la hora ya ha transcurrido, bloquear el turno
-            // inmediatamente
+            // Si es el mismo día y la hora ya ha transcurrido, bloquear el turno inmediatamente
             if (esHoy && horaEvaluar.isBefore(horaActual)) {
                 horasBloqueadas.add(turno);
                 continue;
             }
 
-            LocalTime limiteInferior = horaEvaluar.minusHours(2).plusMinutes(1);
-            LocalTime limiteSuperior = horaEvaluar.plusHours(2).minusMinutes(1);
+            LocalDateTime inicioTurno = LocalDateTime.of(fechaConsultada, horaEvaluar);
 
             boolean existeAlMenosUnaMesaLibre = false;
 
             for (MesaEntity mesa : mesasAptas) {
-                boolean mesaOcupada = false;
-                for (ReservaEntity res : reservasDelDia) {
-                    if (res.getMesaId() != null && res.getMesaId().equals(mesa.getId())) {
-                        LocalTime horaExistente = LocalTime.parse(res.getHora());
-                        if (horaExistente.isAfter(limiteInferior) &&
-                                horaExistente.isBefore(limiteSuperior)) {
-                            mesaOcupada = true;
-                            break;
-                        }
-                    }
-                }
+                boolean mesaOcupada = reservasCandidatas.stream()
+                        .filter(r -> mesa.getId().equals(r.getMesaId()))
+                        .anyMatch(r -> {
+                            LocalDateTime inicioExistente = obtenerInicio(r.getFecha(), r.getHora());
+                            return colisionanHorarios(inicioTurno, inicioExistente);
+                        });
+
                 if (!mesaOcupada) {
                     existeAlMenosUnaMesaLibre = true;
                     break;
@@ -314,6 +297,9 @@ public class ReservaServiceImpl implements ReservaService {
             if ("CANCELADA".equals(estadoActual)) {
                 throw new RuntimeException("No se puede reprogramar una reserva que ya ha sido cancelada.");
             }
+            if ("EXPIRADA".equals(estadoActual)) {
+                throw new RuntimeException("No se puede reprogramar una reserva que ha expirado.");
+            }
 
             LocalDate hoy = LocalDate.now();
             LocalDate fechaOriginal = parsearFecha(reservaExistente.getFecha());
@@ -356,25 +342,24 @@ public class ReservaServiceImpl implements ReservaService {
 
             final String sectorBuscado = (sectorTemp == null || sectorTemp.isBlank()) ? "Mesa-Estandar" : sectorTemp;
 
-            // Validar que el usuario no tenga otra reserva en conflicto en esa fecha y
-            // horario (excluyendo esta misma)
-            LocalTime limiteInferior = horaNueva.minusHours(2).plusMinutes(1);
-            LocalTime limiteSuperior = horaNueva.plusHours(2).minusMinutes(1);
+            LocalDateTime nuevoInicio = obtenerInicio(datosNuevos.getFecha(), datosNuevos.getHora());
+            if (nuevoInicio == null) {
+                throw new RuntimeException("La nueva fecha u hora indicada no es válida.");
+            }
 
+            // Validar que el usuario no tenga otra reserva en conflicto en esa fecha y horario (excluyendo esta misma)
             List<ReservaEntity> reservasUsuario = reservaRepo.findByUsuarioId(reservaExistente.getUsuarioId());
-            boolean conflictoMismoDia = reservasUsuario.stream()
+            boolean conflictoUsuario = reservasUsuario.stream()
                     .filter(r -> r.getId() != null && !r.getId().equals(id))
                     .filter(this::esReservaActiva)
-                    .filter(r -> r.getFecha() != null && r.getFecha().equals(datosNuevos.getFecha()))
                     .anyMatch(r -> {
-                        LocalTime hExistente = parsearHora(r.getHora());
-                        return hExistente != null && hExistente.isAfter(limiteInferior)
-                                && hExistente.isBefore(limiteSuperior);
+                        LocalDateTime inicioExistente = obtenerInicio(r.getFecha(), r.getHora());
+                        return colisionanHorarios(nuevoInicio, inicioExistente);
                     });
 
-            if (conflictoMismoDia) {
+            if (conflictoUsuario) {
                 throw new RuntimeException(
-                        "Ya tienes otra reserva activa para esa fecha en un horario cercano. Debe haber al menos 2 horas de diferencia.");
+                        "Ya tienes otra reserva activa en un horario cercano. Debe haber al menos 2 horas de diferencia.");
             }
 
             // Buscar mesas aptas en el sector con capacidad adecuada ordenadas por Best-Fit
@@ -390,27 +375,21 @@ public class ReservaServiceImpl implements ReservaService {
                         + nuevosInvitados + " personas.");
             }
 
-            // Reservas del día consultado (excluyendo la reserva que se está reprogramando)
-            List<ReservaEntity> reservasDelDia = reservaRepo.findAll().stream()
+            // Reservas candidatas (excluyendo la reserva que se está reprogramando)
+            List<ReservaEntity> reservasCandidatas = obtenerReservasCandidatas(fechaNueva).stream()
                     .filter(r -> r.getId() != null && !r.getId().equals(id))
-                    .filter(r -> r.getFecha() != null && r.getFecha().equals(datosNuevos.getFecha()))
-                    .filter(this::reservaBloqueaMesa)
                     .collect(Collectors.toList());
 
             MesaEntity mesaAsignada = null;
             for (MesaEntity mesa : mesasAptasDelSector) {
-                boolean tieneConflicto = false;
-                for (ReservaEntity resExistente : reservasDelDia) {
-                    if (resExistente.getMesaId() != null && resExistente.getMesaId().equals(mesa.getId())) {
-                        LocalTime horaExistente = parsearHora(resExistente.getHora());
-                        if (horaExistente != null && horaExistente.isAfter(limiteInferior)
-                                && horaExistente.isBefore(limiteSuperior)) {
-                            tieneConflicto = true;
-                            break;
-                        }
-                    }
-                }
-                if (!tieneConflicto) {
+                boolean mesaOcupada = reservasCandidatas.stream()
+                        .filter(r -> mesa.getId().equals(r.getMesaId()))
+                        .anyMatch(r -> {
+                            LocalDateTime inicioExistente = obtenerInicio(r.getFecha(), r.getHora());
+                            return colisionanHorarios(nuevoInicio, inicioExistente);
+                        });
+
+                if (!mesaOcupada) {
                     mesaAsignada = mesa;
                     break;
                 }
@@ -418,7 +397,7 @@ public class ReservaServiceImpl implements ReservaService {
 
             if (mesaAsignada == null) {
                 throw new RuntimeException("No hay mesas disponibles en el sector " + sectorBuscado
-                        + " para la nueva fecha y hora. Por favor intenta otro turno.");
+                        + " para la nueva fecha y hora (" + datosNuevos.getHora() + "). Por favor intenta otro turno.");
             }
 
             // Preservar platos preordenados, usuario, comentarios y asignar nuevos datos y
@@ -455,7 +434,7 @@ public class ReservaServiceImpl implements ReservaService {
                     .orElseThrow(() -> new RuntimeException("Reserva no encontrada con ID: " + id));
 
             String estado = reserva.getEstado() != null ? reserva.getEstado().toUpperCase().trim() : "PENDIENTE";
-            if ("CANCELADA".equals(estado) || "COMPLETADA".equals(estado)) {
+            if ("CANCELADA".equals(estado) || "COMPLETADA".equals(estado) || "EXPIRADA".equals(estado)) {
                 throw new RuntimeException(
                         "No se pueden modificar los platos de una reserva " + estado.toLowerCase() + ".");
             }
@@ -519,6 +498,11 @@ public class ReservaServiceImpl implements ReservaService {
             if ("CANCELADA".equals(estado) || "COMPLETADA".equals(estado)) {
                 throw new RuntimeException("No se puede confirmar una reserva que se encuentra " + estado.toLowerCase() + ".");
             }
+            if ("EXPIRADA".equals(estado) || haExpiradoPendiente(reserva)) {
+                reserva.setEstado("EXPIRADA");
+                reservaRepo.save(reserva);
+                throw new RuntimeException("El tiempo límite de apartado (2 horas) para esta reserva ha expirado. Por favor, crea una nueva reserva.");
+            }
 
             LocalDate fecha = parsearFecha(reserva.getFecha());
             LocalTime hora = parsearHora(reserva.getHora());
@@ -546,13 +530,13 @@ public class ReservaServiceImpl implements ReservaService {
                 throw new RuntimeException("No hay mesas en el sector " + sectorBuscado + " con capacidad suficiente.");
             }
 
-            LocalTime limiteInferior = hora.minusHours(2).plusMinutes(1);
-            LocalTime limiteSuperior = hora.plusHours(2).minusMinutes(1);
+            LocalDateTime inicioReserva = obtenerInicio(reserva.getFecha(), reserva.getHora());
+            if (inicioReserva == null) {
+                throw new RuntimeException("La reserva no cuenta con una fecha u hora válida para confirmar.");
+            }
 
-            List<ReservaEntity> reservasDelDia = reservaRepo.findAll().stream()
+            List<ReservaEntity> reservasCandidatas = obtenerReservasCandidatas(fecha).stream()
                     .filter(r -> r.getId() != null && !r.getId().equals(id))
-                    .filter(r -> r.getFecha() != null && r.getFecha().equals(reserva.getFecha()))
-                    .filter(this::reservaBloqueaMesa)
                     .collect(Collectors.toList());
 
             MesaEntity mesaAsignada = null;
@@ -560,10 +544,10 @@ public class ReservaServiceImpl implements ReservaService {
             // Conservar mesa si sigue disponible
             if (reserva.getMesaId() != null && !reserva.getMesaId().isBlank()) {
                 boolean mesaPreviaLibre = mesasAptasDelSector.stream().anyMatch(m -> m.getId().equals(reserva.getMesaId()))
-                        && reservasDelDia.stream().noneMatch(r -> {
+                        && reservasCandidatas.stream().noneMatch(r -> {
                             if (r.getMesaId() != null && r.getMesaId().equals(reserva.getMesaId())) {
-                                LocalTime h = parsearHora(r.getHora());
-                                return h != null && h.isAfter(limiteInferior) && h.isBefore(limiteSuperior);
+                                LocalDateTime inicioExistente = obtenerInicio(r.getFecha(), r.getHora());
+                                return colisionanHorarios(inicioReserva, inicioExistente);
                             }
                             return false;
                         });
@@ -575,17 +559,14 @@ public class ReservaServiceImpl implements ReservaService {
             // Si la mesa previa está ocupada, buscar otra mesa disponible en el sector (Best-Fit)
             if (mesaAsignada == null) {
                 for (MesaEntity mesa : mesasAptasDelSector) {
-                    boolean tieneConflicto = false;
-                    for (ReservaEntity rConf : reservasDelDia) {
-                        if (rConf.getMesaId() != null && rConf.getMesaId().equals(mesa.getId())) {
-                            LocalTime h = parsearHora(rConf.getHora());
-                            if (h != null && h.isAfter(limiteInferior) && h.isBefore(limiteSuperior)) {
-                                tieneConflicto = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!tieneConflicto) {
+                    boolean mesaOcupada = reservasCandidatas.stream()
+                            .filter(r -> mesa.getId().equals(r.getMesaId()))
+                            .anyMatch(r -> {
+                                LocalDateTime inicioExistente = obtenerInicio(r.getFecha(), r.getHora());
+                                return colisionanHorarios(inicioReserva, inicioExistente);
+                            });
+
+                    if (!mesaOcupada) {
                         mesaAsignada = mesa;
                         break;
                     }
@@ -627,10 +608,51 @@ public class ReservaServiceImpl implements ReservaService {
         }
     }
 
+    private LocalDateTime obtenerInicio(String fechaStr, String horaStr) {
+        LocalDate fecha = parsearFecha(fechaStr);
+        LocalTime hora = parsearHora(horaStr);
+        if (fecha == null || hora == null) {
+            return null;
+        }
+        return LocalDateTime.of(fecha, hora);
+    }
+
+    /**
+     * Evalúa si dos reservas colisionan en tiempo utilizando intersección real de intervalos:
+     * [inicio1, inicio1 + DURACION) y [inicio2, inicio2 + DURACION).
+     * Regla matemática: inicio1 < fin2 && inicio2 < fin1.
+     * Resuelve de forma robusta cualquier horario y cruce de medianoche sin generar falsos bloqueos.
+     */
+    private boolean colisionanHorarios(LocalDateTime inicio1, LocalDateTime inicio2) {
+        if (inicio1 == null || inicio2 == null) {
+            return false;
+        }
+        LocalDateTime fin1 = inicio1.plusMinutes(DURACION_RESERVA_MINUTOS);
+        LocalDateTime fin2 = inicio2.plusMinutes(DURACION_RESERVA_MINUTOS);
+
+        return inicio1.isBefore(fin2) && inicio2.isBefore(fin1);
+    }
+
+    /**
+     * Obtiene las reservas activas que potencialmente pueden solaparse con el día consultado
+     * (incluye ayer para reservas nocturnas que pasen medianoche y mañana para veladas tardías de hoy).
+     */
+    private List<ReservaEntity> obtenerReservasCandidatas(LocalDate fecha) {
+        if (fecha == null) return List.of();
+        String strAyer = fecha.minusDays(1).toString();
+        String strHoy = fecha.toString();
+        String strManana = fecha.plusDays(1).toString();
+
+        return reservaRepo.findAll().stream()
+                .filter(this::reservaBloqueaMesa)
+                .filter(r -> r.getFecha() != null &&
+                        (r.getFecha().equals(strHoy) || r.getFecha().equals(strAyer) || r.getFecha().equals(strManana)))
+                .collect(Collectors.toList());
+    }
+
     /**
      * Determina si una reserva bloquea una mesa física en un horario determinado.
-     * Gestiona también la expiración de reservas en estado PENDIENTE no confirmadas
-     * (mesas fantasma).
+     * Gestiona también el apartado temporal y la expiración automática de reservas en estado PENDIENTE.
      */
     private boolean reservaBloqueaMesa(ReservaEntity r) {
         if (r == null)
@@ -639,9 +661,21 @@ public class ReservaServiceImpl implements ReservaService {
         String estado = r.getEstado();
         if (estado != null) {
             String est = estado.trim().toUpperCase();
-            // PENDIENTE NO bloquea mesa física ni marca el horario como ocupado hasta confirmación
-            if ("CANCELADA".equals(est) || "COMPLETADA".equals(est) || "EXPIRADA".equals(est) || "PENDIENTE".equals(est)) {
+            if ("CANCELADA".equals(est) || "COMPLETADA".equals(est) || "EXPIRADA".equals(est)) {
                 return false;
+            }
+            // Control de apartado temporal para reservas PENDIENTE
+            if ("PENDIENTE".equals(est)) {
+                if (haExpiradoPendiente(r)) {
+                    r.setEstado("EXPIRADA");
+                    try {
+                        reservaRepo.save(r);
+                    } catch (Exception ignored) {
+                    }
+                    return false;
+                }
+                // Si la reserva sigue dentro de su ventana de gracia (no ha expirado),
+                // retiene y bloquea la mesa física para garantizar el apartado sin sobreventas (Double Booking).
             }
         }
 
@@ -667,10 +701,15 @@ public class ReservaServiceImpl implements ReservaService {
     /**
      * Evalúa si una reserva PENDIENTE ya superó su tiempo límite de confirmación:
      * 1. Si pasaron más de 2 horas desde su creación sin confirmarse.
-     * 2. Si la reserva es para hoy y faltan menos de 30 minutos para la hora
-     * reservada.
+     * 2. Si la reserva es para una fecha pasada, o si es para hoy y faltan menos de 30 minutos
+     *    para la hora reservada.
      */
     private boolean haExpiradoPendiente(ReservaEntity r) {
+        if (r == null) {
+            return false;
+        }
+
+        // 1. Expiración por tiempo transcurrido desde la creación (2 horas de apartado temporal)
         if (r.getFechaCreacion() != null && !r.getFechaCreacion().isBlank()) {
             try {
                 LocalDateTime creado = LocalDateTime.parse(r.getFechaCreacion().trim());
@@ -681,12 +720,20 @@ public class ReservaServiceImpl implements ReservaService {
             }
         }
 
+        // 2. Expiración por cercanía a la fecha y hora de la velada
         LocalDate fecha = parsearFecha(r.getFecha());
         LocalTime hora = parsearHora(r.getHora());
-        if (fecha != null && hora != null && fecha.isEqual(LocalDate.now())) {
-            LocalTime limiteHoy = hora.minusMinutes(30);
-            if (LocalTime.now().isAfter(limiteHoy)) {
+        LocalDate hoy = LocalDate.now();
+
+        if (fecha != null) {
+            if (fecha.isBefore(hoy)) {
                 return true;
+            }
+            if (fecha.isEqual(hoy) && hora != null) {
+                LocalTime limiteHoy = hora.minusMinutes(30);
+                if (LocalTime.now().isAfter(limiteHoy)) {
+                    return true;
+                }
             }
         }
 
