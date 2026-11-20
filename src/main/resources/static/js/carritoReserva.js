@@ -752,15 +752,30 @@ async function confirmarReservaCarrito() {
         return;
     }
 
-    // Validación de hora no inferior a la actual cuando sea el mismo día
-    if (reserva.fecha === fechaHoy && reserva.hora <= horaActual) {
-        if (alertaError && alertaErrorTexto) {
-            alertaErrorTexto.innerHTML = `<strong>¡Horario no disponible!</strong> La hora de tu reserva (${reserva.hora}) para el día de hoy ya ha transcurrido. Por favor selecciona un turno más tarde o para otra fecha.`;
-            alertaError.style.display = "flex";
-        } else {
-            alert("La hora seleccionada para el día de hoy ya ha pasado.");
+    // Validación de hora y anticipación mínima de 30 minutos cuando sea el mismo día
+    if (reserva.fecha === fechaHoy) {
+        if (reserva.hora <= horaActual) {
+            if (alertaError && alertaErrorTexto) {
+                alertaErrorTexto.innerHTML = `<strong>¡Horario no disponible!</strong> La hora de tu reserva (${reserva.hora}) para el día de hoy ya ha transcurrido. Por favor selecciona un turno más tarde o para otra fecha.`;
+                alertaError.style.display = "flex";
+            } else {
+                alert("La hora seleccionada para el día de hoy ya ha pasado.");
+            }
+            return;
         }
-        return;
+
+        const ahora = new Date();
+        const limite30 = new Date(ahora.getTime() + 30 * 60 * 1000);
+        const horaLimite30 = `${String(limite30.getHours()).padStart(2, "0")}:${String(limite30.getMinutes()).padStart(2, "0")}`;
+        if (reserva.hora <= horaLimite30) {
+            if (alertaError && alertaErrorTexto) {
+                alertaErrorTexto.innerHTML = `<strong>¡Tiempo insuficiente!</strong> Las reservas para el día de hoy deben realizarse con al menos 30 minutos de anticipación. Por favor selecciona un turno posterior.`;
+                alertaError.style.display = "flex";
+            } else {
+                alert("Las reservas para el día de hoy deben realizarse con al menos 30 minutos de anticipación.");
+            }
+            return;
+        }
     }
 
     if (btnConfirmar) {

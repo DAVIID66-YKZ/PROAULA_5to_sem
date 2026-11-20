@@ -74,8 +74,13 @@ public class ReservaServiceImpl implements ReservaService {
                 }
                 if (fechaNueva.isEqual(hoy)) {
                     LocalTime horaNueva = parsearHora(reserva.getHora());
-                    if (horaNueva != null && horaNueva.isBefore(LocalTime.now())) {
-                        throw new RuntimeException("La hora seleccionada para el día de hoy ya ha pasado.");
+                    if (horaNueva != null) {
+                        if (horaNueva.isBefore(LocalTime.now())) {
+                            throw new RuntimeException("La hora seleccionada para el día de hoy ya ha pasado.");
+                        }
+                        if (!horaNueva.isAfter(LocalTime.now().plusMinutes(30))) {
+                            throw new RuntimeException("Las reservas para el día de hoy deben realizarse con al menos 30 minutos de anticipación. Por favor selecciona un turno posterior.");
+                        }
                     }
                 }
             }
@@ -220,8 +225,8 @@ public class ReservaServiceImpl implements ReservaService {
             LocalTime horaEvaluar = parsearHora(turno);
             if (horaEvaluar == null) continue;
 
-            // Si es el mismo día y la hora ya ha transcurrido, bloquear el turno inmediatamente
-            if (esHoy && horaEvaluar.isBefore(horaActual)) {
+            // Si es el mismo día y la hora ya ha transcurrido o faltan menos de 30 minutos, bloquear el turno inmediatamente
+            if (esHoy && !horaEvaluar.isAfter(horaActual.plusMinutes(30))) {
                 horasBloqueadas.add(turno);
                 continue;
             }
@@ -323,8 +328,13 @@ public class ReservaServiceImpl implements ReservaService {
             if (horaNueva == null) {
                 throw new RuntimeException("La hora indicada no es válida.");
             }
-            if (fechaNueva.isEqual(hoy) && horaNueva.isBefore(LocalTime.now())) {
-                throw new RuntimeException("La hora seleccionada para el día de hoy ya ha pasado.");
+            if (fechaNueva.isEqual(hoy)) {
+                if (horaNueva.isBefore(LocalTime.now())) {
+                    throw new RuntimeException("La hora seleccionada para el día de hoy ya ha pasado.");
+                }
+                if (!horaNueva.isAfter(LocalTime.now().plusMinutes(30))) {
+                    throw new RuntimeException("Las reservas para el día de hoy deben reprogramarse con al menos 30 minutos de anticipación. Por favor selecciona una hora posterior.");
+                }
             }
 
             int nuevosInvitados = datosNuevos.getNumeroPersonas() > 0 ? datosNuevos.getNumeroPersonas()
@@ -679,20 +689,14 @@ public class ReservaServiceImpl implements ReservaService {
             }
         }
 
-        LocalDate fecha = parsearFecha(r.getFecha());
-        if (fecha == null)
-            return false;
-
-        LocalDate hoy = LocalDate.now();
-        if (fecha.isBefore(hoy)) {
+        LocalDateTime inicio = obtenerInicio(r.getFecha(), r.getHora());
+        if (inicio == null) {
             return false;
         }
 
-        if (fecha.isEqual(hoy)) {
-            LocalTime hora = parsearHora(r.getHora());
-            if (hora != null && hora.isBefore(LocalTime.now())) {
-                return false;
-            }
+        LocalDateTime fin = inicio.plusMinutes(DURACION_RESERVA_MINUTOS);
+        if (fin.isBefore(LocalDateTime.now())) {
+            return false;
         }
 
         return true;
@@ -721,19 +725,14 @@ public class ReservaServiceImpl implements ReservaService {
         }
 
         // 2. Expiración por cercanía a la fecha y hora de la velada
-        LocalDate fecha = parsearFecha(r.getFecha());
-        LocalTime hora = parsearHora(r.getHora());
-        LocalDate hoy = LocalDate.now();
-
-        if (fecha != null) {
-            if (fecha.isBefore(hoy)) {
+        LocalDateTime inicio = obtenerInicio(r.getFecha(), r.getHora());
+        if (inicio != null) {
+            if (inicio.isBefore(LocalDateTime.now())) {
                 return true;
             }
-            if (fecha.isEqual(hoy) && hora != null) {
-                LocalTime limiteHoy = hora.minusMinutes(30);
-                if (LocalTime.now().isAfter(limiteHoy)) {
-                    return true;
-                }
+            LocalDateTime limite30Min = inicio.minusMinutes(30);
+            if (LocalDateTime.now().isAfter(limite30Min)) {
+                return true;
             }
         }
 

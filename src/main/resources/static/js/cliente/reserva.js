@@ -44,6 +44,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+const MAPA_HORAS_AMPM = {
+    "10:00": "10:00 AM",
+    "11:00": "11:00 AM",
+    "12:00": "12:00 PM",
+    "13:00": "01:00 PM",
+    "14:00": "02:00 PM",
+    "15:00": "03:00 PM",
+    "16:00": "04:00 PM",
+    "17:00": "05:00 PM",
+    "18:00": "06:00 PM",
+    "19:00": "07:00 PM",
+    "20:00": "08:00 PM",
+    "21:00": "09:00 PM",
+    "22:00": "10:00 PM"
+};
+
 /**
  * Consulta las horas completamente colapsadas del sector y deshabilita las opciones
  */
@@ -54,9 +70,16 @@ function obtenerFechaYHoraLocal() {
     const dia = String(ahora.getDate()).padStart(2, "0");
     const horas = String(ahora.getHours()).padStart(2, "0");
     const minutos = String(ahora.getMinutes()).padStart(2, "0");
+
+    // Límite de 30 minutos de anticipación para reservas de hoy
+    const limite30 = new Date(ahora.getTime() + 30 * 60 * 1000);
+    const horas30 = String(limite30.getHours()).padStart(2, "0");
+    const minutos30 = String(limite30.getMinutes()).padStart(2, "0");
+
     return {
         fechaHoy: `${anio}-${mes}-${dia}`,
-        horaActual: `${horas}:${minutos}`
+        horaActual: `${horas}:${minutos}`,
+        horaLimite30: `${horas30}:${minutos30}`
     };
 }
 
@@ -65,12 +88,12 @@ async function comprobarHorariosDisponibles() {
     const experienciaRadio = document.querySelector('input[name="experiencia"]:checked');
     const personas = parseInt(document.getElementById("personas").value) || 2;
     const horaSelect = document.getElementById("hora");
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || localStorage.getItem("jwtToken");
 
     // Detener la ejecución si el formulario no tiene datos mínimos seleccionados
     if (!fecha || !experienciaRadio) return;
 
-    const { fechaHoy, horaActual } = obtenerFechaYHoraLocal();
+    const { fechaHoy, horaActual, horaLimite30 } = obtenerFechaYHoraLocal();
     const esMismoDia = (fecha === fechaHoy);
     const esPasado = (fecha < fechaHoy);
 
@@ -90,15 +113,19 @@ async function comprobarHorariosDisponibles() {
             Array.from(horaSelect.options).forEach(option => {
                 const estaOcupada = horasColapsadas.includes(option.value);
                 const esHoraPasada = esMismoDia && (option.value <= horaActual);
-                const noDisponible = estaOcupada || esHoraPasada || esPasado;
+                const esMenos30Min = esMismoDia && (option.value <= horaLimite30);
+                const noDisponible = estaOcupada || esHoraPasada || esMenos30Min || esPasado;
 
                 option.disabled = noDisponible;
 
-                let etiqueta = option.value;
+                const baseLabel = MAPA_HORAS_AMPM[option.value] || option.value;
+                let etiqueta = baseLabel;
                 if (esPasado) {
                     etiqueta += " (Fecha pasada)";
                 } else if (esHoraPasada) {
                     etiqueta += " (Hora pasada)";
+                } else if (esMenos30Min) {
+                    etiqueta += " (Mín. 30 min anticipación)";
                 } else if (estaOcupada) {
                     etiqueta += " (Ocupado)";
                 }
@@ -155,7 +182,7 @@ async function guardarReserva(event) {
         return;
     }
 
-    const { fechaHoy, horaActual } = obtenerFechaYHoraLocal();
+    const { fechaHoy, horaActual, horaLimite30 } = obtenerFechaYHoraLocal();
 
     // Validación 1: Fecha no inferior a hoy
     if (fecha < fechaHoy) {
@@ -167,14 +194,25 @@ async function guardarReserva(event) {
         return;
     }
 
-    // Validación 2: Si es el mismo día, hora no inferior a la actual
-    if (fecha === fechaHoy && hora <= horaActual) {
-        if (typeof mostrarToast === "function") {
-            mostrarToast("La hora seleccionada para hoy ya ha pasado. Selecciona una hora posterior.", "advertencia");
-        } else {
-            alert("La hora seleccionada para el día de hoy ya ha pasado. Por favor selecciona una hora posterior.");
+    // Validación 2: Si es el mismo día, hora no inferior a la actual y al menos 30 min de anticipación
+    if (fecha === fechaHoy) {
+        if (hora <= horaActual) {
+            if (typeof mostrarToast === "function") {
+                mostrarToast("La hora seleccionada para hoy ya ha pasado. Selecciona una hora posterior.", "advertencia");
+            } else {
+                alert("La hora seleccionada para el día de hoy ya ha pasado. Por favor selecciona una hora posterior.");
+            }
+            return;
         }
-        return;
+        if (hora <= horaLimite30) {
+            const aviso30 = "Para el día de hoy, las reservas deben solicitarse con al menos 30 minutos de anticipación para que el restaurante prepare tu mesa.";
+            if (typeof mostrarToast === "function") {
+                mostrarToast(aviso30, "advertencia", "Mínimo 30 min de anticipación");
+            } else {
+                alert(aviso30);
+            }
+            return;
+        }
     }
 
     if (personas > 12 || personas < 1) {
