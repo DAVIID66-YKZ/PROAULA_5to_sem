@@ -97,7 +97,8 @@ function renderizarTablaReservasTodas(listaFiltrada) {
             PENDIENTE: "status-pending",
             LLEGADA: "status-arrived",
             CANCELADA: "status-cancelada",
-            COMPLETADA: "status-completada"
+            COMPLETADA: "status-completada",
+            EXPIRADA: "status-cancelada"
         };
         let estadoKey = String(r.estado || "CONFIRMADA").trim().toUpperCase();
         let cls = statusMap[estadoKey] || "status-pending";
@@ -145,7 +146,7 @@ function renderizarTablaReservasTodas(listaFiltrada) {
                         <td><span class="status-badge ${cls}">${(function() {
                 var isEn = (localStorage.getItem("adminIdioma") === "en");
                 if (!isEn) return estadoKey;
-                var map = { CONFIRMADA: "CONFIRMED", PENDIENTE: "PENDING", LLEGADA: "ARRIVED", CANCELADA: "CANCELLED", COMPLETADA: "COMPLETED" };
+                var map = { CONFIRMADA: "CONFIRMED", PENDIENTE: "PENDING", LLEGADA: "ARRIVED", CANCELADA: "CANCELLED", COMPLETADA: "COMPLETED", EXPIRADA: "EXPIRED" };
                 return map[estadoKey] || estadoKey;
             })()}</span></td>
             <td>${experiencia}</td>

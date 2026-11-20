@@ -204,8 +204,8 @@ function renderizarTablaReservas() {
         const fechaReserva = new Date(`${res.fecha}T${res.hora || "00:00"}`);
         const yaPaso = fechaReserva < ahora;
 
-        if (filtroEstadoActual === "CANCELADA") return est === "CANCELADA";
-        if (filtroEstadoActual === "COMPLETADA") return est === "COMPLETADA" || (yaPaso && est !== "CANCELADA");
+        if (filtroEstadoActual === "CANCELADA") return est === "CANCELADA" || est === "EXPIRADA";
+        if (filtroEstadoActual === "COMPLETADA") return est === "COMPLETADA" || (yaPaso && est !== "CANCELADA" && est !== "EXPIRADA");
         if (filtroEstadoActual === "PENDIENTE") return est === "PENDIENTE" && !yaPaso;
         if (filtroEstadoActual === "CONFIRMADA") return est === "CONFIRMADA" && !yaPaso;
 
@@ -277,10 +277,14 @@ function renderizarTablaReservas() {
 
         const textoPersonas = `${res.numeroPersonas} ${lang === "en" ? (res.numeroPersonas === 1 ? "guest" : "guests") : (res.numeroPersonas === 1 ? "persona" : "personas")}`;
 
-        if (estadoRes === "CANCELADA") {
+        if (estadoRes === "CANCELADA" || estadoRes === "EXPIRADA") {
+            const esExpirada = estadoRes === "EXPIRADA";
+            const textoBadge = esExpirada
+                ? (lang === "en" ? "Expired" : "Expirada")
+                : (lang === "en" ? "Cancelled" : "Cancelada");
             estadoBadge = `
                 <span class="status-pill" style="background:rgba(231, 76, 60, 0.15); color:#e74c3c; border:1px solid rgba(231, 76, 60, 0.4);">
-                    ${lang === "en" ? "Cancelled" : "Cancelada"}
+                    ${textoBadge}
                 </span>
             `;
             botonesAcciones = `<span style="color:#777; font-size: 13px;">—</span>`;
@@ -780,6 +784,8 @@ async function recalcularHorasReprogramar(horaPreferida) {
     const ahora = new Date();
     const hoyStr = ahora.toISOString().split("T")[0];
     const horaActualStr = ahora.toTimeString().substring(0, 5);
+    const limite30 = new Date(ahora.getTime() + 30 * 60 * 1000);
+    const horaLimite30Str = `${String(limite30.getHours()).padStart(2, "0")}:${String(limite30.getMinutes()).padStart(2, "0")}`;
     const esMismoDia = (fecha === hoyStr);
     const esPasado = (fecha < hoyStr);
 
@@ -799,7 +805,8 @@ async function recalcularHorasReprogramar(horaPreferida) {
             const esSuHoraActual = reserva && (reserva.fecha === fecha) && (reserva.hora === opt.value) && (reserva.experiencia === sector);
             const estaOcupada = horasOcupadas.includes(opt.value) && !esSuHoraActual;
             const esHoraPasada = esMismoDia && (opt.value <= horaActualStr);
-            const noDisponible = estaOcupada || esHoraPasada || esPasado;
+            const esMenos30Min = esMismoDia && (opt.value <= horaLimite30Str);
+            const noDisponible = estaOcupada || esHoraPasada || esMenos30Min || esPasado;
 
             opt.disabled = noDisponible;
 
@@ -809,6 +816,8 @@ async function recalcularHorasReprogramar(horaPreferida) {
                 sufijo = lang === "en" ? " (Past date)" : " (Fecha pasada)";
             } else if (esHoraPasada) {
                 sufijo = lang === "en" ? " (Past time)" : " (Hora pasada)";
+            } else if (esMenos30Min) {
+                sufijo = lang === "en" ? " (Min. 30m advance)" : " (Mín. 30 min anticipación)";
             } else if (estaOcupada) {
                 sufijo = lang === "en" ? " (Full)" : " (Ocupado)";
             } else if (esSuHoraActual) {
@@ -853,6 +862,23 @@ async function guardarReprogramacion(event) {
             mostrarToast(advertencia, "advertencia");
         } else {
             alert(advertencia);
+        }
+        return;
+    }
+
+    const ahora = new Date();
+    const hoyStr = ahora.toISOString().split("T")[0];
+    const limite30 = new Date(ahora.getTime() + 30 * 60 * 1000);
+    const horaLimite30Str = `${String(limite30.getHours()).padStart(2, "0")}:${String(limite30.getMinutes()).padStart(2, "0")}`;
+
+    if (fecha === hoyStr && hora <= horaLimite30Str) {
+        const aviso30 = lang === "en"
+            ? "Reservations for today must be rescheduled at least 30 minutes in advance."
+            : "Las reservas para el día de hoy deben reprogramarse con al menos 30 minutos de anticipación.";
+        if (typeof mostrarToast === "function") {
+            mostrarToast(aviso30, "advertencia", "Mínimo 30 min de anticipación");
+        } else {
+            alert(aviso30);
         }
         return;
     }
